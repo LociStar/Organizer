@@ -46,8 +46,8 @@ public enum Achievement {
 
     public String getDescription(I18nContext context) {
         return context.localize(this.description)
-                .replace("{patreon_url}", Config.PATREON_URL)
-                .replace("{top_gg_url}", Config.TOP_GG_URL);
+                .replace("{patreon_url}", "https://github.com/LociStar")//Config.PATREON_URL
+                .replace("{top_gg_url}", "https://github.com/LociStar");//Config.TOP_GG_URL
     }
 
     public static EnumSet<Achievement> of(int value) {
