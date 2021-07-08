@@ -4,16 +4,10 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.net.URL;
 
 /**
- * @Author: EDZ
- * @Description: ${description}
- * @Date: 2019/5/9 13:05
- * @Version: 1.0
+ * Makes an image round
+ * @Author: LociStar
  */
 public class CopeImageUtil {
     public static BufferedImage cutHeadImages(ByteArrayInputStream byteArrayInputStream) {
