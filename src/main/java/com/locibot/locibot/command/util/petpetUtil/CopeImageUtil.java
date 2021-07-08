@@ -47,8 +47,8 @@ public class CopeImageUtil {
 //            graphics.setColor(Color.WHITE);
 //            graphics.drawOval(border1, border1, width - border1 * 2, width - border1 * 2);
 //            graphics.dispose();
-            OutputStream os = new FileOutputStream("./13000.png");//When publishing a project, such as: Tomcat he will create this under the local tomcat webapps file on the server file name
-            ImageIO.write(formatAvatarImage, "PNG", os);
+//            OutputStream os = new FileOutputStream("./13000.png");//When publishing a project, such as: Tomcat he will create this under the local tomcat webapps file on the server file name
+//            ImageIO.write(formatAvatarImage, "PNG", os);
             return formatAvatarImage;
         } catch (Exception e) {
             e.printStackTrace();
