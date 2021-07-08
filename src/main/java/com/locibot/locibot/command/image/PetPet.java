@@ -1,5 +1,6 @@
 package com.locibot.locibot.command.image;
 
+import com.locibot.locibot.command.util.petpetUtil.CopeImageUtil;
 import com.locibot.locibot.command.util.petpetUtil.ThreadedImageBrightener;
 import com.locibot.locibot.core.command.BaseCmd;
 import com.locibot.locibot.core.command.CommandCategory;
@@ -7,7 +8,6 @@ import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.squareup.gifencoder.*;
 import com.twelvemonkeys.image.ResampleOp;
-import discord4j.rest.util.Image;
 import reactor.core.publisher.Mono;
 
 import javax.imageio.ImageIO;
@@ -16,12 +16,11 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 
 public class PetPet extends BaseCmd {
 
     private static final int FPS_CAP = 60;
-    private static final int HAND_SIZE = 112;
+    private static final int HAND_SIZE = 120;
     private static final int DEFAULT_X = 12;
     private static final int DEFAULT_Y = 18;
     private static final float PET_SIZE = 100.0F;
@@ -32,18 +31,22 @@ public class PetPet extends BaseCmd {
 
     @Override
     public Mono<?> execute(Context context) {
-        Image image = context.getAuthor().getAvatar().block();
-
-        int fps = this.getClampedFPS(20);
+        int fps = this.getClampedFPS(15);
         float scale = 1;
 
-        try {
-            return context.createFollowupMessage("Here is your pet: ").then(this.processPet(context, fps, scale, new ByteArrayInputStream(image.getData())));
-        } catch (OutOfMemoryError | Exception error) {
-            error.printStackTrace();
-        }
-
-        return context.createFollowupMessage("Ups.. something broke^^");
+        return context.createFollowupMessage("Here is your pet: ")
+                .then(context.getAuthor().getAvatar().flatMap(image -> {
+                    try {
+                        BufferedImage bufferedImage = CopeImageUtil.cutHeadImages(new ByteArrayInputStream(image.getData()));
+                        ByteArrayOutputStream os = new ByteArrayOutputStream();
+                        ImageIO.write(bufferedImage, "png", os); // Passing: ​(RenderedImage im, String formatName, OutputStream output)
+                        InputStream is = new ByteArrayInputStream(os.toByteArray());
+                        return this.processPet(context, fps, scale, is);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return context.createFollowupMessage("Ups.. something broke^^");
+                }).onErrorReturn(Mono.empty()));
     }
 
     private int getClampedFPS(int fps) {
@@ -53,20 +56,19 @@ public class PetPet extends BaseCmd {
     private Mono<?> processPet(Context context, int fps, float scale, InputStream stream) throws Exception {
         File outputGif = new File("./petpet_output.gif");
         FileOutputStream outputStream = new FileOutputStream(outputGif);
-        GifEncoder gifEncoder = new GifEncoder(outputStream, 112, 112, 0);
+        GifEncoder gifEncoder = new GifEncoder(outputStream, 120, 120, 0);
         ImageOptions options = new ImageOptions()
                 .setTransparencyColor(Color.BLACK.getRGB())
                 .setColorQuantizer(MedianCutQuantizer.INSTANCE)
                 .setDitherer(FloydSteinbergDitherer.INSTANCE)
                 .setDisposalMethod(DisposalMethod.DO_NOT_DISPOSE);
-        System.out.println(Arrays.toString(options.getClass().getDeclaredFields()));
         Field delayCentiSeconds = options.getClass().getDeclaredField("delayCentiSeconds");
         delayCentiSeconds.setAccessible(true);
         delayCentiSeconds.set(options, Math.round(100.0F / fps));
         try {
             BufferedImage bufferedImage = ImageIO.read(this.getClass().getResource("/Pictures/petpet.png"));
             BufferedImage image = ImageIO.read(stream);
-            ThreadedImageBrightener imageDarkener = new ThreadedImageBrightener(image, 0.05F);
+            ThreadedImageBrightener imageDarkener = new ThreadedImageBrightener(image, 0.06F);
             imageDarkener.run();
 
             int inputWidth = image.getWidth(null);
