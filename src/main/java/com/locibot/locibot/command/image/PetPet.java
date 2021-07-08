@@ -8,6 +8,7 @@ import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.squareup.gifencoder.*;
 import com.twelvemonkeys.image.ResampleOp;
+import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import javax.imageio.ImageIO;
@@ -16,6 +17,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.net.URL;
 
 public class PetPet extends BaseCmd {
 
@@ -27,6 +29,7 @@ public class PetPet extends BaseCmd {
 
     protected PetPet() {
         super(CommandCategory.IMAGE, CommandPermission.USER_GUILD, "petpet", "create a petpet gif");
+        this.addOption("url", "url", false, ApplicationCommandOptionType.STRING);
     }
 
     @Override
@@ -37,6 +40,16 @@ public class PetPet extends BaseCmd {
         return context.createFollowupMessage("Here is your pet: ")
                 .then(context.getAuthor().getAvatar().flatMap(image -> {
                     try {
+                        if (context.getOptionAsString("url").isPresent()){
+                            BufferedImage bufferedImage = ImageIO.read(new URL(context.getOptionAsString("url").get()));
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            ImageIO.write(bufferedImage, "png", baos);
+                            bufferedImage = CopeImageUtil.cutHeadImages(new ByteArrayInputStream(baos.toByteArray()));
+                            ByteArrayOutputStream os = new ByteArrayOutputStream();
+                            ImageIO.write(bufferedImage, "png", os); // Passing: ​(RenderedImage im, String formatName, OutputStream output)
+                            InputStream is = new ByteArrayInputStream(os.toByteArray());
+                            return this.processPet(context, fps, scale, is);
+                        }
                         BufferedImage bufferedImage = CopeImageUtil.cutHeadImages(new ByteArrayInputStream(image.getData()));
                         ByteArrayOutputStream os = new ByteArrayOutputStream();
                         ImageIO.write(bufferedImage, "png", os); // Passing: ​(RenderedImage im, String formatName, OutputStream output)
