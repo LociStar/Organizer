@@ -38,7 +38,6 @@ public abstract class CreateRainMap {
         HourlyWeatherForecast hwf = null;
         try {
             hwf = owm.hourlyWeatherForecastByCityName(city);
-            System.out.println(hwf);
         } catch (APIException e) {
             return new byte[0];
         }
@@ -73,6 +72,7 @@ public abstract class CreateRainMap {
         heatMapChart.getStyler().setRangeColors(rangeColors);
         heatMapChart.getStyler().setShowValue(true);
         heatMapChart.getStyler().setHeatMapValueDecimalPattern("###,###.### mm");
+        heatMapChart.getStyler().setValueFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
         heatMapChart.getStyler().setPlotBackgroundColor(new Color(72, 72, 72));
         heatMapChart.getStyler().setChartBackgroundColor(new Color(122, 122, 122));
         heatMapChart.getStyler().setLegendBackgroundColor(new Color(83, 83, 83));
@@ -82,6 +82,9 @@ public abstract class CreateRainMap {
         heatMapChart.getStyler().setPlotContentSize(1);
         heatMapChart.getStyler().setAxisTicksLineVisible(false);
         heatMapChart.getStyler().setPlotGridLinesVisible(false);
+
+        BitmapEncoder.saveBitmap(heatMapChart, "D:\\Programms\\Java\\IdeaProjects\\ShadbotOriginal\\src\\main\\resources\\Pictures\\Rain", BitmapEncoder.BitmapFormat.PNG);
+
 
         return BitmapEncoder.getBitmapBytes(heatMapChart, BitmapEncoder.BitmapFormat.PNG);
 
