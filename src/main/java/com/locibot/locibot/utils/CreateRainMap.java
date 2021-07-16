@@ -71,8 +71,8 @@ public abstract class CreateRainMap {
         Color[] rangeColors = {new Color(255, 255, 255), new Color(28, 73, 255), new Color(0, 22, 190), new Color(0, 19, 98)};
         heatMapChart.getStyler().setRangeColors(rangeColors);
         heatMapChart.getStyler().setShowValue(true);
-        heatMapChart.getStyler().setHeatMapValueDecimalPattern("###,###.### mm");
-        heatMapChart.getStyler().setValueFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+        heatMapChart.getStyler().setHeatMapValueDecimalPattern("###,###.###");
+        heatMapChart.getStyler().setValueFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
         heatMapChart.getStyler().setPlotBackgroundColor(new Color(72, 72, 72));
         heatMapChart.getStyler().setChartBackgroundColor(new Color(122, 122, 122));
         heatMapChart.getStyler().setLegendBackgroundColor(new Color(83, 83, 83));
