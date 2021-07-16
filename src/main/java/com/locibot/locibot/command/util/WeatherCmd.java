@@ -8,10 +8,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.data.credential.Credential;
 import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.object.Emoji;
-import com.locibot.locibot.utils.CreateHeatMap;
-import com.locibot.locibot.utils.EnumUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
-import com.locibot.locibot.utils.StringUtil;
+import com.locibot.locibot.utils.*;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import net.aksingh.owmjapis.api.APIException;
@@ -95,7 +92,18 @@ public class WeatherCmd extends BaseCmd {
                                 else messageCreateSpec.setContent("Please provide a real city ;)");
                             } catch (IOException ignored) {
                             }
-                        })));
+                        })))
+        .then(context.getChannel().flatMap(textChannel ->
+                textChannel.createMessage(messageCreateSpec -> {
+                    try {
+                        byte[] bytes = CreateRainMap.create(city, this.owm);
+                        if (bytes.length > 0)
+                            messageCreateSpec.addFile("rain.png",
+                                    new ByteArrayInputStream(bytes));
+                        else messageCreateSpec.setContent("No City No Rain");
+                    } catch (IOException ignored) {
+                    }
+                })));
     }
 
     private Consumer<EmbedCreateSpec> formatEmbed(Context context, WeatherWrapper weather) {
