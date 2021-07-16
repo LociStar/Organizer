@@ -6,6 +6,7 @@ import com.locibot.locibot.core.command.BaseCmd;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
+import com.locibot.locibot.object.Emoji;
 import com.squareup.gifencoder.*;
 import com.twelvemonkeys.image.ResampleOp;
 import discord4j.rest.util.ApplicationCommandOptionType;
@@ -40,7 +41,7 @@ public class PetPet extends BaseCmd {
         return context.createFollowupMessage("Here is your pet: ")
                 .then(context.getAuthor().getAvatar().flatMap(image -> {
                     try {
-                        if (context.getOptionAsString("url").isPresent()){
+                        if (context.getOptionAsString("url").isPresent()) {
                             BufferedImage bufferedImage = ImageIO.read(new URL(context.getOptionAsString("url").get()));
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             ImageIO.write(bufferedImage, "png", baos);
@@ -59,7 +60,8 @@ public class PetPet extends BaseCmd {
                         e.printStackTrace();
                     }
                     return context.createFollowupMessage("Ups.. something broke^^");
-                }).onErrorReturn(Mono.empty()));
+                }).onErrorReturn(context.createFollowupMessage(Emoji.RED_FLAG, context.localize("exception.server.access")
+                        .formatted(context.getFullCommandName()))));
     }
 
     private int getClampedFPS(int fps) {
