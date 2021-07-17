@@ -9,6 +9,9 @@ import com.locibot.locibot.data.credential.Credential;
 import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.*;
+import com.locibot.locibot.utils.weather.CreateHeatMap;
+import com.locibot.locibot.utils.weather.CreateRainMap;
+import com.locibot.locibot.utils.weather.HourlyWeatherForecastClass;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import net.aksingh.owmjapis.api.APIException;
@@ -82,28 +85,26 @@ public class WeatherCmd extends BaseCmd {
                             .formatted(city));
                 })
                 .onErrorMap(APIException.class, IOException::new)
-                .then(context.getChannel().flatMap(textChannel ->
-                        textChannel.createMessage(messageCreateSpec -> {
+                .then(Mono.just(new HourlyWeatherForecastClass(this.owm, city)).flatMap(hwfc ->
+                        context.getChannel().flatMap(textChannel -> textChannel.createMessage(messageCreateSpec -> {
                             try {
-                                byte[] bytes = CreateHeatMap.create(city, this.owm);
+                                byte[] bytes = hwfc.createHeatMap();
                                 if (bytes.length > 0)
                                     messageCreateSpec.addFile("temperature.png",
                                             new ByteArrayInputStream(bytes));
-                                else messageCreateSpec.setContent("Please provide a real city ;)");
+                                else
+                                    messageCreateSpec.setContent("Please provide a real city ;)");
                             } catch (IOException ignored) {
                             }
-                        })))
-        .then(context.getChannel().flatMap(textChannel ->
-                textChannel.createMessage(messageCreateSpec -> {
-                    try {
-                        byte[] bytes = CreateRainMap.create(city, this.owm);
-                        if (bytes.length > 0)
-                            messageCreateSpec.addFile("rain.png",
-                                    new ByteArrayInputStream(bytes));
-                        else messageCreateSpec.setContent("No City No Rain");
-                    } catch (IOException ignored) {
-                    }
-                })));
+                            try {
+                                byte[] bytes = hwfc.createRainMap();
+                                if (bytes.length > 0)
+                                    messageCreateSpec.addFile("rain.png",
+                                            new ByteArrayInputStream(bytes));
+                                else messageCreateSpec.setContent("No City No Rain");
+                            } catch (IOException ignored) {
+                            }
+                        }))));
     }
 
     private Consumer<EmbedCreateSpec> formatEmbed(Context context, WeatherWrapper weather) {
