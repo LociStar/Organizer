@@ -9,7 +9,7 @@
     <hr>
     <h2>Usage</h2>
     <a></a>
-    <p><b>Contact me on Discord if your are interested in adding this bot to your server!</b></p>
+    <p><b>Contact me on Discord if your are interested in adding this bot to your own server!</b></p>
     <hr>
     <h2>Support</h2>
     <p><b><a href="https://discord.gg/ber7Jxxd">Join</a> the support server if you have any questions, suggestions or if you just want to talk.</b></p>
