@@ -27,3 +27,5 @@ Thumbs.db
 # Project Files
 *.log
 credentials.properties
+/src/main/java/com/locibot/locibot/Test2.java
+/src/main/resources/sentry.properties
