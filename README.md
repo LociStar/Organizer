@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <a href="dicord-invite-link">
+    <a href="bot-dicord-invite-link">
         <img align="right" src="https://image.flaticon.com/icons/png/512/544/544539.png" height="220" width="220">
     </a>
     <h1>Organizer</h1>
@@ -12,12 +12,12 @@
     <p><b>Contact me on Discord if your are interested in adding this bot to your own server!</b></p>
     <hr>
     <h2>Support</h2>
-    <p><b><a href="https://discord.gg/ber7Jxxd">Join</a> the support server if you have any questions, suggestions or if you just want to talk.</b></p>
+    <p><b><a href="https://discord.gg/tAeFra36KX">Join</a> the support server if you have any questions, suggestions or if you just want to talk.</b></p>
     <hr>
     <h2>Privacy</h2>
     In order to store custom settings, coins, locations (for weather subscription), I may save server ID, channel(s) ID, role(s) ID, user(s) ID or the entered locations in a persistent database. 
-    <br>If an error occurs while you're interacting with Shadbot, I may log the content of the message that triggered the command for debugging purpose.
-    <br>If you have any questions or requests, do not hesitate to <a href="https://discord.gg/ber7Jxxd">join</a> the support server or directly contact me via Discord.
+    <br>If an error occurs while you're interacting with Organizer, I may log the content of the message that triggered the command for debugging purpose.
+    <br>If you have any questions or requests, do not hesitate to <a href="https://discord.gg/tAeFra36KX">join</a> the support server or directly contact me via Discord.
     <hr>
     <h2>Libraries used</h2>
     <ul>
