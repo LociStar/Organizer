@@ -47,8 +47,8 @@ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Gen
 You should have received a copy of the GNU General Public License along with this program. If not,
 see http://www.gnu.org/licenses/
 </pre>
-<a href="">The full licence can be found here.</a>
+<a href="https://github.com/LociStar/Organizer/blob/master/LICENSE">The full licence can be found here.</a>
 <hr>
-<p><i>Bot originally inspired by <a href="https://github.com/Mantaro/MantaroBot">MantaroBot</i></a>
+<p><i>Bot originally inspired by <a href="https://github.com/Shadorc/Shadbot">Shadbot</i></a>
 </body>
 </html>
