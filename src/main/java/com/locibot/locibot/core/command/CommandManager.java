@@ -17,6 +17,7 @@ import com.locibot.locibot.command.info.InfoGroup;
 import com.locibot.locibot.command.moderation.ModerationGroup;
 import com.locibot.locibot.command.music.*;
 import com.locibot.locibot.command.owner.OwnerGroup;
+import com.locibot.locibot.command.register.RegisterGroup;
 import com.locibot.locibot.command.setting.SettingGroup;
 import com.locibot.locibot.command.standalone.*;
 import com.locibot.locibot.command.util.*;
@@ -44,6 +45,7 @@ public class CommandManager {
                 new InfoGroup(), new ImageGroup(), new ModerationGroup(), new OwnerGroup(),
                 new GameStatsGroup(), new SettingGroup(),
                 new DonatorGroup(), new GameGroup(), new GroupGroup(),
+                new RegisterGroup(),
                 // Image
                 new Rule34Cmd(), // TODO Improvement: Add to Image group when Discord autocompletion is implemented
                 // Standalone

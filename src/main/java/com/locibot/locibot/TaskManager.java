@@ -3,16 +3,21 @@ package com.locibot.locibot;
 import com.locibot.locibot.command.game.lottery.LotteryCmd;
 import com.locibot.locibot.api.BotListStats;
 import com.locibot.locibot.command.group.GroupUtil;
+import com.locibot.locibot.command.register.RegisterWeather;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.Telemetry;
+import com.locibot.locibot.data.credential.Credential;
+import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.object.ExceptionHandler;
-import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.LogUtil;
-import com.locibot.locibot.utils.SystemUtil;
+import com.locibot.locibot.utils.*;
+import com.locibot.locibot.utils.weather.CreateHeatMap;
+import com.locibot.locibot.utils.weather.CreateRainMap;
+import com.locibot.locibot.utils.weather.HourlyWeatherForecastClass;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.gateway.GatewayClient;
 import discord4j.gateway.GatewayClientGroup;
+import net.aksingh.owmjapis.core.OWM;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -20,12 +25,12 @@ import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 import reactor.util.Logger;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,6 +163,44 @@ public class TaskManager {
                     });
                     LOGGER.info("Closing group disposer");
                     return Mono.empty();
+                }).subscribe(null, ExceptionHandler::handleUnknownError);
+        this.tasks.add(task);
+    }
+
+    public void scheduleWeatherSubscriptions(GatewayDiscordClient gateway) {
+        LOGGER.info("Scheduling weather subscriptions");
+        final Disposable task = Flux.interval(RegisterWeather.getDelay(), Duration.ofDays(1), DEFAULT_SCHEDULER)
+                .doOnNext(__ -> {
+                    LOGGER.info("Sending weather subscriptions");
+                    OWM owm = new OWM(CredentialManager.get(Credential.OPENWEATHERMAP_API_KEY));
+                    owm.setUnit(OWM.Unit.METRIC);
+                    DatabaseManager.getGuilds().getDBGuilds().forEach(dbGuild ->
+                            dbGuild.getMembers().forEach(dbMember ->
+                                    dbMember.getWeatherRegistered().forEach(city ->
+                                            gateway.getUserById(dbMember.getId()).flatMap(user ->
+                                                    user.getPrivateChannel().flatMap(privateChannel ->
+                                                            privateChannel.createMessage("Daily weather forecast of " + city + ":")
+                                                                    .then(Mono.just(new HourlyWeatherForecastClass(owm, city)).flatMap(hwfc ->
+                                                                            privateChannel.createMessage(messageCreateSpec -> {
+                                                                                try {
+                                                                                    byte[] bytes = hwfc.createHeatMap();
+                                                                                    if (bytes.length > 0)
+                                                                                        messageCreateSpec.addFile("temperature.png",
+                                                                                                new ByteArrayInputStream(bytes));
+                                                                                    else
+                                                                                        messageCreateSpec.setContent("Please provide a real city ;)");
+                                                                                    bytes = hwfc.createRainMap();
+                                                                                    if (bytes.length > 0)
+                                                                                        messageCreateSpec.addFile("rain.png",
+                                                                                                new ByteArrayInputStream(bytes));
+                                                                                    else
+                                                                                        messageCreateSpec.setContent("No City No Rain");
+                                                                                    System.out.println("Message End");
+                                                                                } catch (IOException e) {
+                                                                                    e.printStackTrace();
+                                                                                }
+                                                                            }))))).subscribe(null, ExceptionHandler::handleUnknownError))));
+                    LOGGER.info("weather subscriptions send");
                 }).subscribe(null, ExceptionHandler::handleUnknownError);
         this.tasks.add(task);
     }

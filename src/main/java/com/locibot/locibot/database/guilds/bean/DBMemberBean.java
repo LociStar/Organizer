@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.locibot.locibot.database.Bean;
 import reactor.util.annotation.Nullable;
 
+import java.util.ArrayList;
+
 public class DBMemberBean implements Bean {
 
     @JsonProperty("_id")
@@ -11,14 +13,18 @@ public class DBMemberBean implements Bean {
     @Nullable
     @JsonProperty("coins")
     private Long coins;
+    @Nullable
+    @JsonProperty("weatherRegistered")
+    private ArrayList<String> weatherRegistered;
 
-    public DBMemberBean(String id, @Nullable Long coins) {
+    public DBMemberBean(String id, @Nullable Long coins, @Nullable ArrayList<String> weatherRegistered) {
         this.id = id;
         this.coins = coins;
+        this.weatherRegistered = weatherRegistered;
     }
 
     public DBMemberBean(String id) {
-        this(id, null);
+        this(id, null, null);
     }
 
     public DBMemberBean() {
@@ -32,11 +38,16 @@ public class DBMemberBean implements Bean {
         return this.coins == null ? 0 : this.coins;
     }
 
+    public ArrayList<String> getWeatherRegistered() {
+        return this.weatherRegistered == null ? new ArrayList<>() : this.weatherRegistered;
+    }
+
     @Override
     public String toString() {
         return "DBMemberBean{" +
                 "id=" + this.id +
                 ", coins=" + this.coins +
+                ", weatherRegistered=" + this.weatherRegistered +
                 '}';
     }
 }

@@ -16,7 +16,8 @@ public enum CommandCategory {
     MODERATION("Moderation"),
     OWNER("Owner"),
     SETTING("Setting"),
-    GROUP("Group");
+    GROUP("Group"),
+    REGISTER("Register");
 
     private final String name;
 

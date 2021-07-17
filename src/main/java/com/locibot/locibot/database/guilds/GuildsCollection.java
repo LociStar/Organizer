@@ -1,5 +1,6 @@
 package com.locibot.locibot.database.guilds;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.locibot.locibot.database.DatabaseCollection;
 import com.locibot.locibot.database.guilds.bean.DBGuildBean;
 import com.mongodb.client.model.Filters;
@@ -18,7 +19,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.Logger;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GuildsCollection extends DatabaseCollection {
@@ -30,6 +33,22 @@ public class GuildsCollection extends DatabaseCollection {
     public GuildsCollection(MongoDatabase database) {
         super(database, "guilds");
         this.guildCache = MultiValueCache.Builder.<Snowflake, DBGuild>create().withInfiniteTtl().build();
+    }
+
+    public List<DBGuild> getDBGuilds() {
+        List<DBGuild> dbGroups = new ArrayList<>();
+        List<Document> documents = Flux.from(this.getCollection().find()).collectList().block();
+        if (documents != null)
+            LOGGER.debug("[DBGuild {}] Request", "0");
+            Telemetry.DB_REQUEST_COUNTER.labels(this.getName()).inc();
+            documents.forEach(document -> {
+                try {
+                    dbGroups.add(new DBGuild(NetUtil.MAPPER.readValue(document.toJson(JSON_WRITER_SETTINGS), DBGuildBean.class)));
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            });
+        return dbGroups;
     }
 
     public Mono<DBGuild> getDBGuild(Snowflake guildId) {

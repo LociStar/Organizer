@@ -139,6 +139,7 @@ public class LociBot {
                     LociBot.taskManager.schedulePeriodicStats(gateway);
                     LociBot.taskManager.scheduleGroups(gateway);
                     LociBot.taskManager.scheduleDeleteOldGroups();
+                    LociBot.taskManager.scheduleWeatherSubscriptions(gateway);
 
                     if (!Config.IS_SNAPSHOT) {
                         if (CredentialManager.get(Credential.BOTLIST_DOT_SPACE_TOKEN) != null) {

@@ -1,4 +1,4 @@
-package com.locibot.locibot.utils;
+package com.locibot.locibot.utils.weather;
 
 import net.aksingh.owmjapis.api.APIException;
 import net.aksingh.owmjapis.core.OWM;
@@ -17,9 +17,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class CreateRainMap {
+public class CreateRainMap {
 
-    public static byte[] create(String city, OWM owm) throws IOException {
+    public byte[] create(HourlyWeatherForecast hwf) throws IOException {
         // Create Chart
         HeatMapChart heatMapChart = new HeatMapChartBuilder().width(800).height(500).title("Rain (mm)").yAxisTitle("date").xAxisTitle("time").build();
 
@@ -34,14 +34,6 @@ public abstract class CreateRainMap {
         xData.add("15:00");
         xData.add("18:00");
         xData.add("21:00");
-
-        HourlyWeatherForecast hwf = null;
-        try {
-            hwf = owm.hourlyWeatherForecastByCityName(city);
-        } catch (APIException e) {
-            return new byte[0];
-        }
-        Collections.reverse(Objects.requireNonNull(hwf.getDataList()));
 
         String lastDate = "";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");

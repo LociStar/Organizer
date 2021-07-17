@@ -1,5 +1,6 @@
 package com.locibot.locibot.database.guilds.entity;
 
+import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.database.DatabaseEntity;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.SerializableEntity;
@@ -18,6 +19,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class DBMember extends SerializableEntity<DBMemberBean> implements DatabaseEntity {
@@ -110,6 +112,30 @@ public class DBMember extends SerializableEntity<DBMemberBean> implements Databa
         return this.delete()
                 .doOnSubscribe(__ -> GuildsCollection.LOGGER.debug("[DBMember {}/{}] Coins deletion",
                         this.getId().asString(), this.getGuildId().asString()));
+    }
+
+    public ArrayList<String> getWeatherRegistered() {
+        return this.getBean().getWeatherRegistered();
+    }
+
+    public Mono<UpdateResult> subscribeWeatherRegistered(String city) {
+        ArrayList<String> cities = getWeatherRegistered();
+        if (!cities.contains(city)) {
+            cities.add(city);
+            return this.update(Updates.set("members.$.weatherRegistered", cities), this.toDocument().append("weatherRegistered", cities))
+                    .doOnSubscribe(__ -> GuildsCollection.LOGGER.debug("[DBMember {}/{}] Register update: {} weatherRegistered",
+                            this.getId().asString(), this.getGuildId().asString(), cities));
+        }
+        return Mono.error(new CommandException("City already subscribed"));
+    }
+
+    public Mono<UpdateResult> unsubscribeWeatherRegistered(String city) {
+        ArrayList<String> cities = getWeatherRegistered();
+        if (cities.remove(city))
+            return this.update(Updates.set("members.$.weatherRegistered", cities), this.toDocument().append("weatherRegistered", cities))
+                    .doOnSubscribe(__ -> GuildsCollection.LOGGER.debug("[DBMember {}/{}] Register update: {} weatherRegistered",
+                            this.getId().asString(), this.getGuildId().asString(), cities));
+        else return Mono.error(new CommandException("City already unsubscribed"));
     }
 
     @Override
