@@ -9,8 +9,6 @@ import com.locibot.locibot.data.credential.Credential;
 import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.*;
-import com.locibot.locibot.utils.weather.CreateHeatMap;
-import com.locibot.locibot.utils.weather.CreateRainMap;
 import com.locibot.locibot.utils.weather.HourlyWeatherForecastClass;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;

@@ -8,11 +8,9 @@ import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.guilds.entity.WeatherChoice;
 import com.locibot.locibot.object.ExceptionHandler;
 import com.locibot.locibot.utils.DiscordUtil;
-import com.locibot.locibot.utils.TimeUtil;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
-import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
