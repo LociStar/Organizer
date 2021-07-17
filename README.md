@@ -1,25 +1,23 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <a href="https://discord.com/oauth2/authorize?client_id=331146243596091403&scope=bot%20applications.commands&permissions=271674454">
-        <img align="right" src="https://i.imgur.com/ab9PUtE.png" height="220" width="220">
+    <a href="dicord-invite-link">
+        <img align="right" src="https://image.flaticon.com/icons/png/512/544/544539.png" height="220" width="220">
     </a>
-    <h1>Shadbot</h1>
-    <p><b>A configurable multipurpose bot bringing you music, multiplayer games, moderation commands and more!</b></p>
+    <h1>Organizer</h1>
+    <p><b>A configurable multipurpose bot bringing you organizing commands, multiplayer games, moderation commands and more!</b></p>
     <hr>
     <h2>Usage</h2>
-    <a href="https://discordbots.org/bot/331146243596091403">
-        <img src="https://discordbots.org/api/widget/331146243596091403.svg">
-    </a>
-    <p><b>Add Shadbot on your own server by clicking on this <a href="https://discord.com/oauth2/authorize?client_id=331146243596091403&scope=bot%20applications.commands&permissions=271674454">link</a>!</b></p>
+    <a></a>
+    <p><b>Contact me on Discord if your are interested in adding this bot to your server!</b></p>
     <hr>
     <h2>Support</h2>
-    <p><b><a href="https://discord.gg/CKnV4ff">Join</a> the support server if you have any questions, suggestions or if you just want to talk.</b></p>
+    <p><b><a href="https://discord.gg/ber7Jxxd">Join</a> the support server if you have any questions, suggestions or if you just want to talk.</b></p>
     <hr>
     <h2>Privacy</h2>
     In order to store custom settings or coins, I may save server ID, channel(s) ID, role(s) ID or user(s) ID in a persistent database. 
     <br>If an error occurs while you're interacting with Shadbot, I may log the content of the message that triggered the command for debugging purpose.
-    <br>If you have any questions or requests, do not hesitate to <a href="https://discord.gg/CKnV4ff">join</a> the support server or directly contact me via Discord (Shadorc#8423).
+    <br>If you have any questions or requests, do not hesitate to <a href="https://discord.gg/ber7Jxxd">join</a> the support server or directly contact me via Discord.
     <hr>
     <h2>Libraries used</h2>
     <ul>
@@ -35,17 +33,8 @@
         <li>And <a href="pom.xml">many others...</a></li>
     </ul>
     <hr>
-    <h2>Getting Started</h2>
-    <br>1. Make sure Java 16 is installed.
-    <br>2. Fork the Shadbot repository: https://github.com/Shadorc/Shadbot/fork
-    <br>3. Clone your forked repository, ie. <code>git clone http://github.com/&lt;YOUR-USERNAME&gt;/shadbot.git</code>
-    <br>4. Read this: https://github.com/Shadorc/Shadbot/wiki/Build-&-Configure
-    <br>5. Run <code><a href="https://maven.apache.org/">mvn</a> package</code>.
-    <br>6. Locate the <code>shadbot-&lt;VERSION&gt;.jar</code>.  
-    <br>7. Open command prompt and run <code>java -jar shadbot-&lt;VERSION&gt;.jar</code>.
-    <br>8. You're done!
     <h2>Licence</h2>
-    <p>Copyright (C) 2021 <b>Shadorc</b>
+    <p>Copyright (C) 2021 <b>LociStar</b>
         <pre>
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -58,7 +47,7 @@ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Gen
 You should have received a copy of the GNU General Public License along with this program. If not,
 see http://www.gnu.org/licenses/
 </pre>
-<a href="https://github.com/Shadorc/Shadbot/blob/master/LICENSE">The full licence can be found here.</a>
+<a href="">The full licence can be found here.</a>
 <hr>
 <p><i>Bot originally inspired by <a href="https://github.com/Mantaro/MantaroBot">MantaroBot</i></a>
 </body>
