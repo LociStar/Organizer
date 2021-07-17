@@ -15,7 +15,7 @@
     <p><b><a href="https://discord.gg/ber7Jxxd">Join</a> the support server if you have any questions, suggestions or if you just want to talk.</b></p>
     <hr>
     <h2>Privacy</h2>
-    In order to store custom settings or coins, I may save server ID, channel(s) ID, role(s) ID or user(s) ID in a persistent database. 
+    In order to store custom settings, coins, locations (for weather subscription), I may save server ID, channel(s) ID, role(s) ID, user(s) ID or the entered locations in a persistent database. 
     <br>If an error occurs while you're interacting with Shadbot, I may log the content of the message that triggered the command for debugging purpose.
     <br>If you have any questions or requests, do not hesitate to <a href="https://discord.gg/ber7Jxxd">join</a> the support server or directly contact me via Discord.
     <hr>
