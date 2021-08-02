@@ -9,6 +9,7 @@ import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.object.entity.Message;
+import discord4j.core.spec.EmbedCreateFields;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -63,22 +64,23 @@ public class DiceGame extends MultiplayerGame<DicePlayer> {
     public Mono<Message> show() {
         return Mono.
                 fromCallable(() -> ShadbotUtil.getDefaultEmbed(embed -> {
-                    embed.setAuthor(this.context.localize("dice.title"), null, this.getContext().getAuthorAvatar())
-                            .setThumbnail("https://i.imgur.com/XgOilIW.png")
-                            .setDescription(this.context.localize("dice.description")
+                    embed.withAuthor(EmbedCreateFields.Author.of(this.context.localize("dice.title"), null, this.getContext().getAuthorAvatar()))
+                            .withThumbnail("https://i.imgur.com/XgOilIW.png")
+                            .withDescription(this.context.localize("dice.description")
                                     .formatted(this.context.getCommandName(), this.context.getSubCommandGroupName().orElseThrow(),
                                             DiceCmd.JOIN_SUB_COMMAND, this.context.localize(this.bet)))
-                            .addField(this.context.localize("dice.player.title"), FormatUtil.format(this.players.values(),
-                                    player -> player.getUsername().orElseThrow(), "\n"), true)
-                            .addField(this.context.localize("dice.number.title"), FormatUtil.format(this.players.values(),
-                                    player -> Integer.toString(player.getNumber()), "\n"), true);
+                            .withFields(
+                                    EmbedCreateFields.Field.of(this.context.localize("dice.player.title"), FormatUtil.format(this.players.values(),
+                                            player -> player.getUsername().orElseThrow(), "\n"), true),
+                                    EmbedCreateFields.Field.of(this.context.localize("dice.number.title"), FormatUtil.format(this.players.values(),
+                                            player -> Integer.toString(player.getNumber()), "\n"), true));
 
                     if (this.isScheduled()) {
                         final Duration remainingDuration = this.getDuration().minus(TimeUtil.elapsed(this.startTimer));
-                        embed.setFooter(this.context.localize("dice.footer.remaining")
-                                .formatted(remainingDuration.toSeconds()), null);
+                        embed.withFooter(EmbedCreateFields.Footer.of(this.context.localize("dice.footer.remaining")
+                                .formatted(remainingDuration.toSeconds()), null));
                     } else {
-                        embed.setFooter(this.context.localize("dice.footer.finished"), null);
+                        embed.withFooter(EmbedCreateFields.Footer.of(this.context.localize("dice.footer.finished"), null));
                     }
                 }))
                 .flatMap(this.context::editFollowupMessage);

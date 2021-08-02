@@ -16,6 +16,7 @@ import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
@@ -30,24 +31,6 @@ public class OverwatchCmd extends BaseCmd {
     private static final String HOME_URL = "https://owapi.io";
     private static final String PROFILE_API_URL = "%s/profile".formatted(HOME_URL);
     private static final String STATS_API_URL = "%s/stats".formatted(HOME_URL);
-
-    public enum Platform {
-        PC("pc"),
-        PSN("psn"),
-        XBL("xbl"),
-        NINTENDO_SWITCH("nintendo-switch");
-
-        private final String name;
-
-        Platform(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return this.name;
-        }
-    }
-
     private final MultiValueCache<String, OverwatchProfile> cachedValues;
 
     public OverwatchCmd() {
@@ -60,6 +43,49 @@ public class OverwatchCmd extends BaseCmd {
         this.cachedValues = MultiValueCache.Builder.<String, OverwatchProfile>create()
                 .withTtl(Config.CACHE_TTL)
                 .build();
+    }
+
+    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, OverwatchProfile overwatchProfile, Platform platform) {
+        final ProfileResponse profile = overwatchProfile.profile();
+        return ShadbotUtil.getDefaultEmbed(
+                embed -> embed.withAuthor(EmbedCreateFields.Author.of(context.localize("overwatch.title"),
+                        "https://playoverwatch.com/en-gb/career/%s/%s"
+                                .formatted(platform.getName(), profile.username()),
+                        context.getAuthorAvatar()))
+                        .withThumbnail(profile.portrait())
+                        .withDescription(context.localize("overwatch.description")
+                                .formatted(profile.username()))
+                        .withFields(
+                                EmbedCreateFields.Field.of(context.localize("overwatch.level"),
+                                        Integer.toString(profile.level()), true),
+                                EmbedCreateFields.Field.of(context.localize("overwatch.playtime"),
+                                        profile.getQuickplayPlaytime(), true),
+                                EmbedCreateFields.Field.of(context.localize("overwatch.games.won"),
+                                        context.localize(profile.games().getQuickplayWon()), true),
+                                EmbedCreateFields.Field.of(context.localize("overwatch.ranks"),
+                                        OverwatchCmd.formatCompetitive(context, profile.competitive()), true),
+                                EmbedCreateFields.Field.of(context.localize("overwatch.heroes.played"),
+                                        overwatchProfile.getQuickplay().getPlayed(), true),
+                                EmbedCreateFields.Field.of(context.localize("overwatch.heroes.ratio"),
+                                        overwatchProfile.getQuickplay().getEliminationsPerLife(), true)));
+    }
+
+    private static String formatCompetitive(Context context, Competitive competitive) {
+        final StringBuilder strBuilder = new StringBuilder();
+        competitive.damage().rank()
+                .ifPresent(rank -> strBuilder.append(context.localize("overwatch.competitive.damage")
+                        .formatted(context.localize(rank))));
+        competitive.tank().rank()
+                .ifPresent(rank -> strBuilder.append(context.localize("overwatch.competitive.tank")
+                        .formatted(context.localize(rank))));
+        competitive.support().rank()
+                .ifPresent(rank -> strBuilder.append(context.localize("overwatch.competitive.support")
+                        .formatted(context.localize(rank))));
+        return strBuilder.isEmpty() ? context.localize("overwatch.not.ranked") : strBuilder.toString();
+    }
+
+    private static String buildUrl(String url, Platform platform, String username) {
+        return "%s/%s/global/%s".formatted(url, platform.getName(), username);
     }
 
     @Override
@@ -75,44 +101,6 @@ public class OverwatchCmd extends BaseCmd {
                     }
                     return context.editFollowupMessage(OverwatchCmd.formatEmbed(context, profile, platform));
                 });
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, OverwatchProfile overwatchProfile, Platform platform) {
-        final ProfileResponse profile = overwatchProfile.profile();
-        return ShadbotUtil.getDefaultEmbed(
-                embed -> embed.setAuthor(context.localize("overwatch.title"),
-                        "https://playoverwatch.com/en-gb/career/%s/%s"
-                                .formatted(platform.getName(), profile.username()),
-                        context.getAuthorAvatar())
-                        .setThumbnail(profile.portrait())
-                        .setDescription(context.localize("overwatch.description")
-                                .formatted(profile.username()))
-                        .addField(context.localize("overwatch.level"),
-                                Integer.toString(profile.level()), true)
-                        .addField(context.localize("overwatch.playtime"),
-                                profile.getQuickplayPlaytime(), true)
-                        .addField(context.localize("overwatch.games.won"),
-                                context.localize(profile.games().getQuickplayWon()), true)
-                        .addField(context.localize("overwatch.ranks"),
-                                OverwatchCmd.formatCompetitive(context, profile.competitive()), true)
-                        .addField(context.localize("overwatch.heroes.played"),
-                                overwatchProfile.getQuickplay().getPlayed(), true)
-                        .addField(context.localize("overwatch.heroes.ratio"),
-                                overwatchProfile.getQuickplay().getEliminationsPerLife(), true));
-    }
-
-    private static String formatCompetitive(Context context, Competitive competitive) {
-        final StringBuilder strBuilder = new StringBuilder();
-        competitive.damage().rank()
-                .ifPresent(rank -> strBuilder.append(context.localize("overwatch.competitive.damage")
-                        .formatted(context.localize(rank))));
-        competitive.tank().rank()
-                .ifPresent(rank -> strBuilder.append(context.localize("overwatch.competitive.tank")
-                        .formatted(context.localize(rank))));
-        competitive.support().rank()
-                .ifPresent(rank -> strBuilder.append(context.localize("overwatch.competitive.support")
-                        .formatted(context.localize(rank))));
-        return strBuilder.isEmpty() ? context.localize("overwatch.not.ranked") : strBuilder.toString();
     }
 
     private Mono<OverwatchProfile> getOverwatchProfile(Locale locale, String battletag, Platform platform) {
@@ -135,8 +123,21 @@ public class OverwatchCmd extends BaseCmd {
                 .switchIfEmpty(Mono.error(new IOException("Overwatch API returned malformed JSON")));
     }
 
-    private static String buildUrl(String url, Platform platform, String username) {
-        return "%s/%s/global/%s".formatted(url, platform.getName(), username);
+    public enum Platform {
+        PC("pc"),
+        PSN("psn"),
+        XBL("xbl"),
+        NINTENDO_SWITCH("nintendo-switch");
+
+        private final String name;
+
+        Platform(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return this.name;
+        }
     }
 
 }

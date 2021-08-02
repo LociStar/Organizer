@@ -21,6 +21,7 @@ import discord4j.core.object.entity.*;
 import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 import discord4j.discordjson.json.ImmutableWebhookMessageEditRequest;
 import discord4j.discordjson.json.WebhookExecuteRequest;
 import discord4j.rest.util.ApplicationCommandOptionType;
@@ -232,7 +233,9 @@ public class Context implements InteractionContext, I18nContext {
 
     @Override
     public Mono<Void> replyEphemeral(Emoji emoji, String message) {
-        return this.event.replyEphemeral("%s %s".formatted(emoji, message))
+        return this.event.reply(InteractionApplicationCommandCallbackSpec.builder()
+                .ephemeral(true)
+                .content("%s %s".formatted(emoji, message)).build())
                 .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
     }
 
@@ -252,7 +255,7 @@ public class Context implements InteractionContext, I18nContext {
 
     @Override
     public Mono<Message> createFollowupMessage(Consumer<EmbedCreateSpec> embed) {
-        final EmbedCreateSpec mutatedSpec = new EmbedCreateSpec();
+        final EmbedCreateSpec mutatedSpec = EmbedCreateSpec.builder().build();
         embed.accept(mutatedSpec);
         return this.event.getInteractionResponse().createFollowupMessage(MultipartRequest.ofRequest(
                 WebhookExecuteRequest.builder()
@@ -286,7 +289,7 @@ public class Context implements InteractionContext, I18nContext {
         return Mono.fromCallable(this.replyId::get)
                 .filter(messageId -> messageId > 0)
                 .flatMap(messageId -> {
-                    final EmbedCreateSpec mutatedSpec = new EmbedCreateSpec();
+                    final EmbedCreateSpec mutatedSpec = EmbedCreateSpec.builder().build();
                     embed.accept(mutatedSpec);
                     return this.event.getInteractionResponse()
                             .editFollowupMessage(messageId, ImmutableWebhookMessageEditRequest.builder()
@@ -302,7 +305,7 @@ public class Context implements InteractionContext, I18nContext {
     @Override
     public Mono<Message> editInitialFollowupMessage(Consumer<EmbedCreateSpec> embed) {
         return Mono.defer(() -> {
-            final EmbedCreateSpec mutatedSpec = new EmbedCreateSpec();
+            final EmbedCreateSpec mutatedSpec = EmbedCreateSpec.builder().build();
             embed.accept(mutatedSpec);
             return this.event.getInteractionResponse()
                     .editInitialResponse(ImmutableWebhookMessageEditRequest.builder()

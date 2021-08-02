@@ -18,6 +18,7 @@ import com.locibot.locibot.utils.ShadbotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.User;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.voice.VoiceConnection;
 import reactor.core.publisher.Mono;
@@ -168,12 +169,12 @@ public class AudioLoadResultListener implements AudioLoadResultHandler {
         final String search = playlist.getName().split(":")[1].trim();
         final String abbrSearch = StringUtil.abbreviate(search, MAX_PLAYLIST_NAME_LENGTH);
         return ShadbotUtil.getDefaultEmbed(
-                embed -> embed.setAuthor(I18nManager.localize(locale, "audioresult.playlist.name").formatted(abbrSearch),
-                        null, avatarUrl)
-                        .setThumbnail("https://i.imgur.com/IG3Hj2W.png")
-                        .setDescription(I18nManager.localize(locale, "audioresult.embed.description").formatted(choices))
-                        .setFooter(I18nManager.localize(locale, "audioresult.embed.footer")
-                                .formatted(Config.MUSIC_CHOICE_DURATION), null));
+                embed -> embed.withAuthor(EmbedCreateFields.Author.of(I18nManager.localize(locale, "audioresult.playlist.name").formatted(abbrSearch),
+                        null, avatarUrl))
+                        .withThumbnail("https://i.imgur.com/IG3Hj2W.png")
+                        .withDescription(I18nManager.localize(locale, "audioresult.embed.description").formatted(choices))
+                        .withFooter(EmbedCreateFields.Footer.of(I18nManager.localize(locale, "audioresult.embed.footer")
+                                .formatted(Config.MUSIC_CHOICE_DURATION), null)));
     }
 
     @Override

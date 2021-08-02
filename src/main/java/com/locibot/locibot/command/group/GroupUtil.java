@@ -2,6 +2,7 @@ package com.locibot.locibot.command.group;
 
 import com.locibot.locibot.database.groups.entity.DBGroup;
 import discord4j.core.object.entity.User;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
 
@@ -20,7 +21,7 @@ public abstract class GroupUtil {
         return GroupType.DEFAULT;
     }
 
-    public static Consumer<EmbedCreateSpec> sendInviteMessage(DBGroup group, User user) {
+    public static EmbedCreateSpec sendInviteMessage(DBGroup group, User user) {
         String dateString = group.getBean().getScheduledDate();
         String timeString = group.getBean().getScheduledTime();
         if (dateString == null || timeString == null) {
@@ -35,14 +36,15 @@ public abstract class GroupUtil {
         GroupType groupType = parseIntToGroupType(group.getBean().getTeamType());
         String url = groupType.getUrl();
 
-        return embedCreateSpec -> embedCreateSpec.setTitle(groupType.getName() + "-Invite")
-                .setColor(Color.RED)
-                .setThumbnail(url)
-                .setAuthor(user.getUsername(), "", user.getAvatarUrl())
-                .addField("Invitation to group: " + group.getBean().getGroupName(), "You got invited from " + user.getUsername() + "!", false)
-                .addField("Date", finalDateString, true)
-                .addField("Time", finalTimeString, true)
-                .addField("Accept/ Decline", "If you are interested to join the "+groupType.getName()+" group, answer with \"/accept " + group.getBean().getGroupName() + "\"\n" +
-                        "You can decline the invitation with \"/decline " + group.getBean().getGroupName() + "\".", false);
+        return EmbedCreateSpec.builder().build().withTitle(groupType.getName() + "-Invite")
+                .withColor(Color.RED)
+                .withThumbnail(url)
+                .withAuthor(EmbedCreateFields.Author.of(user.getUsername(), "", user.getAvatarUrl()))
+                .withFields(EmbedCreateFields.Field.of("Invitation to group: " + group.getBean().getGroupName(), "You got invited from " + user.getUsername() + "!", false),
+                        EmbedCreateFields.Field.of("Date", finalDateString, true),
+                        EmbedCreateFields.Field.of("Time", finalTimeString, true),
+                        EmbedCreateFields.Field.of("Accept/ Decline", "If you are interested to join the " + groupType.getName() + " group, answer with \"/accept " + group.getBean().getGroupName() + "\"\n" +
+                                "You can decline the invitation with \"/decline " + group.getBean().getGroupName() + "\".", false));
     }
 }
+

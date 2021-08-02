@@ -7,6 +7,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.ShadbotUtil;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
@@ -31,8 +32,8 @@ public class JokeCmd extends BaseCmd {
 
     private static Consumer<EmbedCreateSpec> formatEmbed(Context context, String joke) {
         return ShadbotUtil.getDefaultEmbed(
-                embed -> embed.setAuthor(context.localize("joke.title"), HOME_URL, context.getAuthorAvatar())
-                        .setDescription(joke));
+                embed -> embed.withAuthor(EmbedCreateFields.Author.of(context.localize("joke.title"), HOME_URL, context.getAuthorAvatar()))
+                        .withDescription(joke));
     }
 
     private static Mono<String> getRandomJoke() {

@@ -12,6 +12,7 @@ import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.object.entity.Guild;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.discordjson.json.ImmutableEmbedFieldData;
 import discord4j.discordjson.possible.Possible;
 import reactor.core.publisher.Mono;
@@ -74,10 +75,10 @@ public class RelicStatusCmd extends BaseCmd {
                 .filter(Predicate.not(List::isEmpty))
                 .map(fields -> ShadbotUtil.getDefaultEmbed(
                         embed -> {
-                            embed.setAuthor(context.localize("relicstatus.title"), null, context.getAuthorAvatar())
-                                    .setThumbnail("https://i.imgur.com/R0N6kW3.png");
+                            embed.withAuthor(EmbedCreateFields.Author.of(context.localize("relicstatus.title"), null, context.getAuthorAvatar()))
+                                    .withThumbnail("https://i.imgur.com/R0N6kW3.png");
 
-                            fields.forEach(field -> embed.addField(field.name(), field.value(), field.inline().get()));
+                            fields.forEach(field -> embed.withFields(EmbedCreateFields.Field.of(field.name(), field.value(), field.inline().get())));
                         }))
                 .flatMap(context::createFollowupMessage)
                 .switchIfEmpty(context.createFollowupMessage(Emoji.INFO, context.localize("relicstatus.not.donator")

@@ -11,6 +11,7 @@ import com.locibot.locibot.utils.ShadbotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.object.Embed;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import org.jsoup.Jsoup;
 import reactor.core.publisher.Mono;
@@ -49,10 +50,10 @@ public class ThisDayCmd extends BaseCmd {
 
     private static Consumer<EmbedCreateSpec> formatEmbed(Context context, ThisDay thisDay) {
         return ShadbotUtil.getDefaultEmbed(
-                embed -> embed.setAuthor(context.localize("thisday.title").formatted(thisDay.getDate()),
-                        HOME_URL, context.getAuthorAvatar())
-                        .setThumbnail("https://i.imgur.com/FdfyJDD.png")
-                        .setDescription(StringUtil.abbreviate(thisDay.getEvents(), Embed.MAX_DESCRIPTION_LENGTH)));
+                embed -> embed.withAuthor(EmbedCreateFields.Author.of(context.localize("thisday.title").formatted(thisDay.getDate()),
+                        HOME_URL, context.getAuthorAvatar()))
+                        .withThumbnail("https://i.imgur.com/FdfyJDD.png")
+                        .withDescription(StringUtil.abbreviate(thisDay.getEvents(), Embed.MAX_DESCRIPTION_LENGTH)));
     }
 
     private static Duration getNextUpdate() {

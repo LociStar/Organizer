@@ -51,7 +51,7 @@ public class ShadbotUtil {
      * @return A default {@link EmbedCreateSpec} with the default color set.
      */
     public static Consumer<EmbedCreateSpec> getDefaultEmbed(Consumer<EmbedCreateSpec> embed) {
-        return embed.andThen(spec -> spec.setColor(Config.BOT_COLOR));
+        return embed.andThen(spec -> spec.withColor(Config.BOT_COLOR));
     }
 
 }
