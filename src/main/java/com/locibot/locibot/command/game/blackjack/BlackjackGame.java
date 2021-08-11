@@ -11,11 +11,13 @@ import com.locibot.locibot.object.casino.Hand;
 import com.locibot.locibot.utils.ShadbotUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.object.entity.Message;
+import discord4j.core.spec.EmbedCreateSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -45,6 +47,17 @@ public class BlackjackGame extends MultiplayerGame<BlackjackPlayer> {
                 "stand", BlackjackPlayer::stand);
     }
 
+    // -1 = Lose | 0 = Draw | 1 = Win
+    private static int getResult(int playerValue, int dealerValue) {
+        if (playerValue > 21) {
+            return -1;
+        } else if (dealerValue <= 21) {
+            return Integer.compare(playerValue, dealerValue);
+        } else {
+            return 1;
+        }
+    }
+
     @Override
     public Mono<Void> start() {
         return Mono.fromRunnable(() -> {
@@ -62,27 +75,29 @@ public class BlackjackGame extends MultiplayerGame<BlackjackPlayer> {
     @Override
     public Mono<Message> show() {
         return Mono.
-                fromCallable(() -> ShadbotUtil.getDefaultEmbed(embed -> {
+                fromCallable(() -> {
+                    EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
                     final Hand visibleDealerHand = this.isScheduled() ?
                             new Hand(this.dealerHand.getCards().subList(0, 1)) : this.dealerHand;
-                    embed.withAuthor(Author.of(this.context.localize("blackjack.title"), null, this.getContext().getAuthorAvatar()))
-                            .withThumbnail("https://i.imgur.com/oESeVrU.png")
-                            .withDescription(this.context.localize("blackjack.description")
+                    embed.author(Author.of(this.context.localize("blackjack.title"), null, this.getContext().getAuthorAvatar()))
+                            .thumbnail("https://i.imgur.com/oESeVrU.png")
+                            .description(this.context.localize("blackjack.description")
                                     .formatted(this.context.getFullCommandName()))
-                            .withFields(Field.of(this.context.localize("blackjack.dealer.hand"), visibleDealerHand.format(), true));
-
+                            .fields(List.of(Field.of(this.context.localize("blackjack.dealer.hand"), visibleDealerHand.format(), true)));
                     if (this.isScheduled()) {
                         final Duration remainingDuration = this.getDuration().minus(TimeUtil.elapsed(this.startTimer));
-                        embed.withFooter(Footer.of(this.context.localize("blackjack.footer.remaining")
+                        embed.footer(Footer.of(this.context.localize("blackjack.footer.remaining")
                                 .formatted(remainingDuration.toSeconds()), null));
                     } else {
-                        embed.withFooter(Footer.of(this.context.localize("blackjack.footer.finished"), null));
+                        embed.footer(Footer.of(this.context.localize("blackjack.footer.finished"), null));
                     }
 
                     this.players.values().stream()
                             .map(player -> player.format(this.context.getLocale()))
-                            .forEach(field -> embed.withFields(Field.of(field.name(), field.value(), field.inline().get())));
-                }))
+                            .forEach(field -> embed.fields(List.of(Field.of(field.name(), field.value(), field.inline().get()))));
+
+                    return ShadbotUtil.getDefaultEmbed(embed.build());
+                })
                 .flatMap(this.context::editInitialFollowupMessage);
     }
 
@@ -119,17 +134,6 @@ public class BlackjackGame extends MultiplayerGame<BlackjackPlayer> {
                         .formatted(text)))
                 .then(this.show())
                 .then(Mono.fromRunnable(this::destroy));
-    }
-
-    // -1 = Lose | 0 = Draw | 1 = Win
-    private static int getResult(int playerValue, int dealerValue) {
-        if (playerValue > 21) {
-            return -1;
-        } else if (dealerValue <= 21) {
-            return Integer.compare(playerValue, dealerValue);
-        } else {
-            return 1;
-        }
     }
 
     @Override

@@ -23,8 +23,8 @@ import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
-import java.util.function.Consumer;
 
 public class OverwatchCmd extends BaseCmd {
 
@@ -40,22 +40,22 @@ public class OverwatchCmd extends BaseCmd {
         this.addOption("battletag", "User's battletag, case sensitive", true,
                 ApplicationCommandOptionType.STRING);
 
-        this.cachedValues = MultiValueCache.Builder.<String, OverwatchProfile>create()
+        this.cachedValues = MultiValueCache.Builder.<String, OverwatchProfile>builder()
                 .withTtl(Config.CACHE_TTL)
                 .build();
     }
 
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, OverwatchProfile overwatchProfile, Platform platform) {
+    private static EmbedCreateSpec formatEmbed(Context context, OverwatchProfile overwatchProfile, Platform platform) {
         final ProfileResponse profile = overwatchProfile.profile();
         return ShadbotUtil.getDefaultEmbed(
-                embed -> embed.withAuthor(EmbedCreateFields.Author.of(context.localize("overwatch.title"),
+                EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("overwatch.title"),
                         "https://playoverwatch.com/en-gb/career/%s/%s"
                                 .formatted(platform.getName(), profile.username()),
                         context.getAuthorAvatar()))
-                        .withThumbnail(profile.portrait())
-                        .withDescription(context.localize("overwatch.description")
+                        .thumbnail(profile.portrait())
+                        .description(context.localize("overwatch.description")
                                 .formatted(profile.username()))
-                        .withFields(
+                        .fields(List.of(
                                 EmbedCreateFields.Field.of(context.localize("overwatch.level"),
                                         Integer.toString(profile.level()), true),
                                 EmbedCreateFields.Field.of(context.localize("overwatch.playtime"),
@@ -67,7 +67,7 @@ public class OverwatchCmd extends BaseCmd {
                                 EmbedCreateFields.Field.of(context.localize("overwatch.heroes.played"),
                                         overwatchProfile.getQuickplay().getPlayed(), true),
                                 EmbedCreateFields.Field.of(context.localize("overwatch.heroes.ratio"),
-                                        overwatchProfile.getQuickplay().getEliminationsPerLife(), true)));
+                                        overwatchProfile.getQuickplay().getEliminationsPerLife(), true))).build());
     }
 
     private static String formatCompetitive(Context context, Competitive competitive) {

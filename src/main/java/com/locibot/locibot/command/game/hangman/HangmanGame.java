@@ -11,6 +11,8 @@ import com.locibot.locibot.utils.ShadbotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.object.entity.Message;
+import discord4j.core.spec.EmbedCreateFields;
+import discord4j.core.spec.EmbedCreateSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -50,6 +52,11 @@ public class HangmanGame extends MultiplayerGame<Player> {
         this.failCount = 0;
     }
 
+    private static String buildImageUrl(String path, int num) {
+        return "https://upload.wikimedia.org/wikipedia/commons/thumb/%s/Hangman-%d.png/60px-Hangman-%d.png"
+                .formatted(path, num, num);
+    }
+
     @Override
     public Mono<Void> start() {
         return Mono.fromRunnable(() -> {
@@ -62,37 +69,38 @@ public class HangmanGame extends MultiplayerGame<Player> {
 
     @Override
     public Mono<Message> show() {
-        return Mono.fromCallable(() -> ShadbotUtil.getDefaultEmbed(
-                embed -> {
-                    embed.setAuthor(this.context.localize("hangman.title"), null, this.getContext().getAuthorAvatar());
-                    embed.setThumbnail("https://i.imgur.com/Vh9WyaU.png");
-                    embed.addField(this.context.localize("hangman.word"), this.getRepresentation(this.word), false);
-                    embed.setDescription(this.context.localize("hangman.description")
-                            .formatted(this.context.getCommandName(), this.context.getSubCommandGroupName().orElseThrow(),
-                                    HangmanCmd.JOIN_SUB_COMMAND));
+        return Mono.fromCallable(() -> {
+            EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
+            embed.author(EmbedCreateFields.Author.of(this.context.localize("hangman.title"), null, this.getContext().getAuthorAvatar()));
+            embed.thumbnail("https://i.imgur.com/Vh9WyaU.png");
+            embed.fields(List.of(EmbedCreateFields.Field.of(this.context.localize("hangman.word"), this.getRepresentation(this.word), false)));
+            embed.description(this.context.localize("hangman.description")
+                    .formatted(this.context.getCommandName(), this.context.getSubCommandGroupName().orElseThrow(),
+                            HangmanCmd.JOIN_SUB_COMMAND));
 
-                    final List<String> missedLetters = this.lettersTested.stream()
-                            .filter(letter -> !this.word.contains(letter))
-                            .map(String::toUpperCase)
-                            .collect(Collectors.toList());
-                    if (!missedLetters.isEmpty()) {
-                        embed.addField(this.context.localize("hangman.misses"),
-                                String.join(", ", missedLetters), false);
-                    }
+            final List<String> missedLetters = this.lettersTested.stream()
+                    .filter(letter -> !this.word.contains(letter))
+                    .map(String::toUpperCase)
+                    .collect(Collectors.toList());
+            if (!missedLetters.isEmpty()) {
+                embed.fields(List.of(EmbedCreateFields.Field.of(this.context.localize("hangman.misses"),
+                        String.join(", ", missedLetters), false)));
+            }
 
-                    if (this.isScheduled()) {
-                        final Duration remainingDuration = this.getDuration().minus(TimeUtil.elapsed(this.startTimer));
-                        embed.setFooter(this.context.localize("hangman.footer.remaining")
-                                .formatted(remainingDuration.toSeconds()), null);
-                    } else {
-                        embed.setFooter(this.context.localize("hangman.footer.finished")
-                                .formatted(this.word), null);
-                    }
+            if (this.isScheduled()) {
+                final Duration remainingDuration = this.getDuration().minus(TimeUtil.elapsed(this.startTimer));
+                embed.footer(EmbedCreateFields.Footer.of(this.context.localize("hangman.footer.remaining")
+                        .formatted(remainingDuration.toSeconds()), null));
+            } else {
+                embed.footer(EmbedCreateFields.Footer.of(this.context.localize("hangman.footer.finished")
+                        .formatted(this.word), null));
+            }
 
-                    if (this.failCount > 0) {
-                        embed.setImage(IMG_LIST.get(Math.min(IMG_LIST.size(), this.failCount) - 1));
-                    }
-                }))
+            if (this.failCount > 0) {
+                embed.image(IMG_LIST.get(Math.min(IMG_LIST.size(), this.failCount) - 1));
+            }
+            return ShadbotUtil.getDefaultEmbed(embed.build());
+        })
                 .flatMap(this.context::editFollowupMessage);
     }
 
@@ -154,11 +162,6 @@ public class HangmanGame extends MultiplayerGame<Player> {
             return this.end();
         }
         return this.show().then();
-    }
-
-    private static String buildImageUrl(String path, int num) {
-        return "https://upload.wikimedia.org/wikipedia/commons/thumb/%s/Hangman-%d.png/60px-Hangman-%d.png"
-                .formatted(path, num, num);
     }
 
     public RateLimiter getRateLimiter() {

@@ -12,9 +12,9 @@ public class CommandHelpBuilder extends HelpBuilder {
         this.cmd = cmd;
         this.options.addAll(cmd.getOptions());
 
-        this.setAuthor(context.localize("help.cmd.title").formatted(this.cmd.getName()),
+        this.author(context.localize("help.cmd.title").formatted(this.cmd.getName()),
                 "https://github.com/LociStar/");
-        this.setDescription(cmd.getDescription());
+        this.description(cmd.getDescription());
     }
 
     public static CommandHelpBuilder create(Context context, BaseCmd cmd) {

@@ -13,6 +13,7 @@ import com.locibot.locibot.utils.ShadbotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import discord4j.core.object.Embed;
 import discord4j.core.object.Embed.Field;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -22,7 +23,7 @@ import reactor.util.retry.Retry;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Comparator;
-import java.util.function.Consumer;
+import java.util.List;
 
 public class UrbanCmd extends BaseCmd {
 
@@ -34,6 +35,35 @@ public class UrbanCmd extends BaseCmd {
                 .description("Search for a word")
                 .required(true)
                 .type(ApplicationCommandOptionType.STRING.getValue()));
+    }
+
+    private static EmbedCreateSpec formatEmbed(Context context, UrbanDefinition urbanDef) {
+        final String definition = StringUtil.abbreviate(urbanDef.getDefinition(), Embed.MAX_DESCRIPTION_LENGTH);
+        final String example = StringUtil.abbreviate(urbanDef.getExample(), Field.MAX_VALUE_LENGTH);
+        EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder()
+                .author(EmbedCreateFields.Author.of(context.localize("urban.title").formatted(urbanDef.word()),
+                        urbanDef.permalink(), context.getAuthorAvatar()))
+                .thumbnail("https://i.imgur.com/7KJtwWp.png")
+                .description(definition);
+
+        if (!example.isBlank()) {
+            embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("urban.example"), example, false)));
+        }
+        return ShadbotUtil.getDefaultEmbed(embed.build());
+    }
+
+    private static Mono<UrbanDefinition> getUrbanDefinition(String query) {
+        final String url = "%s?".formatted(HOME_URL)
+                + "term=%s".formatted(NetUtil.encode(query));
+        return RequestHelper.fromUrl(url)
+                .to(UrbanDictionaryResponse.class)
+                .flatMapIterable(UrbanDictionaryResponse::definitions)
+                .sort(Comparator.comparingInt(UrbanDefinition::getRatio).reversed())
+                .next()
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
+                        .filter(ServerAccessException.isStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR))
+                        .onRetryExhaustedThrow((spec, signal) -> new IOException("Retries exhausted on error %d"
+                                .formatted(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()))));
     }
 
     @Override
@@ -52,36 +82,6 @@ public class UrbanCmd extends BaseCmd {
                             .switchIfEmpty(context.editFollowupMessage(Emoji.MAGNIFYING_GLASS,
                                     context.localize("urban.not.found").formatted(query)));
                 });
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, UrbanDefinition urbanDef) {
-        final String definition = StringUtil.abbreviate(urbanDef.getDefinition(), Embed.MAX_DESCRIPTION_LENGTH);
-        final String example = StringUtil.abbreviate(urbanDef.getExample(), Field.MAX_VALUE_LENGTH);
-        return ShadbotUtil.getDefaultEmbed(
-                embed -> {
-                    embed.setAuthor(context.localize("urban.title").formatted(urbanDef.word()),
-                            urbanDef.permalink(), context.getAuthorAvatar())
-                            .setThumbnail("https://i.imgur.com/7KJtwWp.png")
-                            .setDescription(definition);
-
-                    if (!example.isBlank()) {
-                        embed.addField(context.localize("urban.example"), example, false);
-                    }
-                });
-    }
-
-    private static Mono<UrbanDefinition> getUrbanDefinition(String query) {
-        final String url = "%s?".formatted(HOME_URL)
-                + "term=%s".formatted(NetUtil.encode(query));
-        return RequestHelper.fromUrl(url)
-                .to(UrbanDictionaryResponse.class)
-                .flatMapIterable(UrbanDictionaryResponse::definitions)
-                .sort(Comparator.comparingInt(UrbanDefinition::getRatio).reversed())
-                .next()
-                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
-                        .filter(ServerAccessException.isStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR))
-                        .onRetryExhaustedThrow((spec, signal) -> new IOException("Retries exhausted on error %d"
-                                .formatted(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()))));
     }
 
 }

@@ -13,8 +13,6 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import reactor.core.publisher.Mono;
 
-import java.util.function.Consumer;
-
 public class JokeCmd extends BaseCmd {
 
     private static final String HOME_URL = "https://icanhazdadjoke.com/";
@@ -23,17 +21,10 @@ public class JokeCmd extends BaseCmd {
         super(CommandCategory.FUN, "joke", "Random dad joke");
     }
 
-    @Override
-    public Mono<?> execute(Context context) {
-        return context.createFollowupMessage(Emoji.HOURGLASS, context.localize("joke.loading"))
-                .then(JokeCmd.getRandomJoke())
-                .flatMap(joke -> context.editFollowupMessage(JokeCmd.formatEmbed(context, joke)));
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, String joke) {
+    private static EmbedCreateSpec formatEmbed(Context context, String joke) {
         return ShadbotUtil.getDefaultEmbed(
-                embed -> embed.withAuthor(EmbedCreateFields.Author.of(context.localize("joke.title"), HOME_URL, context.getAuthorAvatar()))
-                        .withDescription(joke));
+                EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("joke.title"), HOME_URL, context.getAuthorAvatar()))
+                        .description(joke).build());
     }
 
     private static Mono<String> getRandomJoke() {
@@ -41,6 +32,13 @@ public class JokeCmd extends BaseCmd {
                 .addHeaders(HttpHeaderNames.ACCEPT, HttpHeaderValues.APPLICATION_JSON)
                 .to(JokeResponse.class)
                 .map(JokeResponse::joke);
+    }
+
+    @Override
+    public Mono<?> execute(Context context) {
+        return context.createFollowupMessage(Emoji.HOURGLASS, context.localize("joke.loading"))
+                .then(JokeCmd.getRandomJoke())
+                .flatMap(joke -> context.editFollowupMessage(JokeCmd.formatEmbed(context, joke)));
     }
 
 }

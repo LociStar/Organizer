@@ -2,7 +2,6 @@ package com.locibot.locibot.command.setting;
 
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.command.*;
-import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.database.guilds.bean.setting.AutoMessageBean;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
@@ -14,14 +13,6 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 public class AutoMessagesSetting extends BaseCmd {
-
-    private enum Action {
-        ENABLE, DISABLE
-    }
-
-    private enum Type {
-        JOIN_MESSAGE, LEAVE_MESSAGE
-    }
 
     public AutoMessagesSetting() {
         super(CommandCategory.SETTING, CommandPermission.ADMIN,
@@ -69,6 +60,14 @@ public class AutoMessagesSetting extends BaseCmd {
             default:
                 return Mono.error(new IllegalStateException());
         }
+    }
+
+    private enum Action {
+        ENABLE, DISABLE
+    }
+
+    private enum Type {
+        JOIN_MESSAGE, LEAVE_MESSAGE
     }
 
 }

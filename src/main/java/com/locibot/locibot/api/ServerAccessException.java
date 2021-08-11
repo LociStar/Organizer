@@ -15,13 +15,13 @@ public class ServerAccessException extends RuntimeException {
         this.response = response;
     }
 
-    public HttpClientResponse getResponse() {
-        return this.response;
-    }
-
     public static Predicate<Throwable> isStatus(HttpResponseStatus status) {
         return thr -> thr instanceof ServerAccessException err
                 && err.getResponse().status().equals(status);
+    }
+
+    public HttpClientResponse getResponse() {
+        return this.response;
     }
 
 }

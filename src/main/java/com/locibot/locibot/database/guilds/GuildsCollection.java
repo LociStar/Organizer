@@ -1,17 +1,17 @@
 package com.locibot.locibot.database.guilds;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.locibot.locibot.database.DatabaseCollection;
-import com.locibot.locibot.database.guilds.bean.DBGuildBean;
-import com.mongodb.client.model.Filters;
-import com.mongodb.reactivestreams.client.MongoDatabase;
 import com.locibot.locibot.core.cache.MultiValueCache;
 import com.locibot.locibot.data.Telemetry;
+import com.locibot.locibot.database.DatabaseCollection;
+import com.locibot.locibot.database.guilds.bean.DBGuildBean;
 import com.locibot.locibot.database.guilds.entity.DBGuild;
 import com.locibot.locibot.database.guilds.entity.DBMember;
 import com.locibot.locibot.database.guilds.entity.Settings;
 import com.locibot.locibot.utils.LogUtil;
 import com.locibot.locibot.utils.NetUtil;
+import com.mongodb.client.model.Filters;
+import com.mongodb.reactivestreams.client.MongoDatabase;
 import discord4j.common.util.Snowflake;
 import org.bson.Document;
 import org.reactivestreams.Publisher;
@@ -32,7 +32,7 @@ public class GuildsCollection extends DatabaseCollection {
 
     public GuildsCollection(MongoDatabase database) {
         super(database, "guilds");
-        this.guildCache = MultiValueCache.Builder.<Snowflake, DBGuild>create().withInfiniteTtl().build();
+        this.guildCache = MultiValueCache.Builder.<Snowflake, DBGuild>builder().withInfiniteTtl().build();
     }
 
     public List<DBGuild> getDBGuilds() {
@@ -40,14 +40,14 @@ public class GuildsCollection extends DatabaseCollection {
         List<Document> documents = Flux.from(this.getCollection().find()).collectList().block();
         if (documents != null)
             LOGGER.debug("[DBGuild {}] Request", "0");
-            Telemetry.DB_REQUEST_COUNTER.labels(this.getName()).inc();
-            documents.forEach(document -> {
-                try {
-                    dbGroups.add(new DBGuild(NetUtil.MAPPER.readValue(document.toJson(JSON_WRITER_SETTINGS), DBGuildBean.class)));
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-            });
+        Telemetry.DB_REQUEST_COUNTER.labels(this.getName()).inc();
+        documents.forEach(document -> {
+            try {
+                dbGroups.add(new DBGuild(NetUtil.MAPPER.readValue(document.toJson(JSON_WRITER_SETTINGS), DBGuildBean.class)));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        });
         return dbGroups;
     }
 

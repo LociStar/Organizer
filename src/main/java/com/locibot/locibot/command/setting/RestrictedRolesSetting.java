@@ -2,7 +2,6 @@ package com.locibot.locibot.command.setting;
 
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.command.*;
-import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.EnumUtil;
@@ -18,14 +17,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class RestrictedRolesSetting extends BaseCmd {
-
-    private enum Action {
-        ADD, REMOVE
-    }
-
-    private enum Type {
-        COMMAND, CATEGORY
-    }
 
     public RestrictedRolesSetting() {
         super(CommandCategory.SETTING, CommandPermission.ADMIN,
@@ -115,5 +106,13 @@ public class RestrictedRolesSetting extends BaseCmd {
                     return context.getDbGuild().updateSetting(Setting.RESTRICTED_ROLES, setting)
                             .then(context.createFollowupMessage(Emoji.CHECK_MARK, strBuilder.toString()));
                 });
+    }
+
+    private enum Action {
+        ADD, REMOVE
+    }
+
+    private enum Type {
+        COMMAND, CATEGORY
     }
 }

@@ -1,14 +1,14 @@
 package com.locibot.locibot.database.users;
 
-import com.locibot.locibot.database.DatabaseCollection;
-import com.mongodb.client.model.Filters;
-import com.mongodb.reactivestreams.client.MongoDatabase;
 import com.locibot.locibot.core.cache.MultiValueCache;
 import com.locibot.locibot.data.Telemetry;
+import com.locibot.locibot.database.DatabaseCollection;
 import com.locibot.locibot.database.users.bean.DBUserBean;
 import com.locibot.locibot.database.users.entity.DBUser;
 import com.locibot.locibot.utils.LogUtil;
 import com.locibot.locibot.utils.NetUtil;
+import com.mongodb.client.model.Filters;
+import com.mongodb.reactivestreams.client.MongoDatabase;
 import discord4j.common.util.Snowflake;
 import org.bson.Document;
 import org.reactivestreams.Publisher;
@@ -23,7 +23,7 @@ public class UsersCollection extends DatabaseCollection {
 
     public UsersCollection(MongoDatabase database) {
         super(database, "users");
-        this.usersCache = MultiValueCache.Builder.<Snowflake, DBUser>create().withInfiniteTtl().build();
+        this.usersCache = MultiValueCache.Builder.<Snowflake, DBUser>builder().withInfiniteTtl().build();
     }
 
     public Mono<DBUser> getDBUser(Snowflake userId) {

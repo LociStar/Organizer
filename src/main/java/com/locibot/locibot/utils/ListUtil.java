@@ -5,6 +5,10 @@ import java.util.List;
 
 public class ListUtil {
 
+    public static <T> List<List<T>> partition(List<T> list, int size) {
+        return new Partition<>(list, size);
+    }
+
     private static class Partition<T> extends AbstractList<List<T>> {
 
         private final List<T> list;
@@ -31,9 +35,5 @@ public class ListUtil {
         public boolean isEmpty() {
             return this.list.isEmpty();
         }
-    }
-
-    public static <T> List<List<T>> partition(List<T> list, int size) {
-        return new Partition<>(list, size);
     }
 }

@@ -1,5 +1,6 @@
 package com.locibot.locibot.database.users.entity;
 
+import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.database.DatabaseEntity;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.SerializableEntity;
@@ -10,7 +11,6 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
-import com.locibot.locibot.data.Telemetry;
 import discord4j.common.util.Snowflake;
 import reactor.core.publisher.Mono;
 

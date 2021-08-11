@@ -15,13 +15,14 @@ import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.RandUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Consumer;
 
 import static com.locibot.locibot.LociBot.DEFAULT_LOGGER;
 
@@ -46,6 +47,17 @@ public class DeviantartCmd extends BaseCmd {
         this.token = SingleValueCache.Builder.create(this.requestAccessToken())
                 .withTtlForValue(TokenResponse::getExpiresIn)
                 .build();
+    }
+
+    private static EmbedCreateSpec formatEmbed(Context context, String query, Image image) {
+        return ShadbotUtil.getDefaultEmbed(
+                EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of("DeviantArt: %s".formatted(query), image.url(), context.getAuthorAvatar()))
+                        .thumbnail("https://i.imgur.com/gT4hHUB.png")
+                        .fields(List.of(
+                                EmbedCreateFields.Field.of(context.localize("deviantart.title"), image.title(), false),
+                                EmbedCreateFields.Field.of(context.localize("deviantart.author"), image.author().username(), false),
+                                EmbedCreateFields.Field.of(context.localize("deviantart.category"), image.categoryPath(), false)))
+                        .image(image.content().map(Content::source).orElseThrow()).build());
     }
 
     @Override
@@ -77,16 +89,6 @@ public class DeviantartCmd extends BaseCmd {
                 .collectList()
                 .map(list -> Optional.ofNullable(RandUtil.randValue(list)))
                 .flatMap(Mono::justOrEmpty);
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, String query, Image image) {
-        return ShadbotUtil.getDefaultEmbed(
-                embed -> embed.setAuthor("DeviantArt: %s".formatted(query), image.url(), context.getAuthorAvatar())
-                        .setThumbnail("https://i.imgur.com/gT4hHUB.png")
-                        .addField(context.localize("deviantart.title"), image.title(), false)
-                        .addField(context.localize("deviantart.author"), image.author().username(), false)
-                        .addField(context.localize("deviantart.category"), image.categoryPath(), false)
-                        .setImage(image.content().map(Content::source).orElseThrow()));
     }
 
     private Mono<TokenResponse> requestAccessToken() {

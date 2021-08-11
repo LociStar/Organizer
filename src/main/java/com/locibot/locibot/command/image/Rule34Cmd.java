@@ -11,12 +11,12 @@ import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.RandUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public class Rule34Cmd extends BaseCmd {
 
@@ -26,6 +26,61 @@ public class Rule34Cmd extends BaseCmd {
     public Rule34Cmd() {
         super(CommandCategory.IMAGE, "rule34", "Search random image from Rule34");
         this.addOption("query", "Search for a Rule34 image", true, ApplicationCommandOptionType.STRING);
+    }
+
+    private static Mono<R34Post> getR34Post(String tag) {
+        final String url = "%s?".formatted(HOME_URL)
+                + "page=dapi"
+                + "&s=post"
+                + "&q=index"
+                + "&tags=%s".formatted(NetUtil.encode(tag.replace(" ", "_")));
+
+        return RequestHelper.fromUrl(url)
+                .to(R34Response.class)
+                .map(R34Response::posts)
+                .flatMap(Mono::justOrEmpty)
+                .map(R34Posts::post)
+                .flatMap(Mono::justOrEmpty)
+                .map(RandUtil::randValue);
+    }
+
+    private static boolean containsChildren(R34Post post, List<String> tags) {
+        return post.hasChildren() || tags.stream().anyMatch(tag -> tag.contains("loli") || tag.contains("shota"));
+    }
+
+    private static EmbedCreateSpec formatEmbed(Context context, R34Post post, String tag) {
+        EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
+        post.getSource().ifPresent(source -> {
+            if (NetUtil.isUrl(source)) {
+                embed.description(context.localize("rule34.source.url").formatted(source));
+            } else {
+                embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("rule34.source"), source, false)));
+            }
+        });
+
+        final String resolution = "%dx%d".formatted(post.width(), post.height());
+        final String formattedTags = Rule34Cmd.formatTags(post.getTags());
+        embed.author(EmbedCreateFields.Author.of(context.localize("rule34.title").formatted(tag), post.fileUrl(), context.getAuthorAvatar()))
+                .thumbnail("https://i.imgur.com/t6JJWFN.png")
+                .fields(List.of(
+                        EmbedCreateFields.Field.of(context.localize("rule34.resolution"), resolution, false),
+                        EmbedCreateFields.Field.of(context.localize("rule34.tags"), formattedTags, false)))
+                .image(post.fileUrl())
+                .footer(EmbedCreateFields.Footer.of(context.localize("rule34.footer"), null));
+        return ShadbotUtil.getDefaultEmbed(embed.build());
+    }
+
+    private static String formatTags(final List<String> tags) {
+        final StringBuilder tagsBuilder = new StringBuilder();
+        for (final String tag : tags) {
+            if (tagsBuilder.length() + tag.length() < MAX_TAGS_CHAR) {
+                tagsBuilder.append("`%s` ".formatted(tag));
+            } else {
+                tagsBuilder.append("...");
+                break;
+            }
+        }
+        return tagsBuilder.toString();
     }
 
     @Override
@@ -51,61 +106,6 @@ public class Rule34Cmd extends BaseCmd {
                             .switchIfEmpty(context.editFollowupMessage(Emoji.MAGNIFYING_GLASS,
                                     context.localize("rule34.not.found").formatted(query)));
                 });
-    }
-
-    private static Mono<R34Post> getR34Post(String tag) {
-        final String url = "%s?".formatted(HOME_URL)
-                + "page=dapi"
-                + "&s=post"
-                + "&q=index"
-                + "&tags=%s".formatted(NetUtil.encode(tag.replace(" ", "_")));
-
-        return RequestHelper.fromUrl(url)
-                .to(R34Response.class)
-                .map(R34Response::posts)
-                .flatMap(Mono::justOrEmpty)
-                .map(R34Posts::post)
-                .flatMap(Mono::justOrEmpty)
-                .map(RandUtil::randValue);
-    }
-
-    private static boolean containsChildren(R34Post post, List<String> tags) {
-        return post.hasChildren() || tags.stream().anyMatch(tag -> tag.contains("loli") || tag.contains("shota"));
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, R34Post post, String tag) {
-        return ShadbotUtil.getDefaultEmbed(
-                embed -> {
-                    post.getSource().ifPresent(source -> {
-                        if (NetUtil.isUrl(source)) {
-                            embed.setDescription(context.localize("rule34.source.url").formatted(source));
-                        } else {
-                            embed.addField(context.localize("rule34.source"), source, false);
-                        }
-                    });
-
-                    final String resolution = "%dx%d".formatted(post.width(), post.height());
-                    final String formattedTags = Rule34Cmd.formatTags(post.getTags());
-                    embed.setAuthor(context.localize("rule34.title").formatted(tag), post.fileUrl(), context.getAuthorAvatar())
-                            .setThumbnail("https://i.imgur.com/t6JJWFN.png")
-                            .addField(context.localize("rule34.resolution"), resolution, false)
-                            .addField(context.localize("rule34.tags"), formattedTags, false)
-                            .setImage(post.fileUrl())
-                            .setFooter(context.localize("rule34.footer"), null);
-                });
-    }
-
-    private static String formatTags(final List<String> tags) {
-        final StringBuilder tagsBuilder = new StringBuilder();
-        for (final String tag : tags) {
-            if (tagsBuilder.length() + tag.length() < MAX_TAGS_CHAR) {
-                tagsBuilder.append("`%s` ".formatted(tag));
-            } else {
-                tagsBuilder.append("...");
-                break;
-            }
-        }
-        return tagsBuilder.toString();
     }
 
 }

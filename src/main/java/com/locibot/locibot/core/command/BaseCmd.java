@@ -68,7 +68,7 @@ public abstract class BaseCmd {
 
     public abstract Mono<?> execute(Context context);
 
-    public Consumer<EmbedCreateSpec> getHelp(Context context) {
+    public EmbedCreateSpec getHelp(Context context) {
         return CommandHelpBuilder.create(context, this).build();
     }
 
@@ -100,20 +100,20 @@ public abstract class BaseCmd {
         return Optional.ofNullable(this.rateLimiter);
     }
 
-    public boolean isEnabled() {
-        return this.isEnabled;
-    }
-
     public void setRateLimiter(@Nullable RateLimiter rateLimiter) {
         this.rateLimiter = rateLimiter;
     }
 
-    public void setGameRateLimiter() {
-        this.setRateLimiter(DEFAULT_GAME_RATELIMITER.get());
+    public boolean isEnabled() {
+        return this.isEnabled;
     }
 
     public void setEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
+    }
+
+    public void setGameRateLimiter() {
+        this.setRateLimiter(DEFAULT_GAME_RATELIMITER.get());
     }
 
     // TODO: Remove

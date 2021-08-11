@@ -13,6 +13,7 @@ import com.locibot.locibot.utils.ShadbotUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.spec.EmbedCreateFields;
+import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.discordjson.json.ImmutableEmbedFieldData;
 import discord4j.discordjson.possible.Possible;
 import reactor.core.publisher.Mono;
@@ -28,6 +29,15 @@ public class RelicStatusCmd extends BaseCmd {
 
     public RelicStatusCmd() {
         super(CommandCategory.DONATOR, "relic_status", "Your donator status");
+    }
+
+    private static Mono<Tuple2<Relic, Optional<Guild>>> getRelicAndGuild(Context context, Relic relic) {
+        final Mono<Optional<Guild>> getGuild = Mono.justOrEmpty(relic.getGuildId())
+                .flatMap(context.getClient()::getGuildById)
+                .map(Optional::of)
+                .defaultIfEmpty(Optional.empty());
+
+        return Mono.zip(Mono.just(relic), getGuild);
     }
 
     @Override
@@ -73,25 +83,17 @@ public class RelicStatusCmd extends BaseCmd {
                 }))
                 .collectList()
                 .filter(Predicate.not(List::isEmpty))
-                .map(fields -> ShadbotUtil.getDefaultEmbed(
-                        embed -> {
-                            embed.withAuthor(EmbedCreateFields.Author.of(context.localize("relicstatus.title"), null, context.getAuthorAvatar()))
-                                    .withThumbnail("https://i.imgur.com/R0N6kW3.png");
+                .map(fields -> {
+                    EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder()
+                            .author(EmbedCreateFields.Author.of(context.localize("relicstatus.title"), null, context.getAuthorAvatar()))
+                            .thumbnail("https://i.imgur.com/R0N6kW3.png");
 
-                            fields.forEach(field -> embed.withFields(EmbedCreateFields.Field.of(field.name(), field.value(), field.inline().get())));
-                        }))
+                    fields.forEach(field -> embed.fields(List.of(EmbedCreateFields.Field.of(field.name(), field.value(), field.inline().get()))));
+                    return ShadbotUtil.getDefaultEmbed(embed.build());
+                })
                 .flatMap(context::createFollowupMessage)
                 .switchIfEmpty(context.createFollowupMessage(Emoji.INFO, context.localize("relicstatus.not.donator")
                         .formatted(Config.PATREON_URL, Emoji.HEARTS)));
-    }
-
-    private static Mono<Tuple2<Relic, Optional<Guild>>> getRelicAndGuild(Context context, Relic relic) {
-        final Mono<Optional<Guild>> getGuild = Mono.justOrEmpty(relic.getGuildId())
-                .flatMap(context.getClient()::getGuildById)
-                .map(Optional::of)
-                .defaultIfEmpty(Optional.empty());
-
-        return Mono.zip(Mono.just(relic), getGuild);
     }
 
 }

@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.function.Consumer;
 
 import static com.locibot.locibot.command.group.GroupUtil.parseIntToGroupType;
 import static com.locibot.locibot.command.group.GroupUtil.sendInviteMessage;

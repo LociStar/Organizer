@@ -8,8 +8,11 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.data.credential.Credential;
 import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.object.Emoji;
-import com.locibot.locibot.utils.*;
+import com.locibot.locibot.utils.EnumUtil;
+import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.StringUtil;
 import com.locibot.locibot.utils.weather.HourlyWeatherForecastClass;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import net.aksingh.owmjapis.api.APIException;
@@ -23,8 +26,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class WeatherCmd extends BaseCmd {
@@ -105,7 +108,7 @@ public class WeatherCmd extends BaseCmd {
                         }))));
     }
 
-    private Consumer<EmbedCreateSpec> formatEmbed(Context context, WeatherWrapper weather) {
+    private EmbedCreateSpec formatEmbed(Context context, WeatherWrapper weather) {
         final DateTimeFormatter formatter = this.dateFormatter.withLocale(context.getLocale());
 
         final String title = context.localize("weather.title")
@@ -122,15 +125,16 @@ public class WeatherCmd extends BaseCmd {
         final String humidity = "%s%%".formatted(context.localize(weather.getHumidity()));
         final String temperature = "%s°C".formatted(context.localize(weather.getTemp()));
 
-        return ShadbotUtil.getDefaultEmbed(
-                embed -> embed.setAuthor(title, url, context.getAuthorAvatar())
-                        .setThumbnail(weather.getIconLink())
-                        .setDescription(context.localize("weather.last.updated").formatted(lastUpdated))
-                        .addField(Emoji.CLOUD + " " + context.localize("weather.clouds"), clouds, true)
-                        .addField(Emoji.WIND + " " + context.localize("weather.wind"), wind, true)
-                        .addField(Emoji.RAIN + " " + context.localize("weather.rain"), rain, true)
-                        .addField(Emoji.DROPLET + " " + context.localize("weather.humidity"), humidity, true)
-                        .addField(Emoji.THERMOMETER + " " + context.localize("weather.temperature"), temperature, true));
+        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+                .author(EmbedCreateFields.Author.of(title, url, context.getAuthorAvatar()))
+                .thumbnail(weather.getIconLink())
+                .description(context.localize("weather.last.updated").formatted(lastUpdated))
+                .fields(List.of(
+                        EmbedCreateFields.Field.of(Emoji.CLOUD + " " + context.localize("weather.clouds"), clouds, true),
+                        EmbedCreateFields.Field.of(Emoji.WIND + " " + context.localize("weather.wind"), wind, true),
+                        EmbedCreateFields.Field.of(Emoji.RAIN + " " + context.localize("weather.rain"), rain, true),
+                        EmbedCreateFields.Field.of(Emoji.DROPLET + " " + context.localize("weather.humidity"), humidity, true),
+                        EmbedCreateFields.Field.of(Emoji.THERMOMETER + " " + context.localize("weather.temperature"), temperature, true))).build());
     }
 
 }

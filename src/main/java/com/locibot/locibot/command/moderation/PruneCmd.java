@@ -50,38 +50,6 @@ public class PruneCmd extends BaseCmd {
                 .type(ApplicationCommandOptionType.INTEGER.getValue()));
     }
 
-    @Override
-    public Mono<?> execute(Context context) {
-        return context.createFollowupMessage(Emoji.HOURGLASS, context.localize("prune.loading"))
-                .then(context.getChannel())
-                .cast(GuildMessageChannel.class)
-                .flatMap(channel -> DiscordUtil.requirePermissions(channel,
-                        Permission.MANAGE_MESSAGES, Permission.READ_MESSAGE_HISTORY)
-                        .then(PruneCmd.getLimit(context))
-                        .flatMapMany(limit -> Flux.defer(() -> {
-                            final List<String> words = StringUtil.split(
-                                    context.getOptionAsString("words").orElse(""), ",");
-
-                            final Mono<User> getAuthor = context.getOptionAsUser("authors");
-                            final Mono<Optional<Snowflake>> getAuthorId = getAuthor
-                                    .map(User::getId)
-                                    .map(Optional::of)
-                                    .defaultIfEmpty(Optional.empty());
-
-                            return getAuthorId.flatMapMany(authorOpt ->
-                                    channel.getMessagesBefore(Snowflake.of(Instant.now()))
-                                            .take(limit)
-                                            .filter(PruneCmd.filterMessage(authorOpt.orElse(null), words)));
-                        }))
-                        .map(Message::getId)
-                        .collectList()
-                        .flatMap(messageIds -> channel.bulkDelete(Flux.fromIterable(messageIds))
-                                .count()
-                                .map(messagesNotDeleted -> Math.max(0, messageIds.size() - messagesNotDeleted - MESSAGES_OFFSET))))
-                .flatMap(messagesDeleted -> context.createFollowupMessage(Emoji.CHECK_MARK, context.localize("prune.messages.deleted")
-                        .formatted(messagesDeleted)));
-    }
-
     private static Predicate<Message> filterMessage(@Nullable Snowflake authorId, List<String> words) {
         return message -> (authorId == null
                 || message.getAuthor().map(User::getId).map(authorId::equals).orElse(false))
@@ -114,6 +82,38 @@ public class PruneCmd extends BaseCmd {
             }
         }
         return strBuilder.toString();
+    }
+
+    @Override
+    public Mono<?> execute(Context context) {
+        return context.createFollowupMessage(Emoji.HOURGLASS, context.localize("prune.loading"))
+                .then(context.getChannel())
+                .cast(GuildMessageChannel.class)
+                .flatMap(channel -> DiscordUtil.requirePermissions(channel,
+                        Permission.MANAGE_MESSAGES, Permission.READ_MESSAGE_HISTORY)
+                        .then(PruneCmd.getLimit(context))
+                        .flatMapMany(limit -> Flux.defer(() -> {
+                            final List<String> words = StringUtil.split(
+                                    context.getOptionAsString("words").orElse(""), ",");
+
+                            final Mono<User> getAuthor = context.getOptionAsUser("authors");
+                            final Mono<Optional<Snowflake>> getAuthorId = getAuthor
+                                    .map(User::getId)
+                                    .map(Optional::of)
+                                    .defaultIfEmpty(Optional.empty());
+
+                            return getAuthorId.flatMapMany(authorOpt ->
+                                    channel.getMessagesBefore(Snowflake.of(Instant.now()))
+                                            .take(limit)
+                                            .filter(PruneCmd.filterMessage(authorOpt.orElse(null), words)));
+                        }))
+                        .map(Message::getId)
+                        .collectList()
+                        .flatMap(messageIds -> channel.bulkDelete(Flux.fromIterable(messageIds))
+                                .count()
+                                .map(messagesNotDeleted -> Math.max(0, messageIds.size() - messagesNotDeleted - MESSAGES_OFFSET))))
+                .flatMap(messagesDeleted -> context.createFollowupMessage(Emoji.CHECK_MARK, context.localize("prune.messages.deleted")
+                        .formatted(messagesDeleted)));
     }
 
 }

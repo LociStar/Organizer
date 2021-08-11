@@ -7,11 +7,10 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.ShadbotUtil;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import org.jsoup.Jsoup;
 import reactor.core.publisher.Mono;
-
-import java.util.function.Consumer;
 
 public class SuicideGirlsCmd extends BaseCmd {
 
@@ -19,6 +18,19 @@ public class SuicideGirlsCmd extends BaseCmd {
 
     public SuicideGirlsCmd() {
         super(CommandCategory.IMAGE, "suicidegirls", "Show random image from SuicideGirls");
+    }
+
+    private static EmbedCreateSpec formatEmbed(Context context, SuicideGirl post) {
+        return ShadbotUtil.getDefaultEmbed(
+                EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of("SuicideGirls", post.getUrl(), context.getAuthorAvatar()))
+                        .description(context.localize("suicidegirls.name").formatted(post.getName()))
+                        .image(post.getImageUrl()).build());
+    }
+
+    private static Mono<SuicideGirl> getRandomSuicideGirl() {
+        return RequestHelper.request(HOME_URL)
+                .map(Jsoup::parse)
+                .map(SuicideGirl::new);
     }
 
     @Override
@@ -33,19 +45,6 @@ public class SuicideGirlsCmd extends BaseCmd {
                             .then(SuicideGirlsCmd.getRandomSuicideGirl())
                             .flatMap(post -> context.editFollowupMessage(SuicideGirlsCmd.formatEmbed(context, post)));
                 });
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, SuicideGirl post) {
-        return ShadbotUtil.getDefaultEmbed(
-                embed -> embed.setAuthor("SuicideGirls", post.getUrl(), context.getAuthorAvatar())
-                        .setDescription(context.localize("suicidegirls.name").formatted(post.getName()))
-                        .setImage(post.getImageUrl()));
-    }
-
-    private static Mono<SuicideGirl> getRandomSuicideGirl() {
-        return RequestHelper.request(HOME_URL)
-                .map(Jsoup::parse)
-                .map(SuicideGirl::new);
     }
 
 }

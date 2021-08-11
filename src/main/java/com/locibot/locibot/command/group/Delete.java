@@ -26,7 +26,7 @@ public class Delete extends BaseCmd {
                     if (group.getOwner().getId().equals(context.getAuthorId())) {
                         return group.delete().then(context.createFollowupMessage(groupName + " has been deleted!"));
                     }
-                    return context.createFollowupMessage("You are not the owner of " + groupName +"!");
+                    return context.createFollowupMessage("You are not the owner of " + groupName + "!");
                 });
             }
             return context.createFollowupMessage(groupName + " does not exist!");

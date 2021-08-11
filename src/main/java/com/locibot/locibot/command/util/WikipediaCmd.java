@@ -12,13 +12,13 @@ import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import discord4j.core.object.Embed;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class WikipediaCmd extends BaseCmd {
 
@@ -27,33 +27,15 @@ public class WikipediaCmd extends BaseCmd {
         this.addOption("word", "The word to search", true, ApplicationCommandOptionType.STRING);
     }
 
-    @Override
-    public Mono<?> execute(Context context) {
-        final String word = context.getOptionAsString("word").orElseThrow();
-
-        return context.createFollowupMessage(Emoji.HOURGLASS, context.localize("wikipedia.loading"))
-                .then(WikipediaCmd.getWikipediaPage(context.getLocale(), word))
-                .flatMap(page -> {
-                    if (page.extract().orElseThrow().endsWith("may refer to:")) {
-                        return context.editFollowupMessage(Emoji.MAGNIFYING_GLASS,
-                                context.localize("wikipedia.several.results"));
-                    }
-
-                    return context.editFollowupMessage(WikipediaCmd.formatEmbed(context, page));
-                })
-                .switchIfEmpty(context.editFollowupMessage(Emoji.MAGNIFYING_GLASS, context.localize("wikipedia.not.found")
-                        .formatted(word)));
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, WikipediaPage page) {
+    private static EmbedCreateSpec formatEmbed(Context context, WikipediaPage page) {
         final String extract = StringUtil.abbreviate(page.extract().orElseThrow(), Embed.MAX_DESCRIPTION_LENGTH);
-        return ShadbotUtil.getDefaultEmbed(
-                embed -> embed.setAuthor(context.localize("wikipedia.title").formatted(page.title()),
+        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+                .author(EmbedCreateFields.Author.of(context.localize("wikipedia.title").formatted(page.title()),
                         "https://%s.wikipedia.org/wiki/%s"
                                 .formatted(context.getLocale().getLanguage(),
-                                        page.getEncodedTitle()), context.getAuthorAvatar())
-                        .setThumbnail("https://i.imgur.com/7X7Cvhf.png")
-                        .setDescription(extract));
+                                        page.getEncodedTitle()), context.getAuthorAvatar()))
+                .thumbnail("https://i.imgur.com/7X7Cvhf.png")
+                .description(extract).build());
     }
 
     private static Mono<WikipediaPage> getWikipediaPage(Locale locale, String search) {
@@ -76,6 +58,24 @@ public class WikipediaCmd extends BaseCmd {
                 .next()
                 .filter(entry -> !"-1".equals(entry.getKey()) && entry.getValue().extract().isPresent())
                 .map(Map.Entry::getValue);
+    }
+
+    @Override
+    public Mono<?> execute(Context context) {
+        final String word = context.getOptionAsString("word").orElseThrow();
+
+        return context.createFollowupMessage(Emoji.HOURGLASS, context.localize("wikipedia.loading"))
+                .then(WikipediaCmd.getWikipediaPage(context.getLocale(), word))
+                .flatMap(page -> {
+                    if (page.extract().orElseThrow().endsWith("may refer to:")) {
+                        return context.editFollowupMessage(Emoji.MAGNIFYING_GLASS,
+                                context.localize("wikipedia.several.results"));
+                    }
+
+                    return context.editFollowupMessage(WikipediaCmd.formatEmbed(context, page));
+                })
+                .switchIfEmpty(context.editFollowupMessage(Emoji.MAGNIFYING_GLASS, context.localize("wikipedia.not.found")
+                        .formatted(word)));
     }
 
 }

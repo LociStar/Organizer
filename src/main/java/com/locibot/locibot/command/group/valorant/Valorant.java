@@ -1,7 +1,6 @@
 package com.locibot.locibot.command.group.valorant;
 
 import com.locibot.locibot.command.group.Create;
-import com.locibot.locibot.command.group.GroupType;
 
 public class Valorant extends Create {
 

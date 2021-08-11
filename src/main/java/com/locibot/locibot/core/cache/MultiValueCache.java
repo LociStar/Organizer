@@ -36,7 +36,7 @@ public class MultiValueCache<K, V> extends ConcurrentHashMap<K, SingleValueCache
         private Function<Throwable, Duration> ttlForError = __ -> Duration.ZERO;
         private Supplier<Duration> ttlForEmpty = () -> Duration.ZERO;
 
-        public static <K, V> MultiValueCache.Builder<K, V> create() {
+        public static <K, V> MultiValueCache.Builder<K, V> builder() {
             return new Builder<>();
         }
 

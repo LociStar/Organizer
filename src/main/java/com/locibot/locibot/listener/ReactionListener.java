@@ -1,10 +1,10 @@
 package com.locibot.locibot.listener;
 
 import com.locibot.locibot.command.moderation.IamCmd;
+import com.locibot.locibot.core.i18n.I18nManager;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.guilds.entity.DBGuild;
 import com.locibot.locibot.database.guilds.entity.Settings;
-import com.locibot.locibot.core.i18n.I18nManager;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.message.TemporaryMessage;
 import com.locibot.locibot.utils.FormatUtil;
@@ -27,40 +27,6 @@ import java.util.Set;
 public class ReactionListener {
 
     private static final Duration TMP_MESSAGE_DURATION = Duration.ofSeconds(8);
-
-    private enum Action {
-        ADD, REMOVE
-    }
-
-    public static class ReactionAddListener implements EventListener<ReactionAddEvent> {
-
-        @Override
-        public Class<ReactionAddEvent> getEventType() {
-            return ReactionAddEvent.class;
-        }
-
-        @Override
-        public Mono<?> execute(ReactionAddEvent event) {
-            return event.getMessage()
-                    .onErrorResume(ClientException.isStatusCode(HttpResponseStatus.FORBIDDEN.code()), err -> Mono.empty())
-                    .flatMap(message -> ReactionListener.iam(message, event.getUserId(), event.getEmoji(), Action.ADD));
-        }
-    }
-
-    public static class ReactionRemoveListener implements EventListener<ReactionRemoveEvent> {
-
-        @Override
-        public Class<ReactionRemoveEvent> getEventType() {
-            return ReactionRemoveEvent.class;
-        }
-
-        @Override
-        public Mono<?> execute(ReactionRemoveEvent event) {
-            return event.getMessage()
-                    .onErrorResume(ClientException.isStatusCode(HttpResponseStatus.FORBIDDEN.code()), err -> Mono.empty())
-                    .flatMap(message -> ReactionListener.iam(message, event.getUserId(), event.getEmoji(), Action.REMOVE));
-        }
-    }
 
     private static Mono<Boolean> canManageRole(Message message, Snowflake roleId) {
         return message.getGuild()
@@ -115,6 +81,40 @@ public class ReactionListener {
                 .filter(selfId -> message.getAuthor().map(User::getId).map(selfId::equals).orElse(false))
                 .flatMap(__ -> message.getGuild().flatMap(guild -> guild.getMemberById(userId)))
                 .flatMap(member -> ReactionListener.execute(message, member, action));
+    }
+
+    private enum Action {
+        ADD, REMOVE
+    }
+
+    public static class ReactionAddListener implements EventListener<ReactionAddEvent> {
+
+        @Override
+        public Class<ReactionAddEvent> getEventType() {
+            return ReactionAddEvent.class;
+        }
+
+        @Override
+        public Mono<?> execute(ReactionAddEvent event) {
+            return event.getMessage()
+                    .onErrorResume(ClientException.isStatusCode(HttpResponseStatus.FORBIDDEN.code()), err -> Mono.empty())
+                    .flatMap(message -> ReactionListener.iam(message, event.getUserId(), event.getEmoji(), Action.ADD));
+        }
+    }
+
+    public static class ReactionRemoveListener implements EventListener<ReactionRemoveEvent> {
+
+        @Override
+        public Class<ReactionRemoveEvent> getEventType() {
+            return ReactionRemoveEvent.class;
+        }
+
+        @Override
+        public Mono<?> execute(ReactionRemoveEvent event) {
+            return event.getMessage()
+                    .onErrorResume(ClientException.isStatusCode(HttpResponseStatus.FORBIDDEN.code()), err -> Mono.empty())
+                    .flatMap(message -> ReactionListener.iam(message, event.getUserId(), event.getEmoji(), Action.REMOVE));
+        }
     }
 
 }

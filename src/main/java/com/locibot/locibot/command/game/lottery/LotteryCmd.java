@@ -44,37 +44,6 @@ public class LotteryCmd extends BaseCmd {
                 ApplicationCommandOptionType.INTEGER);
     }
 
-    @Override
-    public Mono<?> execute(Context context) {
-        final Optional<Long> numberOpt = context.getOptionAsLong("number");
-        if (numberOpt.isEmpty()) {
-            return LotteryCmd.show(context);
-        }
-
-        return DatabaseManager.getGuilds()
-                .getDBMember(context.getGuildId(), context.getAuthorId())
-                .filterWhen(dbMember -> BooleanUtils.not(DatabaseManager.getLottery().isGambler(dbMember.getId())))
-                .switchIfEmpty(Mono.error(new CommandException(context.localize("lottery.already.participating"))))
-                .flatMap(dbMember -> {
-                    if (dbMember.getCoins() < Constants.PAID_COST) {
-                        return Mono.error(new CommandException(context.localize("not.enough.coins")));
-                    }
-
-                    final long number = numberOpt.orElseThrow();
-                    if (!NumberUtil.isBetween(number, Constants.MIN_NUM, Constants.MAX_NUM)) {
-                        return Mono.error(new CommandException(
-                                context.localize("lottery.invalid.number")
-                                        .formatted(number, Constants.MIN_NUM, Constants.MAX_NUM)));
-                    }
-
-                    return dbMember.addCoins(-Constants.PAID_COST)
-                            .thenReturn(new LotteryGambler(context.getGuildId(), context.getAuthorId(), (int) number))
-                            .flatMap(LotteryGambler::insert)
-                            .then(context.createFollowupMessage(Emoji.TICKET, context.localize("lottery.message")
-                                    .formatted(number, FormatUtil.formatDurationWords(context.getLocale(), LotteryCmd.getDelay()))));
-                });
-    }
-
     private static Mono<Message> show(Context context) {
         final Mono<List<LotteryGambler>> getGamblers = DatabaseManager.getLottery()
                 .getGamblers()
@@ -154,6 +123,37 @@ public class LotteryCmd extends BaseCmd {
                             }));
                 }))
                 .then();
+    }
+
+    @Override
+    public Mono<?> execute(Context context) {
+        final Optional<Long> numberOpt = context.getOptionAsLong("number");
+        if (numberOpt.isEmpty()) {
+            return LotteryCmd.show(context);
+        }
+
+        return DatabaseManager.getGuilds()
+                .getDBMember(context.getGuildId(), context.getAuthorId())
+                .filterWhen(dbMember -> BooleanUtils.not(DatabaseManager.getLottery().isGambler(dbMember.getId())))
+                .switchIfEmpty(Mono.error(new CommandException(context.localize("lottery.already.participating"))))
+                .flatMap(dbMember -> {
+                    if (dbMember.getCoins() < Constants.PAID_COST) {
+                        return Mono.error(new CommandException(context.localize("not.enough.coins")));
+                    }
+
+                    final long number = numberOpt.orElseThrow();
+                    if (!NumberUtil.isBetween(number, Constants.MIN_NUM, Constants.MAX_NUM)) {
+                        return Mono.error(new CommandException(
+                                context.localize("lottery.invalid.number")
+                                        .formatted(number, Constants.MIN_NUM, Constants.MAX_NUM)));
+                    }
+
+                    return dbMember.addCoins(-Constants.PAID_COST)
+                            .thenReturn(new LotteryGambler(context.getGuildId(), context.getAuthorId(), (int) number))
+                            .flatMap(LotteryGambler::insert)
+                            .then(context.createFollowupMessage(Emoji.TICKET, context.localize("lottery.message")
+                                    .formatted(number, FormatUtil.formatDurationWords(context.getLocale(), LotteryCmd.getDelay()))));
+                });
     }
 
 }

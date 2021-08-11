@@ -2,16 +2,13 @@ package com.locibot.locibot.command.group;
 
 import com.locibot.locibot.core.command.BaseCmd;
 import com.locibot.locibot.core.command.CommandCategory;
-import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
-import com.locibot.locibot.database.groups.GroupsCollection;
 import com.locibot.locibot.database.groups.entity.DBGroup;
 import com.locibot.locibot.database.groups.entity.DBGroupMember;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.User;
 import discord4j.rest.util.ApplicationCommandOptionType;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -19,9 +16,9 @@ import java.util.List;
 
 public abstract class Create extends BaseCmd {
 
-    private int min;
-    private int opt;
-    private int groupType;
+    private final int min;
+    private final int opt;
+    private final int groupType;
 
     /**
      * @param min         count of minimum required members

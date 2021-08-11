@@ -8,7 +8,7 @@ import discord4j.rest.util.Color;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.function.Consumer;
+import java.util.List;
 
 public abstract class GroupUtil {
 
@@ -36,15 +36,15 @@ public abstract class GroupUtil {
         GroupType groupType = parseIntToGroupType(group.getBean().getTeamType());
         String url = groupType.getUrl();
 
-        return EmbedCreateSpec.builder().build().withTitle(groupType.getName() + "-Invite")
-                .withColor(Color.RED)
-                .withThumbnail(url)
-                .withAuthor(EmbedCreateFields.Author.of(user.getUsername(), "", user.getAvatarUrl()))
-                .withFields(EmbedCreateFields.Field.of("Invitation to group: " + group.getBean().getGroupName(), "You got invited from " + user.getUsername() + "!", false),
+        return EmbedCreateSpec.builder().title(groupType.getName() + "-Invite")
+                .color(Color.RED)
+                .thumbnail(url)
+                .author(EmbedCreateFields.Author.of(user.getUsername(), "", user.getAvatarUrl()))
+                .fields(List.of(EmbedCreateFields.Field.of("Invitation to group: " + group.getBean().getGroupName(), "You got invited from " + user.getUsername() + "!", false),
                         EmbedCreateFields.Field.of("Date", finalDateString, true),
                         EmbedCreateFields.Field.of("Time", finalTimeString, true),
                         EmbedCreateFields.Field.of("Accept/ Decline", "If you are interested to join the " + groupType.getName() + " group, answer with \"/accept " + group.getBean().getGroupName() + "\"\n" +
-                                "You can decline the invitation with \"/decline " + group.getBean().getGroupName() + "\".", false));
+                                "You can decline the invitation with \"/decline " + group.getBean().getGroupName() + "\".", false))).build();
     }
 }
 

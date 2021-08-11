@@ -13,10 +13,6 @@ import reactor.core.publisher.Mono;
 
 public class NSFWSetting extends BaseCmd {
 
-    private enum Action {
-        TOGGLE, ENABLE, DISABLE
-    }
-
     public NSFWSetting() {
         super(CommandCategory.SETTING, CommandPermission.ADMIN,
                 "nsfw", "Manage current channel's NSFW state");
@@ -45,6 +41,10 @@ public class NSFWSetting extends BaseCmd {
                         ? context.localize("setting.nsfw.nsfw").formatted(channel.getMention())
                         : context.localize("setting.nsfw.sfw").formatted(channel.getMention()))
                 .flatMap(message -> context.createFollowupMessage(Emoji.CHECK_MARK, message));
+    }
+
+    private enum Action {
+        TOGGLE, ENABLE, DISABLE
     }
 
 }

@@ -18,7 +18,6 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.function.Consumer;
 
 public class ThisDayCmd extends BaseCmd {
 
@@ -41,19 +40,12 @@ public class ThisDayCmd extends BaseCmd {
                 .map(ThisDay::new);
     }
 
-    @Override
-    public Mono<?> execute(Context context) {
-        return context.createFollowupMessage(Emoji.HOURGLASS, context.localize("thisday.loading"))
-                .then(this.getThisDay)
-                .flatMap(thisDay -> context.editFollowupMessage(ThisDayCmd.formatEmbed(context, thisDay)));
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, ThisDay thisDay) {
+    private static EmbedCreateSpec formatEmbed(Context context, ThisDay thisDay) {
         return ShadbotUtil.getDefaultEmbed(
-                embed -> embed.withAuthor(EmbedCreateFields.Author.of(context.localize("thisday.title").formatted(thisDay.getDate()),
+                EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("thisday.title").formatted(thisDay.getDate()),
                         HOME_URL, context.getAuthorAvatar()))
-                        .withThumbnail("https://i.imgur.com/FdfyJDD.png")
-                        .withDescription(StringUtil.abbreviate(thisDay.getEvents(), Embed.MAX_DESCRIPTION_LENGTH)));
+                        .thumbnail("https://i.imgur.com/FdfyJDD.png")
+                        .description(StringUtil.abbreviate(thisDay.getEvents(), Embed.MAX_DESCRIPTION_LENGTH)).build());
     }
 
     private static Duration getNextUpdate() {
@@ -66,6 +58,13 @@ public class ThisDayCmd extends BaseCmd {
         }
 
         return TimeUtil.elapsed(nextDate.toInstant());
+    }
+
+    @Override
+    public Mono<?> execute(Context context) {
+        return context.createFollowupMessage(Emoji.HOURGLASS, context.localize("thisday.loading"))
+                .then(this.getThisDay)
+                .flatMap(thisDay -> context.editFollowupMessage(ThisDayCmd.formatEmbed(context, thisDay)));
     }
 
 }

@@ -1,7 +1,6 @@
 package com.locibot.locibot.command.moderation;
 
 import com.locibot.locibot.core.command.*;
-import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.database.guilds.bean.setting.IamBean;
 import com.locibot.locibot.database.guilds.entity.setting.Iam;
 import com.locibot.locibot.utils.DiscordUtil;
@@ -10,6 +9,7 @@ import com.locibot.locibot.utils.ShadbotUtil;
 import discord4j.core.object.entity.Role;
 import discord4j.core.object.reaction.ReactionEmoji;
 import discord4j.core.object.reaction.ReactionEmoji.Unicode;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import discord4j.rest.util.Permission;
@@ -18,7 +18,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -70,12 +69,13 @@ public class IamCmd extends BaseCmd {
                                     .formatted(REACTION.getRaw(), FormatUtil.format(roles,
                                             role -> "`@%s`".formatted(role.getName()), "\n")));
 
-                            final Consumer<EmbedCreateSpec> embedConsumer = ShadbotUtil.getDefaultEmbed(
-                                    embed -> embed.setAuthor("Iam: %s"
-                                                    .formatted(FormatUtil.format(roles,
-                                                            role -> "@%s".formatted(role.getName()), ", ")),
-                                            null, context.getAuthorAvatar())
-                                            .setDescription(description));
+                            final EmbedCreateSpec embedConsumer = ShadbotUtil.getDefaultEmbed(
+                                    EmbedCreateSpec.builder()
+                                            .author(EmbedCreateFields.Author.of("Iam: %s"
+                                                            .formatted(FormatUtil.format(roles,
+                                                                    role -> "@%s".formatted(role.getName()), ", ")),
+                                                    null, context.getAuthorAvatar()))
+                                            .description(description).build());
 
                             return context.createFollowupMessage(embedConsumer)
                                     .flatMap(message -> message.addReaction(REACTION)

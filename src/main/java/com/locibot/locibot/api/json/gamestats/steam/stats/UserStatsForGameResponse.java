@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Optional;
 
-public record UserStatsForGameResponse(@JsonProperty("playerstats") Optional<PlayerStats> playerStats) {
+public record UserStatsForGameResponse(
+        @JsonProperty("playerstats") Optional<PlayerStats> playerStats) {
 
 }

@@ -1,7 +1,6 @@
 package com.locibot.locibot.command.setting;
 
 import com.locibot.locibot.core.command.*;
-import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.database.guilds.entity.DBGuild;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
@@ -17,10 +16,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class AllowedRolesSetting extends BaseCmd {
-
-    private enum Action {
-        ADD, REMOVE
-    }
 
     public AllowedRolesSetting() {
         super(CommandCategory.SETTING, CommandPermission.ADMIN,
@@ -52,7 +47,7 @@ public class AllowedRolesSetting extends BaseCmd {
                 .required(false)
                 .type(ApplicationCommandOptionType.ROLE.getValue()));
 
-/* TODO               .addField("Info", "**server owner** and **administrators** "
+/* TODO               .fields("Info", "**server owner** and **administrators** "
                         + "will always be able to interact with Shadbot.", false)
  */
     }
@@ -90,6 +85,10 @@ public class AllowedRolesSetting extends BaseCmd {
                     return dbGuild.updateSetting(Setting.ALLOWED_ROLES, allowedRoleIds)
                             .then(context.createFollowupMessage(strBuilder.toString()));
                 });
+    }
+
+    private enum Action {
+        ADD, REMOVE
     }
 
 }

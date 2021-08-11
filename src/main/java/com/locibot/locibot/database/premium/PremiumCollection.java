@@ -1,14 +1,14 @@
 package com.locibot.locibot.database.premium;
 
-import com.locibot.locibot.database.DatabaseCollection;
-import com.mongodb.reactivestreams.client.MongoDatabase;
 import com.locibot.locibot.core.cache.SingleValueCache;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.Telemetry;
+import com.locibot.locibot.database.DatabaseCollection;
 import com.locibot.locibot.database.premium.bean.RelicBean;
 import com.locibot.locibot.database.premium.entity.Relic;
 import com.locibot.locibot.utils.LogUtil;
 import com.locibot.locibot.utils.NetUtil;
+import com.mongodb.reactivestreams.client.MongoDatabase;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.User;
@@ -31,6 +31,17 @@ public class PremiumCollection extends DatabaseCollection {
     public PremiumCollection(MongoDatabase database) {
         super(database, "premium");
         this.relicCache = SingleValueCache.Builder.create(this.requestRelics()).withInfiniteTtl().build();
+    }
+
+    /**
+     * @param type The {@link RelicType} type of the {@link Relic} to generate.
+     * @return The generated {@link Relic} inserted in the database.
+     */
+    public static Mono<Relic> generateRelic(RelicType type) {
+        final Relic relic = new Relic(UUID.randomUUID(), type, Duration.ofDays(Config.RELIC_DURATION));
+        return relic.insert()
+                .thenReturn(relic)
+                .doOnSubscribe(__ -> LOGGER.info("Relic generated. Type: {}, ID: {}", relic.getType(), relic.getId()));
     }
 
     private Mono<List<Relic>> requestRelics() {
@@ -84,17 +95,6 @@ public class PremiumCollection extends DatabaseCollection {
                 .filter(relic -> relic.getUserId().map(userId::equals).orElse(false)
                         || relic.getGuildId().map(guildId::equals).orElse(false))
                 .hasElements();
-    }
-
-    /**
-     * @param type The {@link RelicType} type of the {@link Relic} to generate.
-     * @return The generated {@link Relic} inserted in the database.
-     */
-    public static Mono<Relic> generateRelic(RelicType type) {
-        final Relic relic = new Relic(UUID.randomUUID(), type, Duration.ofDays(Config.RELIC_DURATION));
-        return relic.insert()
-                .thenReturn(relic)
-                .doOnSubscribe(__ -> LOGGER.info("Relic generated. Type: {}, ID: {}", relic.getType(), relic.getId()));
     }
 
     public void invalidateCache() {

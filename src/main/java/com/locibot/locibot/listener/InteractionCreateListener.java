@@ -1,16 +1,16 @@
 package com.locibot.locibot.listener;
 
 import com.locibot.locibot.core.command.*;
-import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.core.i18n.I18nManager;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.Telemetry;
+import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.ReactorUtil;
 import discord4j.core.event.domain.interaction.InteractionCreateEvent;
 import discord4j.core.object.command.ApplicationCommandInteraction;
-import discord4j.core.object.entity.channel.PrivateChannel;
 import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 import discord4j.rest.util.Permission;
 import reactor.core.publisher.Mono;
 
@@ -38,8 +38,10 @@ public class InteractionCreateListener implements EventListener<InteractionCreat
                 .filterWhen(ReactorUtil.filterOrExecute(
                         permissions -> permissions.contains(Permission.SEND_MESSAGES)
                                 && permissions.contains(Permission.VIEW_CHANNEL),
-                        event.replyEphemeral(Emoji.RED_CROSS
-                                + I18nManager.localize(Config.DEFAULT_LOCALE, "interaction.missing.permissions"))))
+                        event.reply(InteractionApplicationCommandCallbackSpec.builder()
+                                .content(Emoji.RED_CROSS
+                                        + I18nManager.localize(Config.DEFAULT_LOCALE, "interaction.missing.permissions"))
+                                .ephemeral(true).build())))
                 .flatMap(__ -> Mono.justOrEmpty(event.getInteraction().getGuildId()))
                 .flatMap(guildId -> DatabaseManager.getGuilds().getDBGuild(guildId))
                 .map(dbGuild -> new Context(event, dbGuild))

@@ -13,14 +13,6 @@ public class Telemetry {
     public static final Set<Long> GUILD_IDS = new HashSet<>();
 
     private static final String SYSTEM_NAMESPACE = "system";
-    private static final String SHARD_NAMESPACE = "shard";
-    private static final String SHADBOT_NAMESPACE = "shadbot";
-    private static final String DATABASE_NAMESPACE = "database";
-    private static final String DISCORD_NAMESPACE = "discord";
-    private static final String MUSIC_NAMESPACE = "music";
-    private static final String GAME_NAMESPACE = "game";
-    private static final String PROCESS_NAMESPACE = "process";
-
     public static final Gauge UPTIME_GAUGE = Gauge.build("uptime", "Uptime in ms")
             .namespace(SYSTEM_NAMESPACE).register();
     public static final Gauge PROCESS_CPU_USAGE_GAUGE = Gauge.build("process_cpu_usage", "Process CPU usage")
@@ -45,38 +37,34 @@ public class Telemetry {
             .namespace(SYSTEM_NAMESPACE).register();
     public static final Gauge DAEMON_THREAD_COUNT_GAUGE = Gauge.build("daemon_thread_count", "Daemon thread count")
             .namespace(SYSTEM_NAMESPACE).register();
-
-    public static final Gauge GUILD_COUNT_GAUGE = Gauge.build("guild_count", "Guild count")
-            .namespace(SHADBOT_NAMESPACE).register();
+    private static final String SHARD_NAMESPACE = "shard";
     public static final Gauge RESPONSE_TIME_GAUGE = Gauge.build("response_time", "Shard response time")
             .namespace(SHARD_NAMESPACE).labelNames("shard_id").register();
+    public static final Counter REST_REQUEST_COUNTER = Counter.build("rest_request", "REST request count")
+            .namespace(SHARD_NAMESPACE).labelNames("route").register();
+    private static final String SHADBOT_NAMESPACE = "shadbot";
+    public static final Gauge GUILD_COUNT_GAUGE = Gauge.build("guild_count", "Guild count")
+            .namespace(SHADBOT_NAMESPACE).register();
     public static final Gauge VOICE_COUNT_GAUGE = Gauge.build("voice_count", "Connected voice channel count")
             .namespace(SHADBOT_NAMESPACE).register();
     public static final Gauge UNIQUE_INTERACTING_USERS = Gauge.build("unique_interacting_users",
             "Unique interacting users count").namespace(SHADBOT_NAMESPACE).register();
-
-    public static final Gauge PROCESS_TOTAL_MEMORY = Gauge.build("total_memory", "Total memory")
-            .namespace(PROCESS_NAMESPACE).register();
-    public static final Gauge PROCESS_FREE_MEMORY = Gauge.build("free_memory", "Free memory")
-            .namespace(PROCESS_NAMESPACE).register();
-    public static final Gauge PROCESS_MAX_MEMORY = Gauge.build("max_memory", "Max memory")
-            .namespace(PROCESS_NAMESPACE).register();
-
+    public static final Counter COMMAND_USAGE_COUNTER = Counter.build("command_usage", "Command usage")
+            .namespace(SHADBOT_NAMESPACE).labelNames("command").register();
+    private static final String DATABASE_NAMESPACE = "database";
+    public static final Counter DB_REQUEST_COUNTER = Counter.build("request_count", "Database request count")
+            .namespace(DATABASE_NAMESPACE).labelNames("collection").register();
+    private static final String DISCORD_NAMESPACE = "discord";
     public static final Counter EVENT_COUNTER = Counter.build("event_count", "Discord event count")
             .namespace(DISCORD_NAMESPACE).labelNames("type").register();
     public static final Counter VOICE_CHANNEL_ERROR_COUNTER = Counter.build("voice_channel_error_count",
             "Voice channel error count").namespace(DISCORD_NAMESPACE).labelNames("exception").register();
-    public static final Counter COMMAND_USAGE_COUNTER = Counter.build("command_usage", "Command usage")
-            .namespace(SHADBOT_NAMESPACE).labelNames("command").register();
-    public static final Counter REST_REQUEST_COUNTER = Counter.build("rest_request", "REST request count")
-            .namespace(SHARD_NAMESPACE).labelNames("route").register();
-    public static final Counter DB_REQUEST_COUNTER = Counter.build("request_count", "Database request count")
-            .namespace(DATABASE_NAMESPACE).labelNames("collection").register();
     public static final Counter MESSAGE_SENT_COUNTER = Counter.build("message_sent", "Message sent count")
             .namespace(DISCORD_NAMESPACE).register();
+    private static final String MUSIC_NAMESPACE = "music";
     public static final Counter MUSIC_ERROR_COUNTER = Counter.build("music_error_count", "Music error count")
             .namespace(MUSIC_NAMESPACE).labelNames("exception").register();
-
+    private static final String GAME_NAMESPACE = "game";
     public static final Summary BLACKJACK_SUMMARY = Summary.build("blackjack", "Blackjack game")
             .namespace(GAME_NAMESPACE).labelNames("result").register();
     public static final Summary DICE_SUMMARY = Summary.build("dice", "Dice game")
@@ -93,5 +81,12 @@ public class Telemetry {
             .namespace(GAME_NAMESPACE).labelNames("result").register();
     public static final Summary SLOT_MACHINE_SUMMARY = Summary.build("slot_machine", "Slot Machine game")
             .namespace(GAME_NAMESPACE).labelNames("result").register();
+    private static final String PROCESS_NAMESPACE = "process";
+    public static final Gauge PROCESS_TOTAL_MEMORY = Gauge.build("total_memory", "Total memory")
+            .namespace(PROCESS_NAMESPACE).register();
+    public static final Gauge PROCESS_FREE_MEMORY = Gauge.build("free_memory", "Free memory")
+            .namespace(PROCESS_NAMESPACE).register();
+    public static final Gauge PROCESS_MAX_MEMORY = Gauge.build("max_memory", "Max memory")
+            .namespace(PROCESS_NAMESPACE).register();
 
 }

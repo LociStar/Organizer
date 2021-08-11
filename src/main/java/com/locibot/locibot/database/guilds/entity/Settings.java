@@ -1,10 +1,10 @@
 package com.locibot.locibot.database.guilds.entity;
 
+import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CommandManager;
 import com.locibot.locibot.database.SerializableEntity;
 import com.locibot.locibot.database.guilds.bean.SettingsBean;
 import com.locibot.locibot.database.guilds.entity.setting.AutoMessage;
-import com.locibot.locibot.core.command.BaseCmd;
-import com.locibot.locibot.core.command.CommandManager;
 import com.locibot.locibot.database.guilds.entity.setting.Iam;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Role;

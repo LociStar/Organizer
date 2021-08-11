@@ -1,8 +1,5 @@
 package com.locibot.locibot.utils.weather;
 
-import io.netty.handler.logging.ByteBufFormat;
-import net.aksingh.owmjapis.api.APIException;
-import net.aksingh.owmjapis.core.OWM;
 import net.aksingh.owmjapis.model.HourlyWeatherForecast;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.HeatMapChart;
@@ -10,14 +7,11 @@ import org.knowm.xchart.HeatMapChartBuilder;
 import org.knowm.xchart.HeatMapSeries;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class CreateHeatMap {
 

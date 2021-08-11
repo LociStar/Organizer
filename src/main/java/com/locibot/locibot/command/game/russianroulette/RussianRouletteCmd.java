@@ -8,11 +8,14 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
 import discord4j.common.util.Snowflake;
+import discord4j.core.spec.EmbedCreateFields;
+import discord4j.core.spec.EmbedCreateSpec;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -62,11 +65,11 @@ public class RussianRouletteCmd extends BaseCmd {
                 }))
                 .map(StringBuilder::toString)
                 .map(description -> ShadbotUtil.getDefaultEmbed(
-                        embed -> embed.setAuthor(context.localize("russianroulette.title"),
-                                null, context.getAuthorAvatar())
-                                .addField(context.localize("russianroulette.tries"),
-                                        "%d/6".formatted(player.getRemaining()), false)
-                                .setDescription(description)))
+                        EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("russianroulette.title"),
+                                null, context.getAuthorAvatar()))
+                                .fields(List.of(EmbedCreateFields.Field.of(context.localize("russianroulette.tries"),
+                                        "%d/6".formatted(player.getRemaining()), false)))
+                                .description(description).build()))
                 .flatMap(context::createFollowupMessage);
     }
 

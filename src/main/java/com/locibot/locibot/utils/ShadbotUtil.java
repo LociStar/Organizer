@@ -1,11 +1,11 @@
 package com.locibot.locibot.utils;
 
+import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.i18n.I18nManager;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.guilds.entity.DBMember;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.locibot.locibot.command.CommandException;
 import discord4j.common.util.Snowflake;
 import discord4j.core.spec.EmbedCreateSpec;
 import org.jsoup.Jsoup;
@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
 
 import java.util.Locale;
-import java.util.function.Consumer;
 
 public class ShadbotUtil {
 
@@ -50,8 +49,8 @@ public class ShadbotUtil {
     /**
      * @return A default {@link EmbedCreateSpec} with the default color set.
      */
-    public static Consumer<EmbedCreateSpec> getDefaultEmbed(Consumer<EmbedCreateSpec> embed) {
-        return embed.andThen(spec -> spec.withColor(Config.BOT_COLOR));
+    public static EmbedCreateSpec getDefaultEmbed(EmbedCreateSpec embed) {
+        return embed.withColor(Config.BOT_COLOR);
     }
 
 }

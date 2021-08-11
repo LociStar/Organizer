@@ -8,23 +8,18 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 public class XkcdCmd extends BaseCmd {
 
-    private enum Sort {
-        LATEST, RANDOM
-    }
-
     private static final String HOME_URL = "https://xkcd.com";
     private static final String LAST_URL = "%s/info.0.json".formatted(HOME_URL);
-
     // Cache for the latest Xkcd ID
     private final AtomicInteger latestId;
 
@@ -36,6 +31,17 @@ public class XkcdCmd extends BaseCmd {
                 DiscordUtil.toOptions(Sort.class));
     }
 
+    private static EmbedCreateSpec formatEmbed(String avatarUrl, XkcdResponse xkcd) {
+        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+                .author(EmbedCreateFields.Author.of("XKCD: %s".formatted(xkcd.title()), "%s/%d".formatted(HOME_URL, xkcd.num()), avatarUrl))
+                .image(xkcd.img()).build());
+    }
+
+    private static Mono<XkcdResponse> getLatestXkcd() {
+        return RequestHelper.fromUrl(LAST_URL)
+                .to(XkcdResponse.class);
+    }
+
     @Override
     public Mono<?> execute(Context context) {
         final Sort sort = context.getOptionAsEnum(Sort.class, "sort").orElseThrow();
@@ -43,12 +49,6 @@ public class XkcdCmd extends BaseCmd {
         return context.createFollowupMessage(Emoji.HOURGLASS, context.localize("xkcd.loading"))
                 .then(getResponse)
                 .flatMap(xkcd -> context.editFollowupMessage(XkcdCmd.formatEmbed(context.getAuthorAvatar(), xkcd)));
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(String avatarUrl, XkcdResponse xkcd) {
-        return ShadbotUtil.getDefaultEmbed(embed ->
-                embed.setAuthor("XKCD: %s".formatted(xkcd.title()), "%s/%d".formatted(HOME_URL, xkcd.num()), avatarUrl)
-                        .setImage(xkcd.img()));
     }
 
     private Mono<XkcdResponse> getRandomXkcd() {
@@ -62,9 +62,8 @@ public class XkcdCmd extends BaseCmd {
                         .to(XkcdResponse.class));
     }
 
-    private static Mono<XkcdResponse> getLatestXkcd() {
-        return RequestHelper.fromUrl(LAST_URL)
-                .to(XkcdResponse.class);
+    private enum Sort {
+        LATEST, RANDOM
     }
 
 }

@@ -1,12 +1,12 @@
 package com.locibot.locibot.utils;
 
 import com.locibot.locibot.LociBot;
+import com.locibot.locibot.command.CommandException;
+import com.locibot.locibot.command.MissingPermissionException;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.database.guilds.entity.Settings;
-import com.locibot.locibot.command.CommandException;
-import com.locibot.locibot.command.MissingPermissionException;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.ExceptionHandler;
 import discord4j.common.util.Snowflake;
@@ -44,7 +44,7 @@ public class DiscordUtil {
      * it is emitted through the Mono.
      */
     public static Mono<Message> sendMessage(String content, MessageChannel channel) {
-        return DiscordUtil.sendMessage(spec -> spec.setContent(content), channel, false);
+        return DiscordUtil.sendMessage(spec -> spec.withContent(content), channel, false);
     }
 
     /**
@@ -74,10 +74,9 @@ public class DiscordUtil {
                                         .formatted(FormatUtil.capitalizeEnum(Permission.EMBED_LINKS)), channel);
                     }
 
-                    return channel.createMessage(spec
-                            .andThen(messageSpec -> messageSpec.setAllowedMentions(AllowedMentions.builder()
-                                    .parseType(AllowedMentions.Type.ROLE, AllowedMentions.Type.USER)
-                                    .build())));
+                    return channel.createMessage(MessageCreateSpec.builder().build().withAllowedMentions(AllowedMentions.builder()
+                            .parseType(AllowedMentions.Type.ROLE, AllowedMentions.Type.USER)
+                            .build()));
                 }))
                 // 403 Forbidden means that the bot is not in the guild
                 .onErrorResume(ClientException.isStatusCode(HttpResponseStatus.FORBIDDEN.code()), err -> Mono.empty())

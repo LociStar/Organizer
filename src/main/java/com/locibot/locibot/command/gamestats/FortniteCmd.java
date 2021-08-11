@@ -14,35 +14,72 @@ import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.util.function.Consumer;
 
 public class FortniteCmd extends BaseCmd {
 
-    private enum Platform {
-        PC, XBL, PSN
-    }
-
     private static final String PLAYER_NOT_FOUND = "Player Not Found";
-
     private final MultiValueCache<String, FortniteResponse> cachedValues;
     private final String apiKey;
-
     public FortniteCmd() {
         super(CommandCategory.GAMESTATS, "fortnite", "Search for Fortnite statistics");
         this.addOption("platform", "User's platform", true, ApplicationCommandOptionType.STRING,
                 DiscordUtil.toOptions(Platform.class));
         this.addOption("username", "Epic nickname", true, ApplicationCommandOptionType.STRING);
 
-        this.cachedValues = MultiValueCache.Builder.<String, FortniteResponse>create()
+        this.cachedValues = MultiValueCache.Builder.<String, FortniteResponse>builder()
                 .withTtl(Config.CACHE_TTL)
                 .build();
         this.apiKey = CredentialManager.get(Credential.FORTNITE_API_KEY);
+    }
+
+    private static boolean isNotFound(Throwable err) {
+        return err.getMessage().equals(PLAYER_NOT_FOUND) || err.getMessage().contains("wrong header");
+    }
+
+    private static String buildApiUrl(Platform platform, final String encodedUsername) {
+        return "https://api.fortnitetracker.com/v1/profile/%s/%s"
+                .formatted(platform.name().toLowerCase(), encodedUsername);
+    }
+
+    private static String buildProfileUrl(Platform platform, String encodedUsername) {
+        return "https://fortnitetracker.com/profile/%s/%s"
+                .formatted(platform.name().toLowerCase(), encodedUsername);
+    }
+
+    private static EmbedCreateSpec formatEmbed(Context context, String profileUrl, String description) {
+        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+                .author(EmbedCreateFields.Author.of(context.localize("fortnite.title"), profileUrl, context.getAuthorAvatar()))
+                .thumbnail("https://i.imgur.com/8NrvS8e.png")
+                .description(description).build());
+    }
+
+    private static String formatDescription(Context context, Stats stats, String username) {
+        final int length = 8;
+        final String format = "%n%-" + (length + 5) + "s %-" + length + "s %-" + length + "s %-" + (length + 3) + "s";
+        return context.localize("fortnite.description").formatted(username) +
+                "```prolog" +
+                format.formatted(" ", context.localize("fortnite.solo"),
+                        context.localize("fortnite.duo"), context.localize("fortnite.squad")) +
+                format.formatted(context.localize("fortnite.top"),
+                        stats.getSoloStats().getTop1(),
+                        stats.getDuoStats().getTop1(),
+                        stats.getSquadStats().getTop1()) +
+                format.formatted(context.localize("fortnite.ratio.season"),
+                        stats.getSeasonSoloStats().getRatio(),
+                        stats.getSeasonDuoStats().getRatio(),
+                        stats.getSeasonSquadStats().getRatio()) +
+                format.formatted(context.localize("fortnite.ratio.lifetime"),
+                        stats.getSoloStats().getRatio(),
+                        stats.getDuoStats().getRatio(),
+                        stats.getSquadStats().getRatio()) +
+                "```";
     }
 
     @Override
@@ -70,47 +107,8 @@ public class FortniteCmd extends BaseCmd {
                         err -> context.editFollowupMessage(Emoji.MAGNIFYING_GLASS, context.localize("fortnite.user.not.found")));
     }
 
-    private static boolean isNotFound(Throwable err) {
-        return err.getMessage().equals(PLAYER_NOT_FOUND) || err.getMessage().contains("wrong header");
-    }
-
-    private static String buildApiUrl(Platform platform, final String encodedUsername) {
-        return "https://api.fortnitetracker.com/v1/profile/%s/%s"
-                .formatted(platform.name().toLowerCase(), encodedUsername);
-    }
-
-    private static String buildProfileUrl(Platform platform, String encodedUsername) {
-        return "https://fortnitetracker.com/profile/%s/%s"
-                .formatted(platform.name().toLowerCase(), encodedUsername);
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, String profileUrl, String description) {
-        return ShadbotUtil.getDefaultEmbed(embed ->
-                embed.setAuthor(context.localize("fortnite.title"), profileUrl, context.getAuthorAvatar())
-                        .setThumbnail("https://i.imgur.com/8NrvS8e.png")
-                        .setDescription(description));
-    }
-
-    private static String formatDescription(Context context, Stats stats, String username) {
-        final int length = 8;
-        final String format = "%n%-" + (length + 5) + "s %-" + length + "s %-" + length + "s %-" + (length + 3) + "s";
-        return context.localize("fortnite.description").formatted(username) +
-                "```prolog" +
-                format.formatted(" ", context.localize("fortnite.solo"),
-                        context.localize("fortnite.duo"), context.localize("fortnite.squad")) +
-                format.formatted(context.localize("fortnite.top"),
-                        stats.getSoloStats().getTop1(),
-                        stats.getDuoStats().getTop1(),
-                        stats.getSquadStats().getTop1()) +
-                format.formatted(context.localize("fortnite.ratio.season"),
-                        stats.getSeasonSoloStats().getRatio(),
-                        stats.getSeasonDuoStats().getRatio(),
-                        stats.getSeasonSquadStats().getRatio()) +
-                format.formatted(context.localize("fortnite.ratio.lifetime"),
-                        stats.getSoloStats().getRatio(),
-                        stats.getDuoStats().getRatio(),
-                        stats.getSquadStats().getRatio()) +
-                "```";
+    private enum Platform {
+        PC, XBL, PSN
     }
 
 }

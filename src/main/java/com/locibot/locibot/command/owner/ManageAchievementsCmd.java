@@ -17,10 +17,6 @@ import reactor.core.publisher.Mono;
 
 public class ManageAchievementsCmd extends BaseCmd {
 
-    private enum Action {
-        ADD, REMOVE
-    }
-
     public ManageAchievementsCmd() {
         super(CommandCategory.OWNER, CommandPermission.OWNER, "manage_achievements", "Manage user's achievements");
         this.addOption("action", "Whether to add or remove an achievment", true, ApplicationCommandOptionType.STRING,
@@ -47,6 +43,10 @@ public class ManageAchievementsCmd extends BaseCmd {
                         .then(context.createFollowupMessage(Emoji.CHECK_MARK, "%s achievement **%s** to **%s** done."
                                 .formatted(FormatUtil.capitalizeEnum(action), achievement.getTitle(context),
                                         user.getTag()))));
+    }
+
+    private enum Action {
+        ADD, REMOVE
     }
 
 }

@@ -1,19 +1,19 @@
 package com.locibot.locibot.database.guilds.entity;
 
 import com.locibot.locibot.command.CommandException;
+import com.locibot.locibot.data.Config;
+import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.database.DatabaseEntity;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.SerializableEntity;
 import com.locibot.locibot.database.guilds.GuildsCollection;
 import com.locibot.locibot.database.guilds.bean.DBMemberBean;
 import com.locibot.locibot.database.users.entity.achievement.Achievement;
+import com.locibot.locibot.utils.NumberUtil;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
-import com.locibot.locibot.data.Config;
-import com.locibot.locibot.data.Telemetry;
-import com.locibot.locibot.utils.NumberUtil;
 import discord4j.common.util.Snowflake;
 import org.bson.Document;
 import org.bson.conversions.Bson;

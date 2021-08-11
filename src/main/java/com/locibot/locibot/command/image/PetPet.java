@@ -13,8 +13,8 @@ import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
