@@ -18,16 +18,6 @@ public class Hello extends BaseCmd {
 
     @Override
     public Mono<?> execute(Context context) {
-        return context.getEvent().getInteractionResponse().createFollowupMessage("Hello")
-                .then(context.createFollowupMessage(EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of("Test", "", ""))
-                        .description("Test")
-                        .fields(List.of(
-                                EmbedCreateFields.Field.of("FILED1", "LOOOOOOOL", false))).build()))
-                .then(context.createFollowupMessage(
-                        EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of("Test", "", ""))
-                                .description("Test")
-                                .fields(List.of(
-                                        EmbedCreateFields.Field.of("FILED1", "LOOOOOOOL", false))
-                                ).build()));
+        return context.getEvent().getInteractionResponse().createFollowupMessage("Hello");
     }
 }
