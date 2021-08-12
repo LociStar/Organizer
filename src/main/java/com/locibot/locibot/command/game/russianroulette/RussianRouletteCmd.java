@@ -67,8 +67,8 @@ public class RussianRouletteCmd extends BaseCmd {
                 .map(description -> ShadbotUtil.getDefaultEmbed(
                         EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("russianroulette.title"),
                                 null, context.getAuthorAvatar()))
-                                .fields(List.of(EmbedCreateFields.Field.of(context.localize("russianroulette.tries"),
-                                        "%d/6".formatted(player.getRemaining()), false)))
+                                .addFields(EmbedCreateFields.Field.of(context.localize("russianroulette.tries"),
+                                        "%d/6".formatted(player.getRemaining()), false))
                                 .description(description).build()))
                 .flatMap(context::createFollowupMessage);
     }

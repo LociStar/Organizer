@@ -83,8 +83,8 @@ public class HangmanGame extends MultiplayerGame<Player> {
                     .map(String::toUpperCase)
                     .collect(Collectors.toList());
             if (!missedLetters.isEmpty()) {
-                embed.fields(List.of(EmbedCreateFields.Field.of(this.context.localize("hangman.misses"),
-                        String.join(", ", missedLetters), false)));
+                embed.addFields(EmbedCreateFields.Field.of(this.context.localize("hangman.misses"),
+                        String.join(", ", missedLetters), false));
             }
 
             if (this.isScheduled()) {

@@ -83,7 +83,7 @@ public class BlackjackGame extends MultiplayerGame<BlackjackPlayer> {
                             .thumbnail("https://i.imgur.com/oESeVrU.png")
                             .description(this.context.localize("blackjack.description")
                                     .formatted(this.context.getFullCommandName()))
-                            .fields(List.of(Field.of(this.context.localize("blackjack.dealer.hand"), visibleDealerHand.format(), true)));
+                            .addFields(Field.of(this.context.localize("blackjack.dealer.hand"), visibleDealerHand.format(), true));
                     if (this.isScheduled()) {
                         final Duration remainingDuration = this.getDuration().minus(TimeUtil.elapsed(this.startTimer));
                         embed.footer(Footer.of(this.context.localize("blackjack.footer.remaining")
@@ -94,7 +94,7 @@ public class BlackjackGame extends MultiplayerGame<BlackjackPlayer> {
 
                     this.players.values().stream()
                             .map(player -> player.format(this.context.getLocale()))
-                            .forEach(field -> embed.fields(List.of(Field.of(field.name(), field.value(), field.inline().get()))));
+                            .forEach(field -> embed.addFields(Field.of(field.name(), field.value(), field.inline().get())));
 
                     return ShadbotUtil.getDefaultEmbed(embed.build());
                 })

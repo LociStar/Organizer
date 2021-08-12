@@ -88,7 +88,7 @@ public class RelicStatusCmd extends BaseCmd {
                             .author(EmbedCreateFields.Author.of(context.localize("relicstatus.title"), null, context.getAuthorAvatar()))
                             .thumbnail("https://i.imgur.com/R0N6kW3.png");
 
-                    fields.forEach(field -> embed.fields(List.of(EmbedCreateFields.Field.of(field.name(), field.value(), field.inline().get()))));
+                    fields.forEach(field -> embed.addFields(EmbedCreateFields.Field.of(field.name(), field.value(), field.inline().get())));
                     return ShadbotUtil.getDefaultEmbed(embed.build());
                 })
                 .flatMap(context::createFollowupMessage)

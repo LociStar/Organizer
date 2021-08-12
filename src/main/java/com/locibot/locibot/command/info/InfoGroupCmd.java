@@ -49,10 +49,10 @@ public class InfoGroupCmd extends BaseCmd {
                 .color(Color.GREEN)
                 .thumbnail("https://img.icons8.com/cotton/344/info--v3.png")
                 .author(EmbedCreateFields.Author.of(owner.getUsername(), "", owner.getAvatarUrl()))
-                .fields(List.of(
+                .addFields(
                         EmbedCreateFields.Field.of("Members", group.getMembers().size() + "", true),
                         EmbedCreateFields.Field.of("Scheduled", dateTime, true),
-                        EmbedCreateFields.Field.of("Team Created", LocalDate.parse(group.getBean().getCreationDate()).format(DateTimeFormatter.ofPattern("dd. MMMM yyyy")), true)));
+                        EmbedCreateFields.Field.of("Team Created", LocalDate.parse(group.getBean().getCreationDate()).format(DateTimeFormatter.ofPattern("dd. MMMM yyyy")), true));
         StringBuilder users = new StringBuilder();
         StringBuilder invited = new StringBuilder();
         StringBuilder inviteStatus = new StringBuilder();
@@ -62,10 +62,10 @@ public class InfoGroupCmd extends BaseCmd {
             invited.append(member.getBean().isInvited()).append(System.getProperty("line.separator"));
             inviteStatus.append(member.getBean().getAccepted() == 1 ? "accepted" : member.getBean().getAccepted() == 0 ? "pending" : "declined").append(System.getProperty("line.separator"));
         });
-        embedCreateSpec.fields(List.of(
+        embedCreateSpec.addFields(
                 EmbedCreateFields.Field.of("Users", users.toString(), true),
                 EmbedCreateFields.Field.of("Invited", invited.toString(), true),
-                EmbedCreateFields.Field.of("Invite Status", inviteStatus.toString(), true)));
+                EmbedCreateFields.Field.of("Invite Status", inviteStatus.toString(), true));
         return context.createFollowupMessage(embedCreateSpec.build());
     }
 
@@ -91,10 +91,10 @@ public class InfoGroupCmd extends BaseCmd {
             count.append("---");
             scheduled.append("---");
         }
-        embedCreateSpec.fields(List.of(
+        embedCreateSpec.addFields(
                 EmbedCreateFields.Field.of("Name", name.toString(), true),
                 EmbedCreateFields.Field.of("Member Count", count.toString(), true),
-                EmbedCreateFields.Field.of("Scheduled", scheduled.toString(), true)));
+                EmbedCreateFields.Field.of("Scheduled", scheduled.toString(), true));
 
         return context.createFollowupMessage(embedCreateSpec.build());
     }

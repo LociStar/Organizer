@@ -43,14 +43,14 @@ public class WallhavenCmd extends BaseCmd {
             if (NetUtil.isUrl(source)) {
                 embed.description(context.localize("wallhaven.source.url").formatted(source));
             } else {
-                embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("wallhaven.source"), source, false)));
+                embed.addFields(EmbedCreateFields.Field.of(context.localize("wallhaven.source"), source, false));
             }
         });
 
         embed.author(EmbedCreateFields.Author.of(title, wallpaper.url(), context.getAuthorAvatar()))
                 .thumbnail("https://wallhaven.cc/images/layout/logo_sm.png")
                 .image(wallpaper.path())
-                .fields(List.of(EmbedCreateFields.Field.of(context.localize("wallhaven.resolution"), wallpaper.resolution(), false)));
+                .addFields(EmbedCreateFields.Field.of(context.localize("wallhaven.resolution"), wallpaper.resolution(), false));
         return ShadbotUtil.getDefaultEmbed(embed.build());
     }
 

@@ -54,7 +54,7 @@ public class Rule34Cmd extends BaseCmd {
             if (NetUtil.isUrl(source)) {
                 embed.description(context.localize("rule34.source.url").formatted(source));
             } else {
-                embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("rule34.source"), source, false)));
+                embed.addFields(EmbedCreateFields.Field.of(context.localize("rule34.source"), source, false));
             }
         });
 
@@ -62,9 +62,9 @@ public class Rule34Cmd extends BaseCmd {
         final String formattedTags = Rule34Cmd.formatTags(post.getTags());
         embed.author(EmbedCreateFields.Author.of(context.localize("rule34.title").formatted(tag), post.fileUrl(), context.getAuthorAvatar()))
                 .thumbnail("https://i.imgur.com/t6JJWFN.png")
-                .fields(List.of(
+                .addFields(
                         EmbedCreateFields.Field.of(context.localize("rule34.resolution"), resolution, false),
-                        EmbedCreateFields.Field.of(context.localize("rule34.tags"), formattedTags, false)))
+                        EmbedCreateFields.Field.of(context.localize("rule34.tags"), formattedTags, false))
                 .image(post.fileUrl())
                 .footer(EmbedCreateFields.Footer.of(context.localize("rule34.footer"), null));
         return ShadbotUtil.getDefaultEmbed(embed.build());

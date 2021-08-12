@@ -39,8 +39,8 @@ public class HelpCmd extends BaseCmd {
         for (final CommandCategory category : CommandCategory.values()) {
             final Collection<String> cmds = map.get(category);
             if (cmds != null && !cmds.isEmpty()) {
-                embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("help.field.title").formatted(category.getName()),
-                        String.join(" ", cmds), false)));
+                embed.addField(EmbedCreateFields.Field.of(context.localize("help.field.title").formatted(category.getName()),
+                        String.join(" ", cmds), false));
             }
         }
         return ShadbotUtil.getDefaultEmbed(embed.build());

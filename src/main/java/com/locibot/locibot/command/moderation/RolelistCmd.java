@@ -70,7 +70,7 @@ public class RolelistCmd extends BaseCmd {
                             .formatted(rolesFormatted));
 
                     FormatUtil.createColumns(usernames, 25)
-                            .forEach(field -> embed.fields(List.of(EmbedCreateFields.Field.of(field.name(), field.value(), true))));
+                            .forEach(field -> embed.addFields(EmbedCreateFields.Field.of(field.name(), field.value(), true)));
                     return ShadbotUtil.getDefaultEmbed(embed.build());
                 }))
                 .flatMap(context::createFollowupMessage);

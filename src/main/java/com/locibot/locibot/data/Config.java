@@ -12,12 +12,12 @@ import java.util.Properties;
 
 public class Config {
 
-    public static final boolean IS_SNAPSHOT = VERSION.endsWith("SNAPSHOT");
-    public static final String USER_AGENT = "Shadbot/%s/D4J-DiscordBot (%s)".formatted(VERSION, GITHUB_URL);
     private static final Logger LOGGER = LogUtil.getLogger(Config.class);
     private static final Properties PROPERTIES = Config.loadProperties();
     public static final String VERSION = PROPERTIES.getProperty("version");
+    public static final boolean IS_SNAPSHOT = VERSION.endsWith("SNAPSHOT");
     public static final String GITHUB_URL = PROPERTIES.getProperty("github.url");
+    public static final String USER_AGENT = "Shadbot/%s/D4J-DiscordBot (%s)".formatted(VERSION, GITHUB_URL);
     public static final String PATREON_URL = PROPERTIES.getProperty("patreon.url");
     public static final String SUPPORT_SERVER_URL = PROPERTIES.getProperty("support.server.url");
     public static final String TOP_GG_URL = PROPERTIES.getProperty("top.gg.url");

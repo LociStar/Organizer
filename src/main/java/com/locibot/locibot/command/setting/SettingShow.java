@@ -90,52 +90,52 @@ public class SettingShow extends BaseCmd {
                     embed.footer(EmbedCreateFields.Footer.of(context.localize("settings.footer"), null));
 
                     defaultVolume.ifPresent(volume ->
-                            embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("settings.volume"), "%d%%".formatted(volume), false))));
+                            embed.addFields(EmbedCreateFields.Field.of(context.localize("settings.volume"), "%d%%".formatted(volume), false)));
                     locale.ifPresent(lang ->
-                            embed.fields(List.of(EmbedCreateFields.Field.of("Language", lang.toLanguageTag(), false))));
+                            embed.addFields(EmbedCreateFields.Field.of("Language", lang.toLanguageTag(), false)));
                     autoJoinMessage.ifPresent(it ->
-                            embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("settings.auto.join.message"), "%s\n%s"
-                                    .formatted(it.getT1().getMention(), it.getT2()), false))));
+                            embed.addFields(EmbedCreateFields.Field.of(context.localize("settings.auto.join.message"), "%s\n%s"
+                                    .formatted(it.getT1().getMention(), it.getT2()), false)));
                     autoLeaveMessage.ifPresent(it ->
-                            embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("settings.auto.leave.message"), "%s\n%s"
-                                    .formatted(it.getT1().getMention(), it.getT2()), false))));
+                            embed.addFields(EmbedCreateFields.Field.of(context.localize("settings.auto.leave.message"), "%s\n%s"
+                                    .formatted(it.getT1().getMention(), it.getT2()), false)));
                     if (!blacklistedCmds.isEmpty()) {
-                        embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("settings.blacklist"),
-                                FormatUtil.format(blacklistedCmds, Function.identity(), "\n"), false)));
+                        embed.addField(EmbedCreateFields.Field.of(context.localize("settings.blacklist"),
+                                FormatUtil.format(blacklistedCmds, Function.identity(), "\n"), false));
                     }
                     if (!allowedRoles.isEmpty()) {
-                        embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("settings.allowed.roles"),
-                                FormatUtil.format(allowedRoles, Role::getMention, "\n"), false)));
+                        embed.addField(EmbedCreateFields.Field.of(context.localize("settings.allowed.roles"),
+                                FormatUtil.format(allowedRoles, Role::getMention, "\n"), false));
                     }
                     if (!allowedTextChannels.isEmpty()) {
-                        embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("settings.allowed.text.channels"),
-                                FormatUtil.format(allowedTextChannels, Channel::getMention, "\n"), false)));
+                        embed.addField(EmbedCreateFields.Field.of(context.localize("settings.allowed.text.channels"),
+                                FormatUtil.format(allowedTextChannels, Channel::getMention, "\n"), false));
                     }
                     if (!allowedVoiceChannels.isEmpty()) {
-                        embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("settings.allowed.voice.channels"),
-                                FormatUtil.format(allowedVoiceChannels, Channel::getMention, "\n"), false)));
+                        embed.addField(EmbedCreateFields.Field.of(context.localize("settings.allowed.voice.channels"),
+                                FormatUtil.format(allowedVoiceChannels, Channel::getMention, "\n"), false));
                     }
                     if (!autoRoles.isEmpty()) {
-                        embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("settings.auto.roles"),
-                                FormatUtil.format(autoRoles, Role::getMention, "\n"), false)));
+                        embed.addField(EmbedCreateFields.Field.of(context.localize("settings.auto.roles"),
+                                FormatUtil.format(autoRoles, Role::getMention, "\n"), false));
                     }
                     if (!restrictedChannels.isEmpty()) {
-                        embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("settings.restricted.channels"),
+                        embed.addField(EmbedCreateFields.Field.of(context.localize("settings.restricted.channels"),
                                 FormatUtil.format(restrictedChannels.entrySet(),
                                         entry -> "%s\n - %s".formatted(
                                                 entry.getKey().getMention(),
                                                 FormatUtil.format(entry.getValue(), BaseCmd::getName, "\n - ")),
                                         "\n"),
-                                false)));
+                                false));
                     }
                     if (!restrictedRoles.isEmpty()) {
-                        embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("settings.restricted.roles"),
+                        embed.addField(EmbedCreateFields.Field.of(context.localize("settings.restricted.roles"),
                                 FormatUtil.format(restrictedRoles.entrySet(),
                                         entry -> "%s\n - %s".formatted(
                                                 entry.getKey().getMention(),
                                                 FormatUtil.format(entry.getValue(), BaseCmd::getName, "\n - ")),
                                         "\n"),
-                                false)));
+                                false));
                     }
 
                     if (embed.build().asRequest().fields().toOptional().map(List::isEmpty).orElse(true)) {

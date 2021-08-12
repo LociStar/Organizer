@@ -76,7 +76,7 @@ public abstract class HelpBuilder {
         if (this.authorName != null && !this.authorName.isBlank()) {
             embed.author(EmbedCreateFields.Author.of(this.authorName, this.authorUrl, this.context.getAuthorAvatar()));
         }
-        embed.fields(List.of(EmbedCreateFields.Field.of(this.context.localize("help.usage"), this.getUsage(), false)));
+        embed.addField(EmbedCreateFields.Field.of(this.context.localize("help.usage"), this.getUsage(), false));
 
         if (this.description != null && !this.description.isBlank()) {
             embed.description(this.description);
@@ -87,15 +87,15 @@ public abstract class HelpBuilder {
         }
 
         if (!this.getArguments().isEmpty()) {
-            embed.fields(List.of(EmbedCreateFields.Field.of(this.context.localize("help.arguments"), this.getArguments(), false)));
+            embed.addField(EmbedCreateFields.Field.of(this.context.localize("help.arguments"), this.getArguments(), false));
         }
 
         if (this.source != null && !this.source.isBlank()) {
-            embed.fields(List.of(EmbedCreateFields.Field.of(this.context.localize("help.source"), this.source, false)));
+            embed.addField(EmbedCreateFields.Field.of(this.context.localize("help.source"), this.source, false));
         }
 
         for (final ImmutableEmbedFieldData field : this.fields) {
-            embed.fields(List.of(EmbedCreateFields.Field.of(field.name(), field.value(), field.inline().get())));
+            embed.addField(EmbedCreateFields.Field.of(field.name(), field.value(), field.inline().get()));
         }
 
         if (this.footer != null && !this.footer.isBlank()) {
