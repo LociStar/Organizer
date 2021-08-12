@@ -16,6 +16,7 @@ import discord4j.core.object.entity.channel.VoiceChannel;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Image.Format;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 
@@ -39,14 +40,14 @@ public class ServerInfoCmd extends BaseCmd {
         return Mono.zip(Mono.just(context),
                 getGuild,
                 getGuild.flatMapMany(Guild::getChannels).collectList(),
-                getGuild.flatMap(Guild::getOwner),
-                getGuild.flatMap(Guild::getRegion))
+                getGuild.flatMap(Guild::getOwner))
+                //getGuild.flatMap(Guild::getRegion))
                 .map(TupleUtils.function(this::formatEmbed))
                 .flatMap(context::createFollowupMessage);
     }
 
     private EmbedCreateSpec formatEmbed(Context context, Guild guild, List<GuildChannel> channels,
-                                        Member owner, Region region) {
+                                        Member owner){//, Region regions) {
         final LocalDateTime creationTime = TimeUtil.toLocalDateTime(guild.getId().getTimestamp());
         final long voiceChannels = channels.stream().filter(VoiceChannel.class::isInstance).count();
         final long textChannels = channels.stream().filter(TextChannel.class::isInstance).count();
@@ -55,7 +56,7 @@ public class ServerInfoCmd extends BaseCmd {
 
         final String idTitle = Emoji.ID + " " + context.localize("serverinfo.id");
         final String ownerTitle = Emoji.CROWN + " " + context.localize("serverinfo.owner");
-        final String regionTitle = Emoji.MAP + " " + context.localize("serverinfo.region");
+        //final String regionTitle = Emoji.MAP + " " + context.localize("serverinfo.region");
         final String creationTitle = Emoji.BIRTHDAY + " " + context.localize("serverinfo.creation");
         final String creationField = "%s\n(%s)"
                 .formatted(creationTime.format(dateFormatter),
@@ -72,7 +73,7 @@ public class ServerInfoCmd extends BaseCmd {
                 .fields(List.of(
                         EmbedCreateFields.Field.of(idTitle, guild.getId().asString(), true),
                         EmbedCreateFields.Field.of(ownerTitle, owner.getTag(), true),
-                        EmbedCreateFields.Field.of(regionTitle, region.getName(), true),
+                        //EmbedCreateFields.Field.of(regionTitle, regions.get(0).getName(), true),
                         EmbedCreateFields.Field.of(creationTitle, creationField, true),
                         EmbedCreateFields.Field.of(channelsTitle, channelsField, true),
                         EmbedCreateFields.Field.of(membersTitle, context.localize(guild.getMemberCount()), true))).build());

@@ -46,7 +46,7 @@ public class AddToGroup extends BaseCmd {
             }
             if (GroupUtil.parseIntToGroupType(group.getBean().getTeamType()).getMin_required() > count) {
                 //send invite to user
-                return user.getPrivateChannel().flatMap(privateChannel -> privateChannel.createEmbed(GroupUtil.sendInviteMessage(group, user)))
+                return user.getPrivateChannel().flatMap(privateChannel -> privateChannel.createMessage(GroupUtil.sendInviteMessage(group, user)))
                         //update Database
                         .then(group.updateInvited(user.getId(), true).then(group.updateAccept(user.getId(), 0)))
                         //inform owner

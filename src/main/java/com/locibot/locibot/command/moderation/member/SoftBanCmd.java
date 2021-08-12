@@ -1,6 +1,7 @@
 package com.locibot.locibot.command.moderation.member;
 
 import discord4j.core.object.entity.Member;
+import discord4j.core.spec.BanQuerySpec;
 import discord4j.rest.util.Permission;
 import reactor.core.publisher.Mono;
 
@@ -13,7 +14,7 @@ public class SoftBanCmd extends RemoveMembersCmd {
 
     @Override
     public Mono<?> action(Member memberToRemove, String reason) {
-        return memberToRemove.ban(spec -> spec.setDeleteMessageDays(7).setReason(reason))
+        return memberToRemove.ban(BanQuerySpec.builder().deleteMessageDays(7).reason(reason).build())
                 .then(memberToRemove.unban());
     }
 }

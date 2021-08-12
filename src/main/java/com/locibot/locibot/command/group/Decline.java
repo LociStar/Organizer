@@ -51,7 +51,7 @@ public class Decline extends BaseCmd {
                             //inform user
                             return context.createFollowupMessage("You have declined the invitation!").then(group.updateAccept(member.getId(), 2))
                                     //send invite message to next optional user
-                                    .then(user.getPrivateChannel().flatMap(privateChannel -> privateChannel.createEmbed(sendInviteMessage(group, user)))
+                                    .then(user.getPrivateChannel().flatMap(privateChannel -> privateChannel.createMessage(sendInviteMessage(group, user)))
                                             //inform owner
                                             .then(informOwner(context, group, dbGroupMember, user)));
                         }

@@ -135,7 +135,7 @@ public class TaskManager {
                                     if (member.getBean().isInvited() && member.getBean().getAccepted() == 0)
                                         gateway.getUserById(member.getId()).flatMap(user ->
                                                 user.getPrivateChannel().flatMap(privateChannel ->
-                                                        privateChannel.createEmbed(GroupUtil.sendInviteMessage(group, gateway.getUserById(member.getId()).block()))
+                                                        privateChannel.createMessage(GroupUtil.sendInviteMessage(group, gateway.getUserById(member.getId()).block()))
                                                 )).subscribe();
                                 });
                             }

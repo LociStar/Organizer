@@ -7,6 +7,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
 import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.core.spec.TextChannelEditSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import discord4j.rest.util.Permission;
 import reactor.core.publisher.Mono;
@@ -36,7 +37,7 @@ public class NSFWSetting extends BaseCmd {
                             case ENABLE -> true;
                             case DISABLE -> false;
                         }))
-                        .flatMap(nsfw -> channel.edit(spec -> spec.setNsfw(nsfw))))
+                        .flatMap(nsfw -> channel.edit(TextChannelEditSpec.builder().nsfw(nsfw).build())))
                 .map(channel -> channel.isNsfw()
                         ? context.localize("setting.nsfw.nsfw").formatted(channel.getMention())
                         : context.localize("setting.nsfw.sfw").formatted(channel.getMention()))
