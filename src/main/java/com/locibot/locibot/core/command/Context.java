@@ -1,13 +1,10 @@
 package com.locibot.locibot.core.command;
 
 import com.locibot.locibot.LociBot;
-import com.locibot.locibot.database.guilds.entity.DBGuild;
 import com.locibot.locibot.core.i18n.I18nContext;
 import com.locibot.locibot.core.i18n.I18nManager;
 import com.locibot.locibot.data.Telemetry;
-import com.locibot.locibot.music.GuildMusic;
-import com.locibot.locibot.music.MusicManager;
-import com.locibot.locibot.music.NoMusicException;
+import com.locibot.locibot.database.guilds.entity.DBGuild;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.EnumUtil;
@@ -21,6 +18,7 @@ import discord4j.core.object.entity.*;
 import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 import discord4j.discordjson.json.ImmutableWebhookMessageEditRequest;
 import discord4j.discordjson.json.WebhookExecuteRequest;
 import discord4j.rest.util.ApplicationCommandOptionType;
@@ -35,7 +33,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
 
 public class Context implements InteractionContext, I18nContext {
 
@@ -195,12 +192,6 @@ public class Context implements InteractionContext, I18nContext {
         return Flux.merge(ownerPerm, adminPerm, Mono.just(CommandPermission.USER_GUILD), Mono.just(CommandPermission.USER_GLOBAL));
     }
 
-    public GuildMusic requireGuildMusic() {
-        return MusicManager.getGuildMusic(this.getGuildId())
-                .filter(guildMusic -> !guildMusic.getTrackScheduler().isStopped())
-                .orElseThrow(NoMusicException::new);
-    }
-
     /////////////////////////////////////////////
     ///////////// InteractionContext
     /////////////////////////////////////////////
@@ -232,7 +223,9 @@ public class Context implements InteractionContext, I18nContext {
 
     @Override
     public Mono<Void> replyEphemeral(Emoji emoji, String message) {
-        return this.event.replyEphemeral("%s %s".formatted(emoji, message))
+        return this.event.reply(InteractionApplicationCommandCallbackSpec.builder()
+                .ephemeral(true)
+                .content("%s %s".formatted(emoji, message)).build())
                 .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
     }
 
@@ -250,13 +243,23 @@ public class Context implements InteractionContext, I18nContext {
         return this.createFollowupMessage("%s %s".formatted(emoji, str));
     }
 
+//    public Mono<Message> createFollowupMessage(Consumer<EmbedCreateSpec> embed) {
+//        final EmbedCreateSpec mutatedSpec = EmbedCreateSpec.builder();
+//        embed.accept(mutatedSpec);
+//        return this.event.getInteractionResponse().createFollowupMessage(MultipartRequest.ofRequest(
+//                WebhookExecuteRequest.builder()
+//                        .addEmbed(mutatedSpec.asRequest())
+//                        .build()))
+//                .map(data -> new Message(this.getClient(), data))
+//                .doOnNext(message -> this.replyId.set(message.getId().asLong()))
+//                .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
+//    }
+
     @Override
-    public Mono<Message> createFollowupMessage(Consumer<EmbedCreateSpec> embed) {
-        final EmbedCreateSpec mutatedSpec = new EmbedCreateSpec();
-        embed.accept(mutatedSpec);
+    public Mono<Message> createFollowupMessage(EmbedCreateSpec embed) {
         return this.event.getInteractionResponse().createFollowupMessage(MultipartRequest.ofRequest(
                 WebhookExecuteRequest.builder()
-                        .addEmbed(mutatedSpec.asRequest())
+                        .addEmbed(embed.asRequest())
                         .build()))
                 .map(data -> new Message(this.getClient(), data))
                 .doOnNext(message -> this.replyId.set(message.getId().asLong()))
@@ -269,7 +272,7 @@ public class Context implements InteractionContext, I18nContext {
                 .filter(messageId -> messageId > 0)
                 .flatMap(messageId -> this.event.getInteractionResponse()
                         .editFollowupMessage(messageId, ImmutableWebhookMessageEditRequest.builder()
-                                .content(message)
+                                .contentOrNull(message)
                                 .build(), true))
                 .map(data -> new Message(this.getClient(), data))
                 .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc())
@@ -282,40 +285,32 @@ public class Context implements InteractionContext, I18nContext {
     }
 
     @Override
-    public Mono<Message> editFollowupMessage(Consumer<EmbedCreateSpec> embed) {
+    public Mono<Message> editFollowupMessage(EmbedCreateSpec embed) {
         return Mono.fromCallable(this.replyId::get)
                 .filter(messageId -> messageId > 0)
-                .flatMap(messageId -> {
-                    final EmbedCreateSpec mutatedSpec = new EmbedCreateSpec();
-                    embed.accept(mutatedSpec);
-                    return this.event.getInteractionResponse()
-                            .editFollowupMessage(messageId, ImmutableWebhookMessageEditRequest.builder()
-                                    .content("")
-                                    .embeds(List.of(mutatedSpec.asRequest()))
-                                    .build(), true);
-                })
+                .flatMap(messageId -> this.event.getInteractionResponse()
+                        .editFollowupMessage(messageId, ImmutableWebhookMessageEditRequest.builder()
+                                .contentOrNull("")
+                                .embeds(List.of(embed.asRequest()))
+                                .build(), true))
                 .map(data -> new Message(this.getClient(), data))
                 .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc())
                 .switchIfEmpty(this.createFollowupMessage(embed));
     }
 
     @Override
-    public Mono<Message> editInitialFollowupMessage(Consumer<EmbedCreateSpec> embed) {
-        return Mono.defer(() -> {
-            final EmbedCreateSpec mutatedSpec = new EmbedCreateSpec();
-            embed.accept(mutatedSpec);
-            return this.event.getInteractionResponse()
-                    .editInitialResponse(ImmutableWebhookMessageEditRequest.builder()
-                            .content("")
-                            .embeds(List.of(mutatedSpec.asRequest()))
-                            .build())
-                    .map(data -> new Message(this.getClient(), data))
-                    .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc())
-                    .switchIfEmpty(this.createFollowupMessage(embed));
-        });
+    public Mono<Message> editInitialFollowupMessage(EmbedCreateSpec embed) {
+        return Mono.defer(() -> this.event.getInteractionResponse()
+                .editInitialResponse(ImmutableWebhookMessageEditRequest.builder()
+                        .contentOrNull("")
+                        .embeds(List.of(embed.asRequest()))
+                        .build())
+                .map(data -> new Message(this.getClient(), data))
+                .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc())
+                .switchIfEmpty(this.createFollowupMessage(embed)));
     }
 
-    public boolean isPrivate(){
+    public boolean isPrivate() {
         return false;
     }
 

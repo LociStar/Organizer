@@ -1,7 +1,6 @@
 package com.locibot.locibot.database.users.entity.achievement;
 
 import com.locibot.locibot.core.i18n.I18nContext;
-import com.locibot.locibot.data.Config;
 import com.locibot.locibot.object.Emoji;
 
 import java.util.EnumSet;
@@ -32,6 +31,17 @@ public enum Achievement {
         this.description = description;
     }
 
+    public static EnumSet<Achievement> of(int value) {
+        final EnumSet<Achievement> achievements = EnumSet.noneOf(Achievement.class);
+        for (final Achievement achievement : Achievement.values()) {
+            final long achievementValue = achievement.getFlag();
+            if ((achievementValue & value) == achievementValue) {
+                achievements.add(achievement);
+            }
+        }
+        return achievements;
+    }
+
     public int getFlag() {
         return 1 << this.value;
     }
@@ -48,16 +58,5 @@ public enum Achievement {
         return context.localize(this.description)
                 .replace("{patreon_url}", "https://github.com/LociStar")//Config.PATREON_URL
                 .replace("{top_gg_url}", "https://github.com/LociStar");//Config.TOP_GG_URL
-    }
-
-    public static EnumSet<Achievement> of(int value) {
-        final EnumSet<Achievement> achievements = EnumSet.noneOf(Achievement.class);
-        for (final Achievement achievement : Achievement.values()) {
-            final long achievementValue = achievement.getFlag();
-            if ((achievementValue & value) == achievementValue) {
-                achievements.add(achievement);
-            }
-        }
-        return achievements;
     }
 }

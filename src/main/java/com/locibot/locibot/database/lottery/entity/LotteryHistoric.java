@@ -1,5 +1,6 @@
 package com.locibot.locibot.database.lottery.entity;
 
+import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.database.DatabaseEntity;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.SerializableEntity;
@@ -7,7 +8,6 @@ import com.locibot.locibot.database.lottery.bean.LotteryHistoricBean;
 import com.locibot.locibot.database.premium.PremiumCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
-import com.locibot.locibot.data.Telemetry;
 import reactor.core.publisher.Mono;
 
 public class LotteryHistoric extends SerializableEntity<LotteryHistoricBean> implements DatabaseEntity {

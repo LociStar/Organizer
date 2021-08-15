@@ -48,33 +48,6 @@ public class RequestHelper {
                 .timeout(Config.TIMEOUT);
     }
 
-    public RequestHelper setMethod(final HttpMethod method) {
-        this.method = Objects.requireNonNull(method);
-        return this;
-    }
-
-    public RequestHelper addHeaders(final CharSequence name, final Object value) {
-        this.headers = this.headers.andThen(headers -> headers.add(name, value));
-        return this;
-    }
-
-    public HttpClient.RequestSender request() {
-        return HTTP_CLIENT
-                .headers(this.headers)
-                .request(this.method)
-                .uri(this.url);
-    }
-
-    public <T> Mono<T> to(final JavaType type) {
-        return this.request()
-                .<T>responseSingle((resp, body) -> RequestHelper.handleResponse(resp, body, type))
-                .timeout(Config.TIMEOUT);
-    }
-
-    public <T> Mono<T> to(final Class<? extends T> type) {
-        return this.to(TypeFactory.defaultInstance().constructType(type));
-    }
-
     private static <T> Mono<T> handleResponse(final HttpClientResponse resp, final ByteBufMono byteBufMono, final JavaType type) {
         final int statusCode = resp.status().code();
         if (statusCode / 100 != 2 && statusCode != HttpResponseStatus.NOT_FOUND.code()) {
@@ -107,5 +80,32 @@ public class RequestHelper {
                                         new IOException("Invalid JSON received (response: %s): %s".formatted(resp, body)))))
                 .retryWhen(ExceptionHandler.RETRY_ON_INTERNET_FAILURES
                         .apply("Retries exhausted while accessing %s".formatted(resp.resourceUrl())));
+    }
+
+    public RequestHelper setMethod(final HttpMethod method) {
+        this.method = Objects.requireNonNull(method);
+        return this;
+    }
+
+    public RequestHelper addHeaders(final CharSequence name, final Object value) {
+        this.headers = this.headers.andThen(headers -> headers.add(name, value));
+        return this;
+    }
+
+    public HttpClient.RequestSender request() {
+        return HTTP_CLIENT
+                .headers(this.headers)
+                .request(this.method)
+                .uri(this.url);
+    }
+
+    public <T> Mono<T> to(final JavaType type) {
+        return this.request()
+                .<T>responseSingle((resp, body) -> RequestHelper.handleResponse(resp, body, type))
+                .timeout(Config.TIMEOUT);
+    }
+
+    public <T> Mono<T> to(final Class<? extends T> type) {
+        return this.to(TypeFactory.defaultInstance().constructType(type));
     }
 }

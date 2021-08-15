@@ -11,10 +11,6 @@ import reactor.core.publisher.Mono;
 
 public class RouletteCmd extends GameCmd<RouletteGame> {
 
-    public enum Place {
-        NUMBER, RED, BLACK, ODD, EVEN, LOW, HIGH
-    }
-
     public RouletteCmd() {
         super("roulette", "Start or join a Roulette game");
         this.addOption(option -> option.name("bet")
@@ -65,5 +61,9 @@ public class RouletteCmd extends GameCmd<RouletteGame> {
                                 .doOnError(err -> game.destroy());
                     }
                 });
+    }
+
+    public enum Place {
+        NUMBER, RED, BLACK, ODD, EVEN, LOW, HIGH
     }
 }

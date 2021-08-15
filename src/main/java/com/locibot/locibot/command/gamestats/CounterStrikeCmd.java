@@ -22,13 +22,13 @@ import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.NumberUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
 import com.locibot.locibot.utils.StringUtil;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class CounterStrikeCmd extends BaseCmd {
@@ -52,9 +52,60 @@ public class CounterStrikeCmd extends BaseCmd {
                 .type(ApplicationCommandOptionType.STRING.getValue()));
 
         this.apiKey = CredentialManager.get(Credential.STEAM_API_KEY);
-        this.steamIdCache = MultiValueCache.Builder.<String, String>create().withTtl(Config.CACHE_TTL).build();
-        this.playerSummaryCache = MultiValueCache.Builder.<String, PlayerSummary>create().withTtl(Config.CACHE_TTL).build();
-        this.userStatsCache = MultiValueCache.Builder.<String, String>create().withTtl(Config.CACHE_TTL).build();
+        this.steamIdCache = MultiValueCache.Builder.<String, String>builder().withTtl(Config.CACHE_TTL).build();
+        this.playerSummaryCache = MultiValueCache.Builder.<String, PlayerSummary>builder().withTtl(Config.CACHE_TTL).build();
+        this.userStatsCache = MultiValueCache.Builder.<String, String>builder().withTtl(Config.CACHE_TTL).build();
+    }
+
+    private static String getIdentificator(String arg) {
+        // The user provided an URL that can contains a pseudo or an ID
+        if (arg.contains("/")) {
+            final List<String> splittedUrl = StringUtil.split(arg, "/");
+            if (splittedUrl.isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+            return splittedUrl.get(splittedUrl.size() - 1);
+        } else {
+            return arg;
+        }
+    }
+
+    private static EmbedCreateSpec formatEmbed(Context context, PlayerSummary player, List<Stats> stats) {
+        final Map<String, Integer> statsMap = stats.stream()
+                .collect(Collectors.toMap(Stats::name, Stats::value));
+
+        final int kills = statsMap.get("total_kills");
+        final int deaths = statsMap.get("total_deaths");
+        final float ratio = (float) kills / deaths;
+
+        final int wins = statsMap.get("total_wins");
+        final int roundsPlayed = statsMap.get("total_rounds_played");
+        final float winRate = (float) wins / roundsPlayed * 100;
+
+        final int mvps = statsMap.get("total_mvps");
+        final float timePlayed = statsMap.get("total_time_played") / 3600f;
+
+        final int shotsHit = statsMap.get("total_shots_hit");
+        final int shotsFired = statsMap.get("total_shots_fired");
+        final float accuracyRate = (float) shotsHit / shotsFired * 100;
+
+        final int killsHeadshot = statsMap.get("total_kills_headshot");
+        final float headshotRate = (float) killsHeadshot / kills * 100;
+
+        return ShadbotUtil.getDefaultEmbed(
+                EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("cs.title"),
+                        "http://steamcommunity.com/profiles/%s".formatted(player.steamId()), context.getAuthorAvatar()))
+                        .thumbnail(player.avatarFull())
+                        .description(context.localize("cs.description").formatted(player.personaName()))
+                        .fields(List.of(
+                                EmbedCreateFields.Field.of(context.localize("cs.kills"), context.localize(kills), true),
+                                EmbedCreateFields.Field.of(context.localize("cs.playtime"), context.localize("counterstrike.time.played")
+                                        .formatted(context.localize(timePlayed)), true),
+                                EmbedCreateFields.Field.of(context.localize("cs.mvp"), context.localize(mvps), true),
+                                EmbedCreateFields.Field.of(context.localize("cs.win"), "%s%%".formatted(context.localize(winRate)), true),
+                                EmbedCreateFields.Field.of(context.localize("cs.accuracy"), "%s%%".formatted(context.localize(accuracyRate)), true),
+                                EmbedCreateFields.Field.of(context.localize("cs.headshot"), "%s%%".formatted(context.localize(headshotRate)), true),
+                                EmbedCreateFields.Field.of(context.localize("cs.ratio"), context.localize(ratio), true))).build());
     }
 
     @Override
@@ -101,19 +152,6 @@ public class CounterStrikeCmd extends BaseCmd {
                 .switchIfEmpty(context.editFollowupMessage(Emoji.MAGNIFYING_GLASS, context.localize("cs.player.not.found")));
     }
 
-    private static String getIdentificator(String arg) {
-        // The user provided an URL that can contains a pseudo or an ID
-        if (arg.contains("/")) {
-            final List<String> splittedUrl = StringUtil.split(arg, "/");
-            if (splittedUrl.isEmpty()) {
-                throw new IllegalArgumentException();
-            }
-            return splittedUrl.get(splittedUrl.size() - 1);
-        } else {
-            return arg;
-        }
-    }
-
     private Mono<String> getSteamId(String identificator) {
         // The user directly provided the ID
         if (NumberUtil.isPositiveLong(identificator)) {
@@ -142,43 +180,6 @@ public class CounterStrikeCmd extends BaseCmd {
                 // Users matching the steamId
                 .flatMapIterable(PlayerSummaries::players)
                 .next();
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, PlayerSummary player, List<Stats> stats) {
-        final Map<String, Integer> statsMap = stats.stream()
-                .collect(Collectors.toMap(Stats::name, Stats::value));
-
-        final int kills = statsMap.get("total_kills");
-        final int deaths = statsMap.get("total_deaths");
-        final float ratio = (float) kills / deaths;
-
-        final int wins = statsMap.get("total_wins");
-        final int roundsPlayed = statsMap.get("total_rounds_played");
-        final float winRate = (float) wins / roundsPlayed * 100;
-
-        final int mvps = statsMap.get("total_mvps");
-        final float timePlayed = statsMap.get("total_time_played") / 3600f;
-
-        final int shotsHit = statsMap.get("total_shots_hit");
-        final int shotsFired = statsMap.get("total_shots_fired");
-        final float accuracyRate = (float) shotsHit / shotsFired * 100;
-
-        final int killsHeadshot = statsMap.get("total_kills_headshot");
-        final float headshotRate = (float) killsHeadshot / kills * 100;
-
-        return ShadbotUtil.getDefaultEmbed(
-                embed -> embed.setAuthor(context.localize("cs.title"),
-                        "http://steamcommunity.com/profiles/%s".formatted(player.steamId()), context.getAuthorAvatar())
-                        .setThumbnail(player.avatarFull())
-                        .setDescription(context.localize("cs.description").formatted(player.personaName()))
-                        .addField(context.localize("cs.kills"), context.localize(kills), true)
-                        .addField(context.localize("cs.playtime"), context.localize("counterstrike.time.played")
-                                .formatted(context.localize(timePlayed)), true)
-                        .addField(context.localize("cs.mvp"), context.localize(mvps), true)
-                        .addField(context.localize("cs.win"), "%s%%".formatted(context.localize(winRate)), true)
-                        .addField(context.localize("cs.accuracy"), "%s%%".formatted(context.localize(accuracyRate)), true)
-                        .addField(context.localize("cs.headshot"), "%s%%".formatted(context.localize(headshotRate)), true)
-                        .addField(context.localize("cs.ratio"), context.localize(ratio), true));
     }
 
 }

@@ -5,7 +5,10 @@ import com.locibot.locibot.command.currency.CoinsCmd;
 import com.locibot.locibot.command.currency.LeaderboardCmd;
 import com.locibot.locibot.command.currency.TransferCoinsCmd;
 import com.locibot.locibot.command.donator.DonatorGroup;
+import com.locibot.locibot.command.fun.ChatCmd;
 import com.locibot.locibot.command.fun.Hello;
+import com.locibot.locibot.command.fun.JokeCmd;
+import com.locibot.locibot.command.fun.ThisDayCmd;
 import com.locibot.locibot.command.game.GameGroup;
 import com.locibot.locibot.command.gamestats.GameStatsGroup;
 import com.locibot.locibot.command.group.Accept;
@@ -15,17 +18,16 @@ import com.locibot.locibot.command.image.ImageGroup;
 import com.locibot.locibot.command.image.Rule34Cmd;
 import com.locibot.locibot.command.info.InfoGroup;
 import com.locibot.locibot.command.moderation.ModerationGroup;
-import com.locibot.locibot.command.music.*;
 import com.locibot.locibot.command.owner.OwnerGroup;
 import com.locibot.locibot.command.register.RegisterGroup;
 import com.locibot.locibot.command.setting.SettingGroup;
 import com.locibot.locibot.command.standalone.*;
-import com.locibot.locibot.command.util.*;
+import com.locibot.locibot.command.util.MathCmd;
+import com.locibot.locibot.command.util.UrbanCmd;
+import com.locibot.locibot.command.util.WeatherCmd;
+import com.locibot.locibot.command.util.WikipediaCmd;
 import com.locibot.locibot.command.util.poll.PollCmd;
 import com.locibot.locibot.command.util.translate.TranslateCmd;
-import com.locibot.locibot.command.fun.ChatCmd;
-import com.locibot.locibot.command.fun.JokeCmd;
-import com.locibot.locibot.command.fun.ThisDayCmd;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.object.ExceptionHandler;
 import discord4j.rest.service.ApplicationService;
@@ -59,7 +61,7 @@ public class CommandManager {
                 // Fun
                 new ChatCmd(), new JokeCmd(), new ThisDayCmd(),
                 // Util
-                new MathCmd(), new LyricsCmd(), new UrbanCmd(), new WeatherCmd(), new WikipediaCmd(),
+                new MathCmd(), new UrbanCmd(), new WeatherCmd(), new WikipediaCmd(),
                 new TranslateCmd(), new PollCmd(),
                 //Global
                 new Hello(), new Accept(), new Decline());

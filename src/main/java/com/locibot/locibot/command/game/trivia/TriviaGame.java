@@ -14,6 +14,7 @@ import com.locibot.locibot.utils.TimeUtil;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.Nullable;
@@ -24,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public class TriviaGame extends MultiplayerGame<TriviaPlayer> {
 
@@ -87,15 +87,15 @@ public class TriviaGame extends MultiplayerGame<TriviaPlayer> {
                             FormatUtil.numberedList(this.answers.size(), this.answers.size(),
                                     count -> "\t**%d**. %s".formatted(count, this.answers.get(count - 1))));
 
-            final Consumer<EmbedCreateSpec> embedConsumer = ShadbotUtil.getDefaultEmbed(
-                    embed -> embed.setAuthor(this.context.localize("trivia.title"), null, this.context.getAuthorAvatar())
-                            .setDescription(description)
-                            .addField(this.context.localize("trivia.category"),
-                                    "`%s`".formatted(this.trivia.category()), true)
-                            .addField(this.context.localize("trivia.difficulty"),
-                                    "`%s`".formatted(this.trivia.difficulty()), true)
-                            .setFooter(this.context.localize("trivia.footer")
-                                    .formatted(this.duration.toSeconds(), Emoji.RED_CROSS), null));
+            final EmbedCreateSpec embedConsumer = ShadbotUtil.getDefaultEmbed(
+                    EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(this.context.localize("trivia.title"), null, this.context.getAuthorAvatar()))
+                            .description(description)
+                            .fields(List.of(EmbedCreateFields.Field.of(this.context.localize("trivia.category"),
+                                    "`%s`".formatted(this.trivia.category()), true),
+                                    EmbedCreateFields.Field.of(this.context.localize("trivia.difficulty"),
+                                            "`%s`".formatted(this.trivia.difficulty()), true)))
+                            .footer(EmbedCreateFields.Footer.of(this.context.localize("trivia.footer")
+                                    .formatted(this.duration.toSeconds(), Emoji.RED_CROSS), null)).build());
 
             return this.context.createFollowupMessage(embedConsumer);
         });

@@ -1,7 +1,7 @@
 package com.locibot.locibot.object.message;
 
-import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.object.Emoji;
+import com.locibot.locibot.utils.DiscordUtil;
 import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.object.entity.channel.MessageChannel;

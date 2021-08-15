@@ -2,7 +2,6 @@ package com.locibot.locibot.command.setting;
 
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.command.*;
-import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.NumberUtil;

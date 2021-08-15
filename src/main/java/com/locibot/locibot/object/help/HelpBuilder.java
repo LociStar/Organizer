@@ -3,6 +3,7 @@ package com.locibot.locibot.object.help;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
 import discord4j.discordjson.json.ImmutableEmbedFieldData;
@@ -11,7 +12,6 @@ import reactor.util.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public abstract class HelpBuilder {
@@ -40,18 +40,18 @@ public abstract class HelpBuilder {
         this.fields = new ArrayList<>();
     }
 
-    public HelpBuilder setAuthor(String authorName, String authorUrl) {
+    public HelpBuilder author(String authorName, String authorUrl) {
         this.authorName = authorName;
         this.authorUrl = authorUrl;
         return this;
     }
 
-    public HelpBuilder setThumbnail(String thumbnailUrl) {
+    public HelpBuilder thumbnail(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
         return this;
     }
 
-    public HelpBuilder setDescription(String description) {
+    public HelpBuilder description(String description) {
         this.description = "**%s**".formatted(description);
         return this;
     }
@@ -61,47 +61,47 @@ public abstract class HelpBuilder {
         return this;
     }
 
-    public HelpBuilder setFooter(String footer) {
+    public HelpBuilder footer(String footer) {
         this.footer = footer;
         return this;
     }
 
-    public HelpBuilder addField(String name, String value, boolean inline) {
+    public HelpBuilder fields(String name, String value, boolean inline) {
         this.fields.add(ImmutableEmbedFieldData.of(name, value, Possible.of(inline)));
         return this;
     }
 
-    public Consumer<EmbedCreateSpec> build() {
-        return ShadbotUtil.getDefaultEmbed(embed -> {
-            if (this.authorName != null && !this.authorName.isBlank()) {
-                embed.setAuthor(this.authorName, this.authorUrl, this.context.getAuthorAvatar());
-            }
-            embed.addField(this.context.localize("help.usage"), this.getUsage(), false);
+    public EmbedCreateSpec build() {
+        EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
+        if (this.authorName != null && !this.authorName.isBlank()) {
+            embed.author(EmbedCreateFields.Author.of(this.authorName, this.authorUrl, this.context.getAuthorAvatar()));
+        }
+        embed.addField(EmbedCreateFields.Field.of(this.context.localize("help.usage"), this.getUsage(), false));
 
-            if (this.description != null && !this.description.isBlank()) {
-                embed.setDescription(this.description);
-            }
+        if (this.description != null && !this.description.isBlank()) {
+            embed.description(this.description);
+        }
 
-            if (this.thumbnailUrl != null && !this.thumbnailUrl.isBlank()) {
-                embed.setThumbnail(this.thumbnailUrl);
-            }
+        if (this.thumbnailUrl != null && !this.thumbnailUrl.isBlank()) {
+            embed.thumbnail(this.thumbnailUrl);
+        }
 
-            if (!this.getArguments().isEmpty()) {
-                embed.addField(this.context.localize("help.arguments"), this.getArguments(), false);
-            }
+        if (!this.getArguments().isEmpty()) {
+            embed.addField(EmbedCreateFields.Field.of(this.context.localize("help.arguments"), this.getArguments(), false));
+        }
 
-            if (this.source != null && !this.source.isBlank()) {
-                embed.addField(this.context.localize("help.source"), this.source, false);
-            }
+        if (this.source != null && !this.source.isBlank()) {
+            embed.addField(EmbedCreateFields.Field.of(this.context.localize("help.source"), this.source, false));
+        }
 
-            for (final ImmutableEmbedFieldData field : this.fields) {
-                embed.addField(field.name(), field.value(), field.inline().get());
-            }
+        for (final ImmutableEmbedFieldData field : this.fields) {
+            embed.addField(EmbedCreateFields.Field.of(field.name(), field.value(), field.inline().get()));
+        }
 
-            if (this.footer != null && !this.footer.isBlank()) {
-                embed.setFooter(this.footer, null);
-            }
-        });
+        if (this.footer != null && !this.footer.isBlank()) {
+            embed.footer(EmbedCreateFields.Footer.of(this.footer, null));
+        }
+        return ShadbotUtil.getDefaultEmbed(embed.build());
     }
 
     protected abstract String getCommandName();

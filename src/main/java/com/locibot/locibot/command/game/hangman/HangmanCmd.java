@@ -16,16 +16,10 @@ import static com.locibot.locibot.LociBot.DEFAULT_LOGGER;
 
 public class HangmanCmd extends GameCmd<HangmanGame> {
 
-    protected enum Difficulty {
-        EASY, HARD
-    }
-
     protected static final String JOIN_SUB_COMMAND = "join";
     protected static final String CREATE_SUB_COMMAND = "create";
-
     private final WordsList easyWords;
     private final WordsList hardWords;
-
     public HangmanCmd() {
         super("hangman", "Start or join a Hangman game", ApplicationCommandOptionType.SUB_COMMAND_GROUP);
         this.addOption(option -> option.name(JOIN_SUB_COMMAND)
@@ -105,6 +99,10 @@ public class HangmanCmd extends GameCmd<HangmanGame> {
             case EASY -> this.easyWords.getRandomWord();
             case HARD -> this.hardWords.getRandomWord();
         };
+    }
+
+    protected enum Difficulty {
+        EASY, HARD
     }
 
 }

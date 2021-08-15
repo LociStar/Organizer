@@ -1,11 +1,11 @@
 package com.locibot.locibot.api;
 
-import com.locibot.locibot.database.DatabaseManager;
-import com.locibot.locibot.database.users.entity.achievement.Achievement;
 import com.locibot.locibot.api.json.dbl.TopGgWebhookResponse;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.credential.Credential;
 import com.locibot.locibot.data.credential.CredentialManager;
+import com.locibot.locibot.database.DatabaseManager;
+import com.locibot.locibot.database.users.entity.achievement.Achievement;
 import com.locibot.locibot.object.ExceptionHandler;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.LogUtil;
@@ -52,6 +52,30 @@ public class BotListStats {
         this.webhookServer = new AtomicReference<>();
 
         this.setupTopGgWebhook();
+    }
+
+    private static Mono<String> post(String url, String authorization, JSONObject content) {
+        return RequestHelper.fromUrl(url)
+                .setMethod(HttpMethod.POST)
+                .addHeaders(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
+                .addHeaders(HttpHeaderNames.AUTHORIZATION, authorization)
+                .request()
+                .send((req, res) -> res.sendString(Mono.just(content.toString())))
+                .responseSingle((res, con) -> con.asString())
+                .timeout(Config.TIMEOUT)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(5))
+                        .filter(TimeoutException.class::isInstance));
+    }
+
+    private static <T> Function<? super Throwable, ? extends Mono<? extends T>> handleError(String url) {
+        return err -> {
+            if (err instanceof TimeoutException) {
+                return Mono.fromRunnable(() ->
+                        LOGGER.warn("A timeout occurred while posting statistics on {}", url));
+            }
+            return Mono.fromRunnable(() ->
+                    LOGGER.warn("An error occurred while posting statistics on {}: {}", url, err.getMessage()));
+        };
     }
 
     private void setupTopGgWebhook() {
@@ -219,30 +243,6 @@ public class BotListStats {
         if (this.webhookServer.get() != null) {
             this.webhookServer.get().disposeNow();
         }
-    }
-
-    private static Mono<String> post(String url, String authorization, JSONObject content) {
-        return RequestHelper.fromUrl(url)
-                .setMethod(HttpMethod.POST)
-                .addHeaders(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
-                .addHeaders(HttpHeaderNames.AUTHORIZATION, authorization)
-                .request()
-                .send((req, res) -> res.sendString(Mono.just(content.toString())))
-                .responseSingle((res, con) -> con.asString())
-                .timeout(Config.TIMEOUT)
-                .retryWhen(Retry.backoff(3, Duration.ofSeconds(5))
-                        .filter(TimeoutException.class::isInstance));
-    }
-
-    private static <T> Function<? super Throwable, ? extends Mono<? extends T>> handleError(String url) {
-        return err -> {
-            if (err instanceof TimeoutException) {
-                return Mono.fromRunnable(() ->
-                        LOGGER.warn("A timeout occurred while posting statistics on {}", url));
-            }
-            return Mono.fromRunnable(() ->
-                    LOGGER.warn("An error occurred while posting statistics on {}: {}", url, err.getMessage()));
-        };
     }
 
 }

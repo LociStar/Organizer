@@ -1,8 +1,8 @@
 package com.locibot.locibot.listener;
 
-import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.core.command.BaseCmd;
 import com.locibot.locibot.core.command.Setting;
+import com.locibot.locibot.database.DatabaseManager;
 import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.channel.TextChannelDeleteEvent;
 import discord4j.core.event.domain.channel.VoiceChannelDeleteEvent;

@@ -41,15 +41,6 @@ public class TranslateRequest {
         this.setSourceText(sourceText);
     }
 
-    private void setSourceText(final String sourceText) {
-        if (sourceText.length() > CHARACTERS_LIMIT) {
-            throw new CommandException(I18nManager.localize(this.locale, "translate.exception.too.many.chars")
-                    .formatted(CHARACTERS_LIMIT));
-        }
-
-        this.sourceText = sourceText;
-    }
-
     private void setSourceLang(final String sourceLang) {
         if (sourceLang.equalsIgnoreCase(AUTO)) {
             this.sourceLang = AUTO;
@@ -59,17 +50,6 @@ public class TranslateRequest {
 
         if (this.sourceLang == null) {
             throw new IllegalArgumentException(I18nManager.localize(this.locale, "translate.exception.source.lang"));
-        }
-        if (Objects.equals(this.sourceLang, this.destLang)) {
-            throw new IllegalArgumentException(I18nManager.localize(this.locale, "translate.exception.same.langs"));
-        }
-    }
-
-    private void setDestLang(String destLang) {
-        this.destLang = this.langToIso(destLang);
-
-        if (this.destLang == null) {
-            throw new IllegalArgumentException(I18nManager.localize(this.locale, "translate.exception.dest.lang"));
         }
         if (Objects.equals(this.sourceLang, this.destLang)) {
             throw new IllegalArgumentException(I18nManager.localize(this.locale, "translate.exception.same.langs"));
@@ -90,8 +70,28 @@ public class TranslateRequest {
         return this.destLang;
     }
 
+    private void setDestLang(String destLang) {
+        this.destLang = this.langToIso(destLang);
+
+        if (this.destLang == null) {
+            throw new IllegalArgumentException(I18nManager.localize(this.locale, "translate.exception.dest.lang"));
+        }
+        if (Objects.equals(this.sourceLang, this.destLang)) {
+            throw new IllegalArgumentException(I18nManager.localize(this.locale, "translate.exception.same.langs"));
+        }
+    }
+
     public String getSourceText() {
         return this.sourceText;
+    }
+
+    private void setSourceText(final String sourceText) {
+        if (sourceText.length() > CHARACTERS_LIMIT) {
+            throw new CommandException(I18nManager.localize(this.locale, "translate.exception.too.many.chars")
+                    .formatted(CHARACTERS_LIMIT));
+        }
+
+        this.sourceText = sourceText;
     }
 
     protected String langToIso(final String lang) {

@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.function.Consumer;
 
 import static com.locibot.locibot.command.group.GroupUtil.parseIntToGroupType;
 import static com.locibot.locibot.command.group.GroupUtil.sendInviteMessage;
@@ -64,12 +63,12 @@ public class Schedule extends BaseCmd {
         group.getMembers().forEach(dbGroupMember -> {
             if (dbGroupMember.getBean().isInvited())
                 context.getClient().getUserById(dbGroupMember.getId()).block().getPrivateChannel()
-                        .flatMap(privateChannel -> privateChannel.createEmbed(getMessage(finalGroup, context))).subscribe();
+                        .flatMap(privateChannel -> privateChannel.createMessage(getMessage(finalGroup, context))).subscribe();
         });
         return context.createFollowupMessage("Group scheduled!");
     }
 
-    public Consumer<EmbedCreateSpec> getMessage(DBGroup group, Context context) {
+    public EmbedCreateSpec getMessage(DBGroup group, Context context) {
         User user = context.getEvent().getClient().getUserById(group.getOwner().getId()).block();
         return sendInviteMessage(group, user);
     }

@@ -26,11 +26,6 @@ public class ManageCoinsCmd extends BaseCmd {
 
     private static final int MIN_COINS = 1;
 
-    // TODO Improvement: Transform these actions as sub-commands
-    private enum Action {
-        ADD, REMOVE, RESET
-    }
-
     public ManageCoinsCmd() {
         super(CommandCategory.MODERATION, CommandPermission.ADMIN,
                 "manage_coins", "Manage users coins");
@@ -107,6 +102,11 @@ public class ManageCoinsCmd extends BaseCmd {
                                         .formatted(mentionsStr)));
                     };
                 });
+    }
+
+    // TODO Improvement: Transform these actions as sub-commands
+    private enum Action {
+        ADD, REMOVE, RESET
     }
 
 }

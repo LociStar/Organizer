@@ -13,13 +13,13 @@ import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.RandUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -35,6 +35,23 @@ public class WallhavenCmd extends BaseCmd {
         this.addOption("query", "Search for a wallpaper", false, ApplicationCommandOptionType.STRING);
 
         this.apiKey = CredentialManager.get(Credential.WALLHAVEN_API_KEY);
+    }
+
+    private static EmbedCreateSpec formatEmbed(Context context, String title, Wallpaper wallpaper) {
+        EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
+        wallpaper.getSource().ifPresent(source -> {
+            if (NetUtil.isUrl(source)) {
+                embed.description(context.localize("wallhaven.source.url").formatted(source));
+            } else {
+                embed.addFields(EmbedCreateFields.Field.of(context.localize("wallhaven.source"), source, false));
+            }
+        });
+
+        embed.author(EmbedCreateFields.Author.of(title, wallpaper.url(), context.getAuthorAvatar()))
+                .thumbnail("https://wallhaven.cc/images/layout/logo_sm.png")
+                .image(wallpaper.path())
+                .addFields(EmbedCreateFields.Field.of(context.localize("wallhaven.resolution"), wallpaper.resolution(), false));
+        return ShadbotUtil.getDefaultEmbed(embed.build());
     }
 
     @Override
@@ -54,25 +71,6 @@ public class WallhavenCmd extends BaseCmd {
                 }))
                 .switchIfEmpty(context.editFollowupMessage(Emoji.MAGNIFYING_GLASS,
                         context.localize("wallhaven.not.found").formatted(query)));
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, String title, Wallpaper wallpaper) {
-        return ShadbotUtil.getDefaultEmbed(
-                embed -> {
-                    wallpaper.getSource().ifPresent(source -> {
-                        if (NetUtil.isUrl(source)) {
-                            embed.setDescription(context.localize("wallhaven.source.url").formatted(source));
-                        } else {
-                            embed.addField(context.localize("wallhaven.source"), source, false);
-                        }
-                    });
-
-                    embed.setAuthor(title, wallpaper.url(), context.getAuthorAvatar())
-                            .setThumbnail("https://wallhaven.cc/images/layout/logo_sm.png")
-                            .setImage(wallpaper.path())
-                            .addField(context.localize("wallhaven.resolution"), wallpaper.resolution(), false);
-
-                });
     }
 
     private Mono<Wallpaper> getWallpaper(final String query) {

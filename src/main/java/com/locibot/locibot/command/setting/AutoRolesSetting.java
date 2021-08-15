@@ -2,7 +2,6 @@ package com.locibot.locibot.command.setting;
 
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.command.*;
-import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.FormatUtil;
@@ -18,10 +17,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class AutoRolesSetting extends BaseCmd {
-
-    private enum Action {
-        ADD, REMOVE
-    }
 
     public AutoRolesSetting() {
         super(CommandCategory.SETTING, CommandPermission.ADMIN,
@@ -39,6 +34,14 @@ public class AutoRolesSetting extends BaseCmd {
                 ApplicationCommandOptionType.ROLE);
         this.addOption("role5", "The fifth role", false,
                 ApplicationCommandOptionType.ROLE);
+    }
+
+    private static Mono<?> checkPermissions(Context context, Set<Snowflake> roleIds) {
+        return context.getChannel()
+                .flatMap(channel -> DiscordUtil.requirePermissions(channel, Permission.MANAGE_ROLES))
+                .then(context.getClient().getSelfMember(context.getGuildId()))
+                .filterWhen(self -> self.hasHigherRoles(roleIds))
+                .switchIfEmpty(Mono.error(new CommandException(context.localize("autoroles.exception.higher"))));
     }
 
     @Override
@@ -74,12 +77,8 @@ public class AutoRolesSetting extends BaseCmd {
                 });
     }
 
-    private static Mono<?> checkPermissions(Context context, Set<Snowflake> roleIds) {
-        return context.getChannel()
-                .flatMap(channel -> DiscordUtil.requirePermissions(channel, Permission.MANAGE_ROLES))
-                .then(context.getClient().getSelfMember(context.getGuildId()))
-                .filterWhen(self -> self.hasHigherRoles(roleIds))
-                .switchIfEmpty(Mono.error(new CommandException(context.localize("autoroles.exception.higher"))));
+    private enum Action {
+        ADD, REMOVE
     }
 
 }

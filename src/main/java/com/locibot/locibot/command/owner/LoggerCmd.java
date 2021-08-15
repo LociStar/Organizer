@@ -17,15 +17,6 @@ import static com.locibot.locibot.LociBot.DEFAULT_LOGGER;
 
 public class LoggerCmd extends BaseCmd {
 
-    private enum LogLevel {
-        OFF,
-        TRACE,
-        DEBUG,
-        INFO,
-        WARN,
-        ERROR
-    }
-
     public LoggerCmd() {
         super(CommandCategory.OWNER, CommandPermission.OWNER, "logger", "Change the level of a logger");
         this.addOption(option -> option.name("name")
@@ -59,6 +50,15 @@ public class LoggerCmd extends BaseCmd {
 
         DEFAULT_LOGGER.info("Logger '{}' set to level {}", name, level);
         return context.createFollowupMessage(Emoji.INFO, "Logger `%s` set to level `%s`.".formatted(name, level));
+    }
+
+    private enum LogLevel {
+        OFF,
+        TRACE,
+        DEBUG,
+        INFO,
+        WARN,
+        ERROR
     }
 
 }

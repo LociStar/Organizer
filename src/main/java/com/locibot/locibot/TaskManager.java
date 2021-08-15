@@ -1,7 +1,7 @@
 package com.locibot.locibot;
 
-import com.locibot.locibot.command.game.lottery.LotteryCmd;
 import com.locibot.locibot.api.BotListStats;
+import com.locibot.locibot.command.game.lottery.LotteryCmd;
 import com.locibot.locibot.command.group.GroupUtil;
 import com.locibot.locibot.command.register.RegisterWeather;
 import com.locibot.locibot.data.Config;
@@ -10,9 +10,9 @@ import com.locibot.locibot.data.credential.Credential;
 import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.object.ExceptionHandler;
-import com.locibot.locibot.utils.*;
-import com.locibot.locibot.utils.weather.CreateHeatMap;
-import com.locibot.locibot.utils.weather.CreateRainMap;
+import com.locibot.locibot.utils.FormatUtil;
+import com.locibot.locibot.utils.LogUtil;
+import com.locibot.locibot.utils.SystemUtil;
 import com.locibot.locibot.utils.weather.HourlyWeatherForecastClass;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.gateway.GatewayClient;
@@ -123,7 +123,7 @@ public class TaskManager {
                                     if (member.getBean().getAccepted() == 0)
                                         gateway.getUserById(member.getId()).flatMap(user ->
                                                 user.getPrivateChannel().flatMap(privateChannel ->
-                                                        privateChannel.createEmbed(GroupUtil.sendInviteMessage(group, gateway.getUserById(member.getId()).block()))
+                                                        privateChannel.createMessage(GroupUtil.sendInviteMessage(group, gateway.getUserById(member.getId()).block()))
                                                                 .then(group.updateInvited(member.getId(), true).then(group.updateAccept(member.getId(), 0)))
                                                 )).subscribe();
                                 });
@@ -135,7 +135,7 @@ public class TaskManager {
                                     if (member.getBean().isInvited() && member.getBean().getAccepted() == 0)
                                         gateway.getUserById(member.getId()).flatMap(user ->
                                                 user.getPrivateChannel().flatMap(privateChannel ->
-                                                        privateChannel.createEmbed(GroupUtil.sendInviteMessage(group, gateway.getUserById(member.getId()).block()))
+                                                        privateChannel.createMessage(GroupUtil.sendInviteMessage(group, gateway.getUserById(member.getId()).block()))
                                                 )).subscribe();
                                 });
                             }

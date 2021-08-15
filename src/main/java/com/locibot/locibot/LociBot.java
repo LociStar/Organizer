@@ -1,7 +1,5 @@
 package com.locibot.locibot;
 
-import com.locibot.locibot.database.DatabaseManager;
-import com.locibot.locibot.listener.*;
 import com.locibot.locibot.api.BotListStats;
 import com.locibot.locibot.core.command.CommandManager;
 import com.locibot.locibot.core.retriever.SpyRestEntityRetriever;
@@ -9,6 +7,8 @@ import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.data.credential.Credential;
 import com.locibot.locibot.data.credential.CredentialManager;
+import com.locibot.locibot.database.DatabaseManager;
+import com.locibot.locibot.listener.*;
 import com.locibot.locibot.object.ExceptionHandler;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.LogUtil;
@@ -152,15 +152,12 @@ public class LociBot {
                     DEFAULT_LOGGER.info("Registering listeners");
                     /* Intent.GUILDS */
                     LociBot.register(gateway, new GuildCreateListener());
-                    LociBot.register(gateway, new GuildDeleteListener());
                     LociBot.register(gateway, new RoleDeleteListener());
                     LociBot.register(gateway, new ChannelDeleteListener.TextChannelDeleteListener());
                     LociBot.register(gateway, new ChannelDeleteListener.VoiceChannelDeleteListener());
                     /* Intent.GUILD_MEMBERS */
                     LociBot.register(gateway, new MemberJoinListener());
                     LociBot.register(gateway, new MemberLeaveListener());
-                    /* Intent.GUILD_VOICE_STATES */
-                    LociBot.register(gateway, new VoiceStateUpdateListener());
                     /* Intent.GUILD_MESSAGE_REACTIONS */
                     LociBot.register(gateway, new ReactionListener.ReactionAddListener());
                     LociBot.register(gateway, new ReactionListener.ReactionRemoveListener());

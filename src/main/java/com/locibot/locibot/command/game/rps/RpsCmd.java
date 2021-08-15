@@ -46,7 +46,7 @@ public class RpsCmd extends BaseCmd {
                         botHandsign.getEmoji(), botHandsign.getHandsign(context)));
 
         final RpsPlayer player = this.getPlayer(context.getGuildId(), context.getAuthorId());
-        final long gains_min = Math.min((long) Constants.GAINS, Config.MAX_COINS);
+        final long gains_min = Math.min(Constants.GAINS, Config.MAX_COINS);
         if (userHandsign.isSuperior(botHandsign)) {
             player.incrementWinStream();
             final int winStreak = player.getWinStreak();

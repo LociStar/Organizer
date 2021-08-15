@@ -19,6 +19,7 @@ import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -30,24 +31,17 @@ import reactor.core.publisher.Mono;
 import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static com.locibot.locibot.LociBot.DEFAULT_LOGGER;
 
 public class DiabloCmd extends BaseCmd {
 
     private static final String ACCESS_TOKEN_URL = "https://us.battle.net/oauth/token?grant_type=client_credentials";
-
-    private enum Region {
-        EU, US, TW, KR
-    }
-
     private final String clientId;
     private final String clientSecret;
     private final SingleValueCache<TokenResponse> token;
     private final MultiValueCache<String, ProfileResponse> profileCache;
     private final MultiValueCache<String, HeroResponse> heroCache;
-
     public DiabloCmd() {
         super(CommandCategory.GAMESTATS, "diablo", "Search for Diablo 3 statistics");
         this.addOption(option -> option.name("region")
@@ -65,8 +59,40 @@ public class DiabloCmd extends BaseCmd {
         this.token = SingleValueCache.Builder.create(this.requestAccessToken())
                 .withTtlForValue(TokenResponse::getExpiresIn)
                 .build();
-        this.profileCache = MultiValueCache.Builder.<String, ProfileResponse>create().withTtl(Config.CACHE_TTL).build();
-        this.heroCache = MultiValueCache.Builder.<String, HeroResponse>create().withTtl(Config.CACHE_TTL).build();
+        this.profileCache = MultiValueCache.Builder.<String, ProfileResponse>builder().withTtl(Config.CACHE_TTL).build();
+        this.heroCache = MultiValueCache.Builder.<String, HeroResponse>builder().withTtl(Config.CACHE_TTL).build();
+    }
+
+    private static String buildProfileApiUrl(String accessToken, Region region, String battletag) {
+        return "https://%s.api.blizzard.com/d3/profile/%s/?access_token=%s"
+                .formatted(region, NetUtil.encode(battletag), accessToken);
+    }
+
+    private static String buildHeroApiUrl(String accessToken, Region region, String battletag, HeroId heroId) {
+        return "https://%s.api.blizzard.com/d3/profile/%s/hero/%d?access_token=%s"
+                .formatted(region, NetUtil.encode(battletag), heroId.id(), accessToken);
+    }
+
+    private static EmbedCreateSpec formatEmbed(Context context, ProfileResponse profile,
+                                               List<HeroResponse> heroResponses) {
+        final String description = context.localize("diablo3.description")
+                .formatted(profile.battleTag(), profile.guildName(),
+                        profile.paragonLevel(), profile.paragonLevelHardcore(),
+                        profile.paragonLevelSeason(), profile.paragonLevelSeasonHardcore());
+
+        final String heroes = FormatUtil.format(heroResponses,
+                hero -> "**%s** (*%s*)".formatted(hero.name(), hero.getClassName()), "\n");
+
+        final String damages = FormatUtil.format(heroResponses,
+                hero -> context.localize("diablo3.hero.dps").formatted(context.localize(hero.stats().damage())), "\n");
+
+        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+                .author(EmbedCreateFields.Author.of(context.localize("diablo3.title"), null, context.getAuthorAvatar()))
+                .thumbnail("https://i.imgur.com/QUS9QkX.png")
+                .description(description)
+                .fields(List.of(
+                        EmbedCreateFields.Field.of(context.localize("diablo3.heroes"), heroes, true),
+                        EmbedCreateFields.Field.of(context.localize("diablo3.damages"), damages, true))).build());
     }
 
     @Override
@@ -109,37 +135,6 @@ public class DiabloCmd extends BaseCmd {
                 });
     }
 
-    private static String buildProfileApiUrl(String accessToken, Region region, String battletag) {
-        return "https://%s.api.blizzard.com/d3/profile/%s/?access_token=%s"
-                .formatted(region, NetUtil.encode(battletag), accessToken);
-    }
-
-    private static String buildHeroApiUrl(String accessToken, Region region, String battletag, HeroId heroId) {
-        return "https://%s.api.blizzard.com/d3/profile/%s/hero/%d?access_token=%s"
-                .formatted(region, NetUtil.encode(battletag), heroId.id(), accessToken);
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, ProfileResponse profile,
-                                                         List<HeroResponse> heroResponses) {
-        final String description = context.localize("diablo3.description")
-                .formatted(profile.battleTag(), profile.guildName(),
-                        profile.paragonLevel(), profile.paragonLevelHardcore(),
-                        profile.paragonLevelSeason(), profile.paragonLevelSeasonHardcore());
-
-        final String heroes = FormatUtil.format(heroResponses,
-                hero -> "**%s** (*%s*)".formatted(hero.name(), hero.getClassName()), "\n");
-
-        final String damages = FormatUtil.format(heroResponses,
-                hero -> context.localize("diablo3.hero.dps").formatted(context.localize(hero.stats().damage())), "\n");
-
-        return ShadbotUtil.getDefaultEmbed(embed ->
-                embed.setAuthor(context.localize("diablo3.title"), null, context.getAuthorAvatar())
-                        .setThumbnail("https://i.imgur.com/QUS9QkX.png")
-                        .setDescription(description)
-                        .addField(context.localize("diablo3.heroes"), heroes, true)
-                        .addField(context.localize("diablo3.damages"), damages, true));
-    }
-
     private Mono<TokenResponse> requestAccessToken() {
         return RequestHelper.fromUrl(ACCESS_TOKEN_URL)
                 .setMethod(HttpMethod.POST)
@@ -152,6 +147,10 @@ public class DiabloCmd extends BaseCmd {
     private String buildAuthorizationValue() {
         return "Basic %s".formatted(Base64.getEncoder()
                 .encodeToString("%s:%s".formatted(this.clientId, this.clientSecret).getBytes()));
+    }
+
+    private enum Region {
+        EU, US, TW, KR
     }
 
 }

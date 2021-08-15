@@ -32,7 +32,7 @@ public class GroupsCollection extends DatabaseCollection {
 
     public GroupsCollection(MongoDatabase database) {
         super(database, "groups");
-        this.groupCache = MultiValueCache.Builder.<String, DBGroup>create().withInfiniteTtl().build();
+        this.groupCache = MultiValueCache.Builder.<String, DBGroup>builder().withInfiniteTtl().build();
 
     }
 

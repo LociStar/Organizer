@@ -9,6 +9,8 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Role;
+import discord4j.core.spec.EmbedCreateFields;
+import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -51,26 +53,26 @@ public class RolelistCmd extends BaseCmd {
 
                     return Mono.zip(Mono.just(mentionedRoles), getUsernames);
                 })
-                .map(TupleUtils.function((mentionedRoles, usernames) -> ShadbotUtil.getDefaultEmbed(
-                        embed -> {
-                            embed.setAuthor(context.localize("rolelist.title"), null, context.getAuthorAvatar());
+                .map(TupleUtils.function((mentionedRoles, usernames) -> {
+                    EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
+                    embed.author(EmbedCreateFields.Author.of(context.localize("rolelist.title"), null, context.getAuthorAvatar()));
 
-                            if (usernames.isEmpty()) {
-                                if (mentionedRoles.size() == 1) {
-                                    embed.setDescription(context.localize("rolelist.nobody.singular"));
-                                } else {
-                                    embed.setDescription(context.localize("rolelist.nobody.plural"));
-                                }
-                                return;
-                            }
+                    if (usernames.isEmpty()) {
+                        if (mentionedRoles.size() == 1) {
+                            embed.description(context.localize("rolelist.nobody.singular"));
+                        } else {
+                            embed.description(context.localize("rolelist.nobody.plural"));
+                        }
+                    }
 
-                            final String rolesFormatted = FormatUtil.format(mentionedRoles, Role::getMention, ", ");
-                            embed.setDescription(context.localize("rolelist.description")
-                                    .formatted(rolesFormatted));
+                    final String rolesFormatted = FormatUtil.format(mentionedRoles, Role::getMention, ", ");
+                    embed.description(context.localize("rolelist.description")
+                            .formatted(rolesFormatted));
 
-                            FormatUtil.createColumns(usernames, 25)
-                                    .forEach(field -> embed.addField(field.name(), field.value(), true));
-                        })))
+                    FormatUtil.createColumns(usernames, 25)
+                            .forEach(field -> embed.addFields(EmbedCreateFields.Field.of(field.name(), field.value(), true)));
+                    return ShadbotUtil.getDefaultEmbed(embed.build());
+                }))
                 .flatMap(context::createFollowupMessage);
     }
 

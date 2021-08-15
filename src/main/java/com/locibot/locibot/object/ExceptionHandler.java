@@ -2,10 +2,9 @@ package com.locibot.locibot.object;
 
 import com.locibot.locibot.LociBot;
 import com.locibot.locibot.command.CommandException;
-import com.locibot.locibot.core.command.Context;
-import com.locibot.locibot.music.NoMusicException;
-import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.command.MissingPermissionException;
+import com.locibot.locibot.core.command.Context;
+import com.locibot.locibot.utils.FormatUtil;
 import io.netty.channel.unix.Errors;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.PrematureCloseException;
@@ -33,9 +32,6 @@ public class ExceptionHandler {
         }
         if (thr instanceof MissingPermissionException err) {
             return ExceptionHandler.onMissingPermissionException(err, context);
-        }
-        if (thr instanceof NoMusicException) {
-            return ExceptionHandler.onNoMusicException(context);
         }
         if (thr instanceof TimeoutException || thr instanceof IOException) {
             return ExceptionHandler.onServerAccessError(thr, context);

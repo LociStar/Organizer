@@ -9,10 +9,6 @@ public class LogUtil {
     private static final String ROOT_NAME = "shadbot";
     private static final String DELIMITER = ".";
 
-    public enum Category {
-        DATABASE, TEST, MUSIC, COMMAND
-    }
-
     public static Logger getLogger() {
         return LogUtil.getLogger(null, new Category[]{});
     }
@@ -32,6 +28,10 @@ public class LogUtil {
                     .append(classType.getSimpleName());
         }
         return Loggers.getLogger(strBuilder.toString());
+    }
+
+    public enum Category {
+        DATABASE, TEST, MUSIC, COMMAND
     }
 
 }

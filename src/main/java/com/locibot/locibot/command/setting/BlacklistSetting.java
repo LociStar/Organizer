@@ -2,7 +2,6 @@ package com.locibot.locibot.command.setting;
 
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.command.*;
-import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.EnumUtil;
@@ -18,14 +17,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class BlacklistSetting extends BaseCmd {
-
-    private enum Action {
-        ADD, REMOVE
-    }
-
-    private enum Type {
-        COMMAND, CATEGORY
-    }
 
     public BlacklistSetting() {
         super(CommandCategory.SETTING, CommandPermission.ADMIN,
@@ -165,6 +156,14 @@ public class BlacklistSetting extends BaseCmd {
         return context.getDbGuild().updateSetting(Setting.BLACKLIST, blacklist)
                 .then(context.createFollowupMessage(Emoji.CHECK_MARK, message
                         .formatted(FormatUtil.format(cmdNames, "`%s`"::formatted, ", "))));
+    }
+
+    private enum Action {
+        ADD, REMOVE
+    }
+
+    private enum Type {
+        COMMAND, CATEGORY
     }
 
 }

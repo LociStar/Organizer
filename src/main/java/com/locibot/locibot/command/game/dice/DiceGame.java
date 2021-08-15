@@ -9,11 +9,14 @@ import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.object.entity.Message;
+import discord4j.core.spec.EmbedCreateFields;
+import discord4j.core.spec.EmbedCreateSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class DiceGame extends MultiplayerGame<DicePlayer> {
@@ -62,25 +65,28 @@ public class DiceGame extends MultiplayerGame<DicePlayer> {
     @Override
     public Mono<Message> show() {
         return Mono.
-                fromCallable(() -> ShadbotUtil.getDefaultEmbed(embed -> {
-                    embed.setAuthor(this.context.localize("dice.title"), null, this.getContext().getAuthorAvatar())
-                            .setThumbnail("https://i.imgur.com/XgOilIW.png")
-                            .setDescription(this.context.localize("dice.description")
+                fromCallable(() -> {
+                    EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder()
+                            .author(EmbedCreateFields.Author.of(this.context.localize("dice.title"), null, this.getContext().getAuthorAvatar()))
+                            .thumbnail("https://i.imgur.com/XgOilIW.png")
+                            .description(this.context.localize("dice.description")
                                     .formatted(this.context.getCommandName(), this.context.getSubCommandGroupName().orElseThrow(),
                                             DiceCmd.JOIN_SUB_COMMAND, this.context.localize(this.bet)))
-                            .addField(this.context.localize("dice.player.title"), FormatUtil.format(this.players.values(),
-                                    player -> player.getUsername().orElseThrow(), "\n"), true)
-                            .addField(this.context.localize("dice.number.title"), FormatUtil.format(this.players.values(),
-                                    player -> Integer.toString(player.getNumber()), "\n"), true);
+                            .fields(List.of(
+                                    EmbedCreateFields.Field.of(this.context.localize("dice.player.title"), FormatUtil.format(this.players.values(),
+                                            player -> player.getUsername().orElseThrow(), "\n"), true),
+                                    EmbedCreateFields.Field.of(this.context.localize("dice.number.title"), FormatUtil.format(this.players.values(),
+                                            player -> Integer.toString(player.getNumber()), "\n"), true)));
 
                     if (this.isScheduled()) {
                         final Duration remainingDuration = this.getDuration().minus(TimeUtil.elapsed(this.startTimer));
-                        embed.setFooter(this.context.localize("dice.footer.remaining")
-                                .formatted(remainingDuration.toSeconds()), null);
+                        embed.footer(EmbedCreateFields.Footer.of(this.context.localize("dice.footer.remaining")
+                                .formatted(remainingDuration.toSeconds()), null));
                     } else {
-                        embed.setFooter(this.context.localize("dice.footer.finished"), null);
+                        embed.footer(EmbedCreateFields.Footer.of(this.context.localize("dice.footer.finished"), null));
                     }
-                }))
+                    return ShadbotUtil.getDefaultEmbed(embed.build());
+                })
                 .flatMap(this.context::editFollowupMessage);
     }
 

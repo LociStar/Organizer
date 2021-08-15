@@ -1,16 +1,16 @@
 package com.locibot.locibot.database.premium.entity;
 
+import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.database.DatabaseEntity;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.SerializableEntity;
 import com.locibot.locibot.database.premium.PremiumCollection;
 import com.locibot.locibot.database.premium.RelicType;
 import com.locibot.locibot.database.premium.bean.RelicBean;
+import com.locibot.locibot.utils.TimeUtil;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
-import com.locibot.locibot.data.Telemetry;
-import com.locibot.locibot.utils.TimeUtil;
 import discord4j.common.util.Snowflake;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.Nullable;

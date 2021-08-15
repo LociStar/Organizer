@@ -25,15 +25,12 @@ public class LociBotUtilTest {
 
     @Test
     public void testGetDefaultEmbed() {
-        final Consumer<EmbedCreateSpec> consumer = ShadbotUtil.getDefaultEmbed(embed -> {
-        });
-        final EmbedCreateSpec spec = new EmbedCreateSpec();
-        consumer.accept(spec);
+        final EmbedCreateSpec consumer = ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder().build());
         final EmbedData expected = EmbedData.builder()
                 .color(Config.BOT_COLOR.getRGB())
                 .fields(Collections.emptyList())
                 .build();
-        assertEquals(expected, spec.asRequest());
+        assertEquals(expected, consumer.asRequest());
     }
 
 }

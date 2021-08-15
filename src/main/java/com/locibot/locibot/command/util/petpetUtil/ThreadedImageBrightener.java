@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
  * This class exists to pull of a trick for transparency in the exported gifs.
  * The transparency color for the gif export is black, so to have black colors in images work the image is brightened.
  * This uses slight multi-threading for faster performance, especially with larger images.
+ *
  * @author Luke Tonon
  * TODO: Possibly extend the usability of this class.
  */
@@ -23,11 +24,11 @@ public final class ThreadedImageBrightener implements Runnable {
         try {
             int bottomHeight = this.bufferedImage.getHeight() / 2;
 
-            ColorProcessor topProcessor = new ColorProcessor(this.bufferedImage, "Top", this.brightnessIncrease,0, 0, this.bufferedImage.getWidth(), bottomHeight);
+            ColorProcessor topProcessor = new ColorProcessor(this.bufferedImage, "Top", this.brightnessIncrease, 0, 0, this.bufferedImage.getWidth(), bottomHeight);
             topProcessor.start();
             topProcessor.join();
 
-            ColorProcessor bottomProcessor = new ColorProcessor(this.bufferedImage, "Bottom", this.brightnessIncrease,0, bottomHeight, this.bufferedImage.getWidth(), this.bufferedImage.getHeight());
+            ColorProcessor bottomProcessor = new ColorProcessor(this.bufferedImage, "Bottom", this.brightnessIncrease, 0, bottomHeight, this.bufferedImage.getWidth(), this.bufferedImage.getHeight());
             bottomProcessor.start();
             bottomProcessor.join();
         } catch (InterruptedException e) {

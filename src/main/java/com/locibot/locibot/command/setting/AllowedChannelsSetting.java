@@ -2,7 +2,6 @@ package com.locibot.locibot.command.setting;
 
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.command.*;
-import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.database.guilds.entity.DBGuild;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
@@ -18,10 +17,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class AllowedChannelsSetting extends BaseCmd {
-
-    private enum Action {
-        ADD, REMOVE
-    }
 
     public AllowedChannelsSetting() {
         super(CommandCategory.SETTING, CommandPermission.ADMIN,
@@ -117,6 +112,10 @@ public class AllowedChannelsSetting extends BaseCmd {
                             .then(dbGuild.updateSetting(Setting.ALLOWED_VOICE_CHANNELS, allowedVoiceChannelIds))
                             .then(context.createFollowupMessage(strBuilder.toString()));
                 });
+    }
+
+    private enum Action {
+        ADD, REMOVE
     }
 
 }

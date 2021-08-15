@@ -1,4 +1,5 @@
 package com.locibot.locibot.command.util.petpetUtil;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -7,6 +8,7 @@ import java.io.ByteArrayInputStream;
 
 /**
  * Makes an image round
+ *
  * @Author: LociStar
  */
 public class CopeImageUtil {
@@ -38,7 +40,7 @@ public class CopeImageUtil {
             //When making the brush, it will basically extend a certain pixel like the outside, and you can test it when you can use it
 //            Stroke s = new BasicStroke(5F, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 //            graphics.setStroke(s);
-//            graphics.setColor(Color.WHITE);
+//            graphics.withColor(Color.WHITE);
 //            graphics.drawOval(border1, border1, width - border1 * 2, width - border1 * 2);
 //            graphics.dispose();
 //            OutputStream os = new FileOutputStream("./13000.png");//When publishing a project, such as: Tomcat he will create this under the local tomcat webapps file on the server file name

@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 public class CommandProcessor {
 
     public static Mono<?> processCommand(Context context) {
-        if (context.isPrivate()){
+        if (context.isPrivate()) {
             return Mono.just(CommandProcessor.executePrivateCommand(context)).log();
         }
         return Mono.just(context.getAuthor())

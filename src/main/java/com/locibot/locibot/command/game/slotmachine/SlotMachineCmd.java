@@ -23,6 +23,33 @@ public class SlotMachineCmd extends BaseCmd {
         this.setGameRateLimiter();
     }
 
+    private static List<SlotOptions> randSlots() {
+        // Pseudo-random number between 0 and 100 inclusive
+        final int rand = ThreadLocalRandom.current().nextInt(100 + 1);
+        if (rand == 0) {
+            return List.of(SlotOptions.GIFT, SlotOptions.GIFT, SlotOptions.GIFT);
+        }
+        if (rand <= 5) {
+            return List.of(SlotOptions.BELL, SlotOptions.BELL, SlotOptions.BELL);
+        }
+        if (rand <= 20) {
+            return List.of(SlotOptions.CHERRIES, SlotOptions.CHERRIES, SlotOptions.CHERRIES);
+        }
+        if (rand <= 50) {
+            return List.of(SlotOptions.APPLE, SlotOptions.APPLE, SlotOptions.APPLE);
+        }
+
+        final List<SlotOptions> list = new ArrayList<>();
+        do {
+            final SlotOptions slot = RandUtil.randValue(SlotOptions.values());
+            if (!list.contains(slot)) {
+                list.add(slot);
+            }
+        } while (list.size() != 3);
+
+        return Collections.unmodifiableList(list);
+    }
+
     @Override
     public Mono<?> execute(Context context) {
         final GamblerPlayer player = new GamblerPlayer(context.getGuildId(), context.getAuthorId(), Constants.PAID_COST);
@@ -56,33 +83,6 @@ public class SlotMachineCmd extends BaseCmd {
                 }))
                 .map(StringBuilder::toString)
                 .flatMap(context::createFollowupMessage);
-    }
-
-    private static List<SlotOptions> randSlots() {
-        // Pseudo-random number between 0 and 100 inclusive
-        final int rand = ThreadLocalRandom.current().nextInt(100 + 1);
-        if (rand == 0) {
-            return List.of(SlotOptions.GIFT, SlotOptions.GIFT, SlotOptions.GIFT);
-        }
-        if (rand <= 5) {
-            return List.of(SlotOptions.BELL, SlotOptions.BELL, SlotOptions.BELL);
-        }
-        if (rand <= 20) {
-            return List.of(SlotOptions.CHERRIES, SlotOptions.CHERRIES, SlotOptions.CHERRIES);
-        }
-        if (rand <= 50) {
-            return List.of(SlotOptions.APPLE, SlotOptions.APPLE, SlotOptions.APPLE);
-        }
-
-        final List<SlotOptions> list = new ArrayList<>();
-        do {
-            final SlotOptions slot = RandUtil.randValue(SlotOptions.values());
-            if (!list.contains(slot)) {
-                list.add(slot);
-            }
-        } while (list.size() != 3);
-
-        return Collections.unmodifiableList(list);
     }
 
 }

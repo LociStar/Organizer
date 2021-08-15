@@ -1,22 +1,22 @@
 package com.locibot.locibot.database;
 
+import com.locibot.locibot.data.Config;
+import com.locibot.locibot.data.credential.Credential;
+import com.locibot.locibot.data.credential.CredentialManager;
+import com.locibot.locibot.database.codec.AutoMessageCodec;
 import com.locibot.locibot.database.codec.IamCodec;
 import com.locibot.locibot.database.codec.LongCodec;
 import com.locibot.locibot.database.codec.SnowflakeCodec;
 import com.locibot.locibot.database.groups.GroupsCollection;
+import com.locibot.locibot.database.guilds.GuildsCollection;
+import com.locibot.locibot.database.lottery.LotteryCollection;
+import com.locibot.locibot.database.premium.PremiumCollection;
+import com.locibot.locibot.database.users.UsersCollection;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoDatabase;
-import com.locibot.locibot.data.Config;
-import com.locibot.locibot.data.credential.Credential;
-import com.locibot.locibot.data.credential.CredentialManager;
-import com.locibot.locibot.database.codec.AutoMessageCodec;
-import com.locibot.locibot.database.guilds.GuildsCollection;
-import com.locibot.locibot.database.lottery.LotteryCollection;
-import com.locibot.locibot.database.premium.PremiumCollection;
-import com.locibot.locibot.database.users.UsersCollection;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 

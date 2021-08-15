@@ -1,6 +1,5 @@
 package com.locibot.locibot.command.info;
 
-import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import com.locibot.locibot.LociBot;
 import com.locibot.locibot.core.command.BaseCmd;
 import com.locibot.locibot.core.command.CommandCategory;
@@ -12,8 +11,10 @@ import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
 import com.locibot.locibot.utils.SystemUtil;
 import com.locibot.locibot.utils.TimeUtil;
+import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import discord4j.common.GitProperties;
 import discord4j.core.object.entity.User;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.gateway.GatewayClient;
 import discord4j.gateway.ShardInfo;
@@ -21,8 +22,8 @@ import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Properties;
-import java.util.function.Consumer;
 
 public class BotInfoCmd extends BaseCmd {
 
@@ -36,20 +37,7 @@ public class BotInfoCmd extends BaseCmd {
         super(CommandCategory.INFO, "bot", "Show bot info");
     }
 
-    @Override
-    public Mono<?> execute(Context context) {
-        return Mono.zip(
-                context.getClient().getUserById(LociBot.getOwnerId()),
-                context.getChannel(),
-                context.getClient().getGuilds().count())
-                .flatMap(TupleUtils.function((owner, channel, guildCount) -> {
-                    final long start = System.currentTimeMillis();
-                    return context.createFollowupMessage(Emoji.GEAR, context.localize("testing.ping"))
-                            .then(context.editFollowupMessage(BotInfoCmd.formatEmbed(context, start, owner, guildCount)));
-                }));
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, long start, User owner, long guildCount) {
+    private static EmbedCreateSpec formatEmbed(Context context, long start, User owner, long guildCount) {
         final long gatewayLatency = context.getClient().getGatewayClientGroup()
                 .find(context.getEvent().getShardInfo().getIndex())
                 .map(GatewayClient::getResponseTime)
@@ -80,12 +68,26 @@ public class BotInfoCmd extends BaseCmd {
                         SystemUtil.getProcessCpuUsage(),
                         context.localize(SystemUtil.getThreadCount()));
 
-        return ShadbotUtil.getDefaultEmbed(embed -> embed
-                .setAuthor(context.localize("botinfo.title"), null, context.getAuthorAvatar())
-                .addField(shadbotTitle, shadbotField, true)
-                .addField(versionsTitle, versionsField, true)
-                .addField(performanceTitle, performanceField, true)
-                .addField(networkTitle, networkField, true));
+        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+                .author(EmbedCreateFields.Author.of(context.localize("botinfo.title"), null, context.getAuthorAvatar()))
+                .fields(List.of(
+                        EmbedCreateFields.Field.of(shadbotTitle, shadbotField, true),
+                        EmbedCreateFields.Field.of(versionsTitle, versionsField, true),
+                        EmbedCreateFields.Field.of(performanceTitle, performanceField, true),
+                        EmbedCreateFields.Field.of(networkTitle, networkField, true))).build());
+    }
+
+    @Override
+    public Mono<?> execute(Context context) {
+        return Mono.zip(
+                context.getClient().getUserById(LociBot.getOwnerId()),
+                context.getChannel(),
+                context.getClient().getGuilds().count())
+                .flatMap(TupleUtils.function((owner, channel, guildCount) -> {
+                    final long start = System.currentTimeMillis();
+                    return context.createFollowupMessage(Emoji.GEAR, context.localize("testing.ping"))
+                            .then(context.editFollowupMessage(BotInfoCmd.formatEmbed(context, start, owner, guildCount)));
+                }));
     }
 
 }

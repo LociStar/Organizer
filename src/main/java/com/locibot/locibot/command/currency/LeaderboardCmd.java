@@ -7,6 +7,8 @@ import com.locibot.locibot.database.guilds.entity.DBMember;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.ShadbotUtil;
 import discord4j.core.object.entity.User;
+import discord4j.core.spec.EmbedCreateFields;
+import discord4j.core.spec.EmbedCreateSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -43,8 +45,8 @@ public class LeaderboardCmd extends BaseCmd {
                             });
                 })
                 .map(description -> ShadbotUtil.getDefaultEmbed(
-                        embed -> embed.setAuthor(context.localize("leaderboard.title"), null, context.getAuthorAvatar())
-                                .setDescription(description)))
+                        EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("leaderboard.title"), null, context.getAuthorAvatar()))
+                                .description(description).build()))
                 .flatMap(context::createFollowupMessage);
     }
 

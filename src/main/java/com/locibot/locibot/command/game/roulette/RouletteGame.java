@@ -6,8 +6,9 @@ import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.*;
-import com.locibot.locibot.utils.*;
 import discord4j.core.object.entity.Message;
+import discord4j.core.spec.EmbedCreateFields;
+import discord4j.core.spec.EmbedCreateSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -37,6 +38,19 @@ public class RouletteGame extends MultiplayerGame<RoulettePlayer> {
         super(context, Duration.ofSeconds(30));
     }
 
+    private static int getMultiplier(RoulettePlayer player, int winningPlace) {
+        if (player.getPlace() == RouletteCmd.Place.NUMBER) {
+            if (player.getNumber().orElseThrow() == winningPlace) {
+                return 36;
+            }
+            return 0;
+        } else if (TESTS.get(player.getPlace()).test(winningPlace)) {
+            return 2;
+        } else {
+            return 0;
+        }
+    }
+
     @Override
     public Mono<Void> start() {
         return Mono.fromRunnable(() -> {
@@ -47,36 +61,37 @@ public class RouletteGame extends MultiplayerGame<RoulettePlayer> {
 
     @Override
     public Mono<Message> show() {
-        return Mono.fromCallable(() -> ShadbotUtil.getDefaultEmbed(
-                embed -> {
-                    final String description = this.context.localize("roulette.description")
-                            .formatted(this.context.getFullCommandName());
-                    final String desc = FormatUtil.format(this.players.values(),
-                            player -> this.context.localize("roulette.player.field")
-                                    .formatted(player.getUsername().orElseThrow(), this.context.localize(player.getBet())), "\n");
-                    final String place = this.getPlayers().values().stream()
-                            .map(player -> player.getPlace() == RouletteCmd.Place.NUMBER
-                                    ? player.getNumber().orElseThrow()
-                                    : player.getPlace())
-                            .map(Object::toString)
-                            .map(StringUtil::capitalize)
-                            .collect(Collectors.joining("\n"));
+        return Mono.fromCallable(() -> {
+            EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
+            final String description = this.context.localize("roulette.description")
+                    .formatted(this.context.getFullCommandName());
+            final String desc = FormatUtil.format(this.players.values(),
+                    player -> this.context.localize("roulette.player.field")
+                            .formatted(player.getUsername().orElseThrow(), this.context.localize(player.getBet())), "\n");
+            final String place = this.getPlayers().values().stream()
+                    .map(player -> player.getPlace() == RouletteCmd.Place.NUMBER
+                            ? player.getNumber().orElseThrow()
+                            : player.getPlace())
+                    .map(Object::toString)
+                    .map(StringUtil::capitalize)
+                    .collect(Collectors.joining("\n"));
 
-                    embed.setAuthor(this.context.localize("roulette.title"), null, this.context.getAuthorAvatar())
-                            .setThumbnail("https://i.imgur.com/D7xZd6C.png")
-                            .setDescription(description)
-                            .addField(this.context.localize("roulette.player.title"), desc, true)
-                            .addField(this.context.localize("roulette.place.title"), place, true);
+            embed.author(EmbedCreateFields.Author.of(this.context.localize("roulette.title"), null, this.context.getAuthorAvatar()))
+                    .thumbnail("https://i.imgur.com/D7xZd6C.png")
+                    .description(description)
+                    .fields(List.of(EmbedCreateFields.Field.of(this.context.localize("roulette.player.title"), desc, true),
+                            EmbedCreateFields.Field.of(this.context.localize("roulette.place.title"), place, true)));
 
-                    if (this.isScheduled()) {
-                        final Duration remainingDuration = this.getDuration()
-                                .minus(TimeUtil.elapsed(this.startTimer));
-                        embed.setFooter(this.context.localize("roulette.footer.remaining")
-                                .formatted(remainingDuration.toSeconds()), null);
-                    } else {
-                        embed.setFooter(this.context.localize("roulette.footer.finished"), null);
-                    }
-                }))
+            if (this.isScheduled()) {
+                final Duration remainingDuration = this.getDuration()
+                        .minus(TimeUtil.elapsed(this.startTimer));
+                embed.footer(EmbedCreateFields.Footer.of(this.context.localize("roulette.footer.remaining")
+                        .formatted(remainingDuration.toSeconds()), null));
+            } else {
+                embed.footer(EmbedCreateFields.Footer.of(this.context.localize("roulette.footer.finished"), null));
+            }
+            return ShadbotUtil.getDefaultEmbed(embed.build());
+        })
                 .flatMap(this.context::editFollowupMessage);
     }
 
@@ -108,19 +123,6 @@ public class RouletteGame extends MultiplayerGame<RoulettePlayer> {
                             .formatted(winningPlace, color, text));
                 })
                 .then(Mono.fromRunnable(this::destroy));
-    }
-
-    private static int getMultiplier(RoulettePlayer player, int winningPlace) {
-        if (player.getPlace() == RouletteCmd.Place.NUMBER) {
-            if (player.getNumber().orElseThrow() == winningPlace) {
-                return 36;
-            }
-            return 0;
-        } else if (TESTS.get(player.getPlace()).test(winningPlace)) {
-            return 2;
-        } else {
-            return 0;
-        }
     }
 
 }

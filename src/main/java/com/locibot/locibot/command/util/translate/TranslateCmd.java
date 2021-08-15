@@ -9,13 +9,12 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.ShadbotUtil;
 import com.locibot.locibot.utils.StringUtil;
+import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import reactor.core.publisher.Mono;
-
-import java.util.function.Consumer;
 
 public class TranslateCmd extends BaseCmd {
 
@@ -30,34 +29,15 @@ public class TranslateCmd extends BaseCmd {
         this.addOption("text", "The text to translate", true, ApplicationCommandOptionType.STRING);
     }
 
-    @Override
-    public Mono<?> execute(Context context) {
-        final String sourceLang = context.getOptionAsString("source_lang").orElseThrow();
-        final String destLang = context.getOptionAsString("destination_lang").orElseThrow();
-        final String text = context.getOptionAsString("text").orElseThrow();
-
-        return Mono.fromCallable(() -> new TranslateRequest(context.getLocale(), sourceLang, destLang, text))
-                .onErrorMap(IllegalArgumentException.class,
-                        err -> new CommandException(context.localize("translate.exception.doc")
-                                .formatted(err.getMessage(), DOC_URL)))
-                .flatMap(request -> context.createFollowupMessage(Emoji.HOURGLASS, context.localize("translate.loading"))
-                        .then(TranslateCmd.getTranslation(request))
-                        .flatMap(response -> context.editFollowupMessage(
-                                TranslateCmd.formatEmbed(context, request, response)))
-                        .onErrorMap(IllegalArgumentException.class,
-                                err -> new CommandException(context.localize("translate.exception.doc")
-                                        .formatted(err.getMessage(), DOC_URL))));
-    }
-
-    private static Consumer<EmbedCreateSpec> formatEmbed(Context context, TranslateRequest request,
-                                                         TranslateResponse response) {
-        return ShadbotUtil.getDefaultEmbed(
-                embed -> embed.setAuthor(context.localize("translate.title"), null, context.getAuthorAvatar())
-                        .setDescription("**%s**%n%s%n%n**%s**%n%s".formatted(
-                                StringUtil.capitalize(request.isoToLang(response.sourceLang())),
-                                request.getSourceText(),
-                                StringUtil.capitalize(request.isoToLang(request.getDestLang())),
-                                response.translatedText())));
+    private static EmbedCreateSpec formatEmbed(Context context, TranslateRequest request,
+                                               TranslateResponse response) {
+        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+                .author(EmbedCreateFields.Author.of(context.localize("translate.title"), null, context.getAuthorAvatar()))
+                .description("**%s**%n%s%n%n**%s**%n%s".formatted(
+                        StringUtil.capitalize(request.isoToLang(response.sourceLang())),
+                        request.getSourceText(),
+                        StringUtil.capitalize(request.isoToLang(request.getDestLang())),
+                        response.translatedText())).build());
     }
 
     private static Mono<TranslateResponse> getTranslation(TranslateRequest data) {
@@ -93,6 +73,25 @@ public class TranslateCmd extends BaseCmd {
         } catch (final JSONException err) {
             return false;
         }
+    }
+
+    @Override
+    public Mono<?> execute(Context context) {
+        final String sourceLang = context.getOptionAsString("source_lang").orElseThrow();
+        final String destLang = context.getOptionAsString("destination_lang").orElseThrow();
+        final String text = context.getOptionAsString("text").orElseThrow();
+
+        return Mono.fromCallable(() -> new TranslateRequest(context.getLocale(), sourceLang, destLang, text))
+                .onErrorMap(IllegalArgumentException.class,
+                        err -> new CommandException(context.localize("translate.exception.doc")
+                                .formatted(err.getMessage(), DOC_URL)))
+                .flatMap(request -> context.createFollowupMessage(Emoji.HOURGLASS, context.localize("translate.loading"))
+                        .then(TranslateCmd.getTranslation(request))
+                        .flatMap(response -> context.editFollowupMessage(
+                                TranslateCmd.formatEmbed(context, request, response)))
+                        .onErrorMap(IllegalArgumentException.class,
+                                err -> new CommandException(context.localize("translate.exception.doc")
+                                        .formatted(err.getMessage(), DOC_URL))));
     }
 
 }

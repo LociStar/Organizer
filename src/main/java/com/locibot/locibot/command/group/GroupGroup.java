@@ -3,7 +3,6 @@ package com.locibot.locibot.command.group;
 import com.locibot.locibot.command.group.amongUs.AmongUs;
 import com.locibot.locibot.command.group.clash.Clash;
 import com.locibot.locibot.command.group.valorant.Valorant;
-import com.locibot.locibot.command.info.InfoGroupCmd;
 import com.locibot.locibot.core.command.BaseCmdGroup;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.CommandPermission;

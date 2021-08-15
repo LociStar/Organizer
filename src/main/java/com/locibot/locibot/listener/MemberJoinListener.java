@@ -18,6 +18,15 @@ import java.util.Set;
 
 public class MemberJoinListener implements EventListener<MemberJoinEvent> {
 
+    public static Mono<Message> sendAutoMessage(GatewayDiscordClient gateway, User user, Snowflake channelId, String message) {
+        return gateway.getChannelById(channelId)
+                .cast(MessageChannel.class)
+                .flatMap(channel -> DiscordUtil.sendMessage(message
+                        .replace("{username}", user.getUsername())
+                        .replace("{userId}", user.getId().asString())
+                        .replace("{mention}", user.getMention()), channel));
+    }
+
     @Override
     public Class<MemberJoinEvent> getEventType() {
         return MemberJoinEvent.class;
@@ -55,14 +64,5 @@ public class MemberJoinListener implements EventListener<MemberJoinEvent> {
         return sendWelcomeMessageDeprecated
                 .and(sendWelcomeMessage)
                 .and(addAutoRoles);
-    }
-
-    public static Mono<Message> sendAutoMessage(GatewayDiscordClient gateway, User user, Snowflake channelId, String message) {
-        return gateway.getChannelById(channelId)
-                .cast(MessageChannel.class)
-                .flatMap(channel -> DiscordUtil.sendMessage(message
-                        .replace("{username}", user.getUsername())
-                        .replace("{userId}", user.getId().asString())
-                        .replace("{mention}", user.getMention()), channel));
     }
 }
