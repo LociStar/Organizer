@@ -143,7 +143,7 @@
         <dependency>
             <groupId>com.discord4j</groupId>
             <artifactId>stores-caffeine</artifactId>
-            <version>3.2.1-SNAPSHOT</version>
+            <version>3.2.1</version>
         </dependency>
         <!-- lavaplayer -->
         <dependency>
