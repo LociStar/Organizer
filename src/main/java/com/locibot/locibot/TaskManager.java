@@ -168,7 +168,7 @@ public class TaskManager {
     }
 
     public void scheduleWeatherSubscriptions(GatewayDiscordClient gateway) {
-        LOGGER.info("Scheduling weather subscriptions");
+        LOGGER.info("Scheduling weather subscriptions");//RegisterWeather.getDelay(), Duration.ofDays(1)
         final Disposable task = Flux.interval(RegisterWeather.getDelay(), Duration.ofDays(1), DEFAULT_SCHEDULER)
                 .doOnNext(__ -> {
                     LOGGER.info("Sending weather subscriptions");
@@ -180,7 +180,7 @@ public class TaskManager {
                                             gateway.getUserById(dbMember.getId()).flatMap(user ->
                                                     user.getPrivateChannel().flatMap(privateChannel ->
                                                             privateChannel.createMessage("Daily weather forecast of " + city + ":")
-                                                                    .then(Mono.just(new HourlyWeatherForecastClass(owm, city)).flatMap(hwfc ->
+                                                                    .then(Mono.just(new HourlyWeatherForecastClass(owm, city)).delayElement(Duration.ofSeconds(1)).flatMap(hwfc ->
                                                                             privateChannel.createMessage(messageCreateSpec -> {
                                                                                 try {
                                                                                     byte[] bytes = hwfc.createHeatMap();
@@ -195,7 +195,7 @@ public class TaskManager {
                                                                                                 new ByteArrayInputStream(bytes));
                                                                                     else
                                                                                         messageCreateSpec.setContent("No City No Rain");
-                                                                                    System.out.println("Message End");
+                                                                                    LOGGER.info(city + " weather send to " + user.getUsername());
                                                                                 } catch (IOException e) {
                                                                                     e.printStackTrace();
                                                                                 }
