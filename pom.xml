@@ -180,7 +180,7 @@
 <!--            <version>2.5.3.0</version>-->
             <groupId>com.github.LociStar</groupId>
             <artifactId>OWM-JAPIs</artifactId>
-            <version>962977cf68</version>
+            <version>83290087b1</version>
         </dependency>
         <!-- Loggers -->
         <dependency>
