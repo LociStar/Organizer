@@ -9,6 +9,8 @@ import org.knowm.xchart.HeatMapSeries;
 import java.awt.*;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +42,7 @@ public class CreateHeatMap {
             countX = xData.indexOf(time[1].substring(0, time[1].length() - 3));
             if (!time[0].equals(lastDate)) {
                 lastDate = time[0];
-                yData.add(LocalDate.parse(time[0]).format(formatter));
+                yData.add(LocalDate.parse(time[0]).format(DateTimeFormatter.ofPattern("EE dd.MM.yy")));
                 countY++;
             }
             var mainData = hwf.getDataList().get(i).getMainData();

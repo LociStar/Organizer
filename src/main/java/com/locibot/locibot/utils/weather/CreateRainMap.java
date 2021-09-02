@@ -40,7 +40,7 @@ public class CreateRainMap {
             countX = xData.indexOf(time[1].substring(0, time[1].length() - 3));
             if (!time[0].equals(lastDate)) {
                 lastDate = time[0];
-                yData.add(LocalDate.parse(time[0]).format(formatter));
+                yData.add(LocalDate.parse(time[0]).format(DateTimeFormatter.ofPattern("EE dd.MM.yy")));
                 countY++;
             }
             var rainData = hwf.getDataList().get(i).getRainData();
@@ -71,8 +71,7 @@ public class CreateRainMap {
         heatMapChart.getStyler().setAxisTicksLineVisible(false);
         heatMapChart.getStyler().setPlotGridLinesVisible(false);
 
-        BitmapEncoder.saveBitmap(heatMapChart, "D:\\Programms\\Java\\IdeaProjects\\ShadbotOriginal\\src\\main\\resources\\Pictures\\Rain", BitmapEncoder.BitmapFormat.PNG);
-
+        //BitmapEncoder.saveBitmap(heatMapChart, "D:\\Programms\\Java\\IdeaProjects\\ShadbotOriginal\\src\\main\\resources\\Pictures\\Rain", BitmapEncoder.BitmapFormat.PNG);
 
         return BitmapEncoder.getBitmapBytes(heatMapChart, BitmapEncoder.BitmapFormat.PNG);
 

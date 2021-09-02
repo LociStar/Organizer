@@ -119,7 +119,7 @@ public class WeatherCmd extends BaseCmd {
         final String clouds = StringUtil.capitalize(weather.getCloudsDescription());
         final String wind = context.localize("weather.wind.speed")
                 .formatted(weather.getWindDescription(context), context.localize(weather.getWindSpeed()));
-        final String rain = weather.getPrecipVol3h()
+        final String rain = weather.getPrecipVol3h() //TODO: need to change, because rain is somehow always none
                 .map(data -> context.localize("weather.precip.volume").formatted(context.localize(data)))
                 .orElse(context.localize("weather.none"));
         final String humidity = "%s%%".formatted(context.localize(weather.getHumidity()));
