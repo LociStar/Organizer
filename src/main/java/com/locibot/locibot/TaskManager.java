@@ -169,6 +169,7 @@ public class TaskManager {
 
     public void scheduleWeatherSubscriptions(GatewayDiscordClient gateway) {
         LOGGER.info("Scheduling weather subscriptions");//RegisterWeather.getDelay(), Duration.ofDays(1)
+        //final Disposable task = Flux.interval(Duration.ofSeconds(10), Duration.ofMinutes(1), DEFAULT_SCHEDULER)
         final Disposable task = Flux.interval(RegisterWeather.getDelay(), Duration.ofDays(1), DEFAULT_SCHEDULER)
                 .doOnNext(__ -> {
                     LOGGER.info("Sending weather subscriptions");
@@ -176,30 +177,42 @@ public class TaskManager {
                     owm.setUnit(OWM.Unit.METRIC);
                     DatabaseManager.getGuilds().getDBGuilds().forEach(dbGuild ->
                             dbGuild.getMembers().forEach(dbMember ->
-                                    dbMember.getWeatherRegistered().forEach(city ->
-                                            gateway.getUserById(dbMember.getId()).flatMap(user ->
-                                                    user.getPrivateChannel().flatMap(privateChannel ->
-                                                            privateChannel.createMessage("Daily weather forecast of " + city + ":")
-                                                                    .then(Mono.just(new HourlyWeatherForecastClass(owm, city)).delayElement(Duration.ofSeconds(1)).flatMap(hwfc ->
-                                                                            privateChannel.createMessage(messageCreateSpec -> {
-                                                                                try {
-                                                                                    byte[] bytes = hwfc.createHeatMap();
-                                                                                    if (bytes.length > 0)
-                                                                                        messageCreateSpec.addFile("temperature.png",
-                                                                                                new ByteArrayInputStream(bytes));
-                                                                                    else
-                                                                                        messageCreateSpec.setContent("Please provide a real city ;)");
-                                                                                    bytes = hwfc.createRainMap();
-                                                                                    if (bytes.length > 0)
-                                                                                        messageCreateSpec.addFile("rain.png",
-                                                                                                new ByteArrayInputStream(bytes));
-                                                                                    else
-                                                                                        messageCreateSpec.setContent("No City No Rain");
-                                                                                    LOGGER.info(city + " weather send to " + user.getUsername());
-                                                                                } catch (IOException e) {
-                                                                                    e.printStackTrace();
-                                                                                }
-                                                                            }))))).subscribe(null, ExceptionHandler::handleUnknownError))));
+                                    dbMember.getWeatherRegistered().forEach(city -> {
+
+                                        //TODO: This is a inefficient implementation. This needs to be reworked.
+                                        //1 sek delay for each City-API-Call
+                                        long expectedTime = System.currentTimeMillis();
+                                        long sleepTime = 1000;
+                                        expectedTime += sleepTime;//Sample expectedTime += 1000; 1 second sleep
+                                        while (System.currentTimeMillis() < expectedTime) {
+                                            //Empty Loop
+                                        }
+
+                                        gateway.getUserById(dbMember.getId()).flatMap(user ->
+                                                user.getPrivateChannel().flatMap(privateChannel ->
+                                                        privateChannel.createMessage("Daily weather forecast of " + city + ":")
+                                                                .then(Mono.just(new HourlyWeatherForecastClass(owm, city)).flatMap(hwfc ->
+                                                                        privateChannel.createMessage(messageCreateSpec -> {
+                                                                            try {
+                                                                                byte[] bytes = hwfc.createHeatMap();
+                                                                                if (bytes.length > 0)
+                                                                                    messageCreateSpec.addFile("temperature.png",
+                                                                                            new ByteArrayInputStream(bytes));
+                                                                                else
+                                                                                    messageCreateSpec.setContent("Please provide a real city ;)");
+                                                                                bytes = hwfc.createRainMap();
+                                                                                if (bytes.length > 0)
+                                                                                    messageCreateSpec.addFile("rain.png",
+                                                                                            new ByteArrayInputStream(bytes));
+                                                                                else
+                                                                                    messageCreateSpec.setContent("No City No Rain");
+                                                                                LOGGER.info(city + " weather send to " + user.getUsername());
+                                                                            } catch (IOException e) {
+                                                                                e.printStackTrace();
+                                                                            }
+                                                                        })))))
+                                                .subscribe(null, ExceptionHandler::handleUnknownError);
+                                    })));
                     LOGGER.info("weather subscriptions send");
                 }).subscribe(null, ExceptionHandler::handleUnknownError);
         this.tasks.add(task);
