@@ -61,32 +61,10 @@ public class LociBot {
     public static void main(String[] args) {
         Locale.setDefault(Config.DEFAULT_LOCALE);
 
-//        final String sentryDsn = CredentialManager.get(Credential.SENTRY_DSN);
-//        if (sentryDsn != null && !Config.IS_SNAPSHOT) {
-//            DEFAULT_LOGGER.info("Initializing Sentry");
-//            Sentry.init(options -> {
-//                options.setDsn(sentryDsn);
-//                options.setRelease(Config.VERSION);
-//                // Ignore events coming from lavaplayer
-//                options.setBeforeSend(
-//                        (sentryEvent, obj) -> sentryEvent.getLogger().startsWith("com.sedmelluq") ? null : sentryEvent);
-//            });
-//        }
-
         DEFAULT_LOGGER.info("Starting LociBot V{}", Config.VERSION);
 
         LociBot.serviceManager = new ServiceManager();
         LociBot.serviceManager.start();
-
-//        final String prometheusPort = CredentialManager.get(Credential.PROMETHEUS_PORT);
-//        if (prometheusPort != null && !Config.IS_SNAPSHOT) {
-//            DEFAULT_LOGGER.info("Initializing Prometheus on port {}", prometheusPort);
-//            try {
-//                LociBot.prometheusServer = new HTTPServer(Integer.parseInt(prometheusPort));
-//            } catch (final IOException err) {
-//                DEFAULT_LOGGER.error("An error occurred while initializing Prometheus", err);
-//            }
-//        }
 
         if (Config.IS_SNAPSHOT) {
             DEFAULT_LOGGER.info("[SNAPSHOT] Enabling Reactor operator stack recorder");
