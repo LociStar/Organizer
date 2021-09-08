@@ -10,7 +10,7 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.RandUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
@@ -67,7 +67,7 @@ public class Rule34Cmd extends BaseCmd {
                         EmbedCreateFields.Field.of(context.localize("rule34.tags"), formattedTags, false))
                 .image(post.fileUrl())
                 .footer(EmbedCreateFields.Footer.of(context.localize("rule34.footer"), null));
-        return ShadbotUtil.getDefaultEmbed(embed.build());
+        return LociBotUtil.getDefaultEmbed(embed.build());
     }
 
     private static String formatTags(final List<String> tags) {

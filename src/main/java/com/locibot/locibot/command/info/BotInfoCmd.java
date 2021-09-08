@@ -8,7 +8,7 @@ import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.SystemUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
@@ -68,7 +68,7 @@ public class BotInfoCmd extends BaseCmd {
                         SystemUtil.getProcessCpuUsage(),
                         context.localize(SystemUtil.getThreadCount()));
 
-        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+        return LociBotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
                 .author(EmbedCreateFields.Author.of(context.localize("botinfo.title"), null, context.getAuthorAvatar()))
                 .fields(List.of(
                         EmbedCreateFields.Field.of(shadbotTitle, shadbotField, true),

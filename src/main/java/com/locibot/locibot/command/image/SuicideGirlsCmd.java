@@ -6,7 +6,7 @@ import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import org.jsoup.Jsoup;
@@ -21,7 +21,7 @@ public class SuicideGirlsCmd extends BaseCmd {
     }
 
     private static EmbedCreateSpec formatEmbed(Context context, SuicideGirl post) {
-        return ShadbotUtil.getDefaultEmbed(
+        return LociBotUtil.getDefaultEmbed(
                 EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of("SuicideGirls", post.getUrl(), context.getAuthorAvatar()))
                         .description(context.localize("suicidegirls.name").formatted(post.getName()))
                         .image(post.getImageUrl()).build());

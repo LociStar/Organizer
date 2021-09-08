@@ -13,7 +13,7 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.NetUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
@@ -54,7 +54,7 @@ public class FortniteCmd extends BaseCmd {
     }
 
     private static EmbedCreateSpec formatEmbed(Context context, String profileUrl, String description) {
-        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+        return LociBotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
                 .author(EmbedCreateFields.Author.of(context.localize("fortnite.title"), profileUrl, context.getAuthorAvatar()))
                 .thumbnail("https://i.imgur.com/8NrvS8e.png")
                 .description(description).build());

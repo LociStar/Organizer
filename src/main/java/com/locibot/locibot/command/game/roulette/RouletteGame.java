@@ -90,7 +90,7 @@ public class RouletteGame extends MultiplayerGame<RoulettePlayer> {
             } else {
                 embed.footer(EmbedCreateFields.Footer.of(this.context.localize("roulette.footer.finished"), null));
             }
-            return ShadbotUtil.getDefaultEmbed(embed.build());
+            return LociBotUtil.getDefaultEmbed(embed.build());
         })
                 .flatMap(this.context::editFollowupMessage);
     }

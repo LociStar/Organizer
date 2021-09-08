@@ -5,7 +5,7 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.ExceptionHandler;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.MapUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.command.ApplicationCommandInteraction;
 import discord4j.core.object.entity.Message;
@@ -53,7 +53,7 @@ public class PollManager {
                                 .formatted(FormatUtil.formatDuration(this.spec.duration()), Emoji.RED_CROSS),
                         "https://i.imgur.com/jcrUDLY.png")).build();
 
-        final EmbedCreateSpec embedConsumer = ShadbotUtil.getDefaultEmbed(embed);
+        final EmbedCreateSpec embedConsumer = LociBotUtil.getDefaultEmbed(embed);
 
         return this.context.createFollowupMessage(embedConsumer)
                 .flatMap(message -> Flux.fromIterable(this.spec.choices().values())
@@ -112,7 +112,7 @@ public class PollManager {
                 .description("__**%s**__%s".formatted(this.spec.question(), representation))
                 .footer(EmbedCreateFields.Footer.of(this.context.localize("poll.results.footer")
                         .formatted(this.context.getAuthorName()), null)).build();
-        final EmbedCreateSpec embedConsumer = ShadbotUtil.getDefaultEmbed(embed);
+        final EmbedCreateSpec embedConsumer = LociBotUtil.getDefaultEmbed(embed);
 
         return this.context.createFollowupMessage(embedConsumer);
     }

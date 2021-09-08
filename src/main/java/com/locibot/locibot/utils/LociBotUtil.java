@@ -14,7 +14,7 @@ import reactor.util.annotation.NonNull;
 
 import java.util.Locale;
 
-public class ShadbotUtil {
+public class LociBotUtil {
 
     /**
      * @param err The exception containing the error message to clean.

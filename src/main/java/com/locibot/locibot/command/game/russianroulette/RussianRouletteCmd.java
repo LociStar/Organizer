@@ -6,7 +6,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.common.util.Snowflake;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
@@ -15,7 +15,6 @@ import reactor.function.TupleUtils;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -34,7 +33,7 @@ public class RussianRouletteCmd extends BaseCmd {
     @Override
     public Mono<?> execute(Context context) {
         final RussianRoulettePlayer player = this.getPlayer(context.getGuildId(), context.getAuthorId());
-        return ShadbotUtil.requireValidBet(context.getLocale(), context.getGuildId(), context.getAuthorId(), Constants.PAID_COST)
+        return LociBotUtil.requireValidBet(context.getLocale(), context.getGuildId(), context.getAuthorId(), Constants.PAID_COST)
                 .then(Mono.defer(() -> {
                     if (!player.isAlive()) {
                         return context.createFollowupMessage(Emoji.BROKEN_HEART, context.localize("russianroulette.already.dead")
@@ -64,7 +63,7 @@ public class RussianRouletteCmd extends BaseCmd {
                     }
                 }))
                 .map(StringBuilder::toString)
-                .map(description -> ShadbotUtil.getDefaultEmbed(
+                .map(description -> LociBotUtil.getDefaultEmbed(
                         EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("russianroulette.title"),
                                 null, context.getAuthorAvatar()))
                                 .addFields(EmbedCreateFields.Field.of(context.localize("russianroulette.tries"),

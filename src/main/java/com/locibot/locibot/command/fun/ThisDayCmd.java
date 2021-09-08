@@ -7,7 +7,7 @@ import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.object.Embed;
@@ -41,7 +41,7 @@ public class ThisDayCmd extends BaseCmd {
     }
 
     private static EmbedCreateSpec formatEmbed(Context context, ThisDay thisDay) {
-        return ShadbotUtil.getDefaultEmbed(
+        return LociBotUtil.getDefaultEmbed(
                 EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("thisday.title").formatted(thisDay.getDate()),
                         HOME_URL, context.getAuthorAvatar()))
                         .thumbnail("https://i.imgur.com/FdfyJDD.png")

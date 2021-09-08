@@ -8,7 +8,7 @@ import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.users.entity.DBUser;
 import com.locibot.locibot.database.users.entity.achievement.Achievement;
 import com.locibot.locibot.object.Emoji;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.object.entity.Member;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
@@ -42,7 +42,7 @@ public class AchievementsCmd extends BaseCmd {
                     AchievementsCmd.formatAchievement(context, achievement, achievements.contains(achievement)));
         }
         embed.description(description.toString());
-        return ShadbotUtil.getDefaultEmbed(embed.build());
+        return LociBotUtil.getDefaultEmbed(embed.build());
     }
 
     private static String formatAchievement(I18nContext context, Achievement achievement, boolean unlocked) {

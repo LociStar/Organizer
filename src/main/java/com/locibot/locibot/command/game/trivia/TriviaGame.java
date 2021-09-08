@@ -9,7 +9,7 @@ import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Member;
@@ -87,7 +87,7 @@ public class TriviaGame extends MultiplayerGame<TriviaPlayer> {
                             FormatUtil.numberedList(this.answers.size(), this.answers.size(),
                                     count -> "\t**%d**. %s".formatted(count, this.answers.get(count - 1))));
 
-            final EmbedCreateSpec embedConsumer = ShadbotUtil.getDefaultEmbed(
+            final EmbedCreateSpec embedConsumer = LociBotUtil.getDefaultEmbed(
                     EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(this.context.localize("trivia.title"), null, this.context.getAuthorAvatar()))
                             .description(description)
                             .fields(List.of(EmbedCreateFields.Field.of(this.context.localize("trivia.category"),

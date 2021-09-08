@@ -9,7 +9,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.NetUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import discord4j.core.object.Embed;
 import discord4j.core.spec.EmbedCreateFields;
@@ -29,7 +29,7 @@ public class WikipediaCmd extends BaseCmd {
 
     private static EmbedCreateSpec formatEmbed(Context context, WikipediaPage page) {
         final String extract = StringUtil.abbreviate(page.extract().orElseThrow(), Embed.MAX_DESCRIPTION_LENGTH);
-        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+        return LociBotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
                 .author(EmbedCreateFields.Author.of(context.localize("wikipedia.title").formatted(page.title()),
                         "https://%s.wikipedia.org/wiki/%s"
                                 .formatted(context.getLocale().getLanguage(),

@@ -10,6 +10,8 @@ import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.listener.*;
 import com.locibot.locibot.object.ExceptionHandler;
+import com.locibot.locibot.service.ServiceManager;
+import com.locibot.locibot.service.TaskService;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.LogUtil;
 import discord4j.common.ReactorResources;
@@ -54,36 +56,37 @@ public class LociBot {
     private static final AtomicLong OWNER_ID = new AtomicLong();
 
     private static GatewayDiscordClient gateway;
-    private static TaskManager taskManager;
-    private static HTTPServer prometheusServer;
-    private static BotListStats botListStats;
+    private static ServiceManager serviceManager;
 
     public static void main(String[] args) {
         Locale.setDefault(Config.DEFAULT_LOCALE);
 
-        final String sentryDsn = CredentialManager.get(Credential.SENTRY_DSN);
-        if (sentryDsn != null && !Config.IS_SNAPSHOT) {
-            DEFAULT_LOGGER.info("Initializing Sentry");
-            Sentry.init(options -> {
-                options.setDsn(sentryDsn);
-                options.setRelease(Config.VERSION);
-                // Ignore events coming from lavaplayer
-                options.setBeforeSend(
-                        (sentryEvent, obj) -> sentryEvent.getLogger().startsWith("com.sedmelluq") ? null : sentryEvent);
-            });
-        }
+//        final String sentryDsn = CredentialManager.get(Credential.SENTRY_DSN);
+//        if (sentryDsn != null && !Config.IS_SNAPSHOT) {
+//            DEFAULT_LOGGER.info("Initializing Sentry");
+//            Sentry.init(options -> {
+//                options.setDsn(sentryDsn);
+//                options.setRelease(Config.VERSION);
+//                // Ignore events coming from lavaplayer
+//                options.setBeforeSend(
+//                        (sentryEvent, obj) -> sentryEvent.getLogger().startsWith("com.sedmelluq") ? null : sentryEvent);
+//            });
+//        }
 
-        DEFAULT_LOGGER.info("Starting Shadbot V{}", Config.VERSION);
+        DEFAULT_LOGGER.info("Starting LociBot V{}", Config.VERSION);
 
-        final String prometheusPort = CredentialManager.get(Credential.PROMETHEUS_PORT);
-        if (prometheusPort != null && !Config.IS_SNAPSHOT) {
-            DEFAULT_LOGGER.info("Initializing Prometheus on port {}", prometheusPort);
-            try {
-                LociBot.prometheusServer = new HTTPServer(Integer.parseInt(prometheusPort));
-            } catch (final IOException err) {
-                DEFAULT_LOGGER.error("An error occurred while initializing Prometheus", err);
-            }
-        }
+        LociBot.serviceManager = new ServiceManager();
+        LociBot.serviceManager.start();
+
+//        final String prometheusPort = CredentialManager.get(Credential.PROMETHEUS_PORT);
+//        if (prometheusPort != null && !Config.IS_SNAPSHOT) {
+//            DEFAULT_LOGGER.info("Initializing Prometheus on port {}", prometheusPort);
+//            try {
+//                LociBot.prometheusServer = new HTTPServer(Integer.parseInt(prometheusPort));
+//            } catch (final IOException err) {
+//                DEFAULT_LOGGER.error("An error occurred while initializing Prometheus", err);
+//            }
+//        }
 
         if (Config.IS_SNAPSHOT) {
             DEFAULT_LOGGER.info("[SNAPSHOT] Enabling Reactor operator stack recorder");
@@ -134,20 +137,9 @@ public class LociBot {
                 .withGateway(gateway -> {
                     LociBot.gateway = gateway;
 
-                    LociBot.taskManager = new TaskManager();
-                    LociBot.taskManager.scheduleLottery(gateway);
-                    LociBot.taskManager.schedulePeriodicStats(gateway);
-                    LociBot.taskManager.scheduleGroups(gateway);
-                    LociBot.taskManager.scheduleDeleteOldGroups();
-                    LociBot.taskManager.scheduleWeatherSubscriptions(gateway);
-
-                    if (!Config.IS_SNAPSHOT) {
-                        if (CredentialManager.get(Credential.BOTLIST_DOT_SPACE_TOKEN) != null) {
-                            DEFAULT_LOGGER.info("Initializing BotListStats");
-                            LociBot.botListStats = new BotListStats(gateway);
-                            LociBot.taskManager.schedulePostStats(LociBot.botListStats);
-                        }
-                    }
+                    final TaskService taskService = new TaskService(gateway);
+                    LociBot.serviceManager.addService(taskService);
+                    taskService.start();
 
                     DEFAULT_LOGGER.info("Registering listeners");
                     /* Intent.GUILDS */
@@ -163,7 +155,7 @@ public class LociBot {
                     LociBot.register(gateway, new ReactionListener.ReactionRemoveListener());
                     LociBot.register(gateway, new InteractionCreateListener());
 
-                    DEFAULT_LOGGER.info("Shadbot is ready");
+                    DEFAULT_LOGGER.info("LociBot is ready");
                     return gateway.onDisconnect();
                 })
                 .block();
@@ -193,16 +185,12 @@ public class LociBot {
         return Mono.defer(() -> {
             DEFAULT_LOGGER.info("Shutdown request received");
 
-            if (LociBot.prometheusServer != null) {
-                LociBot.prometheusServer.stop();
-            }
-            if (LociBot.taskManager != null) {
-                LociBot.taskManager.stop();
-            }
-            if (LociBot.botListStats != null) {
-                LociBot.botListStats.stop();
+            if (LociBot.serviceManager != null) {
+                DEFAULT_LOGGER.info("Stopping services");
+                LociBot.serviceManager.stop();
             }
 
+            DEFAULT_LOGGER.info("Closing gateway discord client");
             return LociBot.gateway.logout()
                     .then(Mono.fromRunnable(DatabaseManager::close));
         });

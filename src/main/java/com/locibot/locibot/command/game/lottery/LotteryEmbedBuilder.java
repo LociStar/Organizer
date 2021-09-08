@@ -4,7 +4,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.lottery.entity.LotteryGambler;
 import com.locibot.locibot.database.lottery.entity.LotteryHistoric;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 
@@ -17,7 +17,7 @@ public class LotteryEmbedBuilder {
 
     private LotteryEmbedBuilder(Context context) {
         this.context = context;
-        this.embed = ShadbotUtil.getDefaultEmbed(
+        this.embed = LociBotUtil.getDefaultEmbed(
                 EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("lottery.embed.title"),
                         null, context.getAuthorAvatar()))
                         .thumbnail("https://i.imgur.com/peLGtkS.png")

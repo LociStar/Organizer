@@ -5,7 +5,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.core.game.GameCmd;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.NumberUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
@@ -72,7 +72,7 @@ public class DiceCmd extends GameCmd<DiceGame> {
             return Mono.error(new CommandException(context.localize("dice.number.already.used")));
         }
 
-        return ShadbotUtil.requireValidBet(context.getLocale(), context.getGuildId(), context.getAuthorId(), game.getBet())
+        return LociBotUtil.requireValidBet(context.getLocale(), context.getGuildId(), context.getAuthorId(), game.getBet())
                 .flatMap(bet -> {
                     final DicePlayer player = new DicePlayer(context.getGuildId(), context.getAuthorId(),
                             context.getAuthorName(), bet, number);
@@ -94,7 +94,7 @@ public class DiceCmd extends GameCmd<DiceGame> {
                     .formatted(context.getCommandName(), context.getSubCommandGroupName().orElseThrow(), JOIN_SUB_COMMAND)));
         }
 
-        return ShadbotUtil.requireValidBet(context.getLocale(), context.getGuildId(), context.getAuthorId(), bet)
+        return LociBotUtil.requireValidBet(context.getLocale(), context.getGuildId(), context.getAuthorId(), bet)
                 .flatMap(__ -> {
                     final DiceGame game = new DiceGame(context, bet);
                     final DicePlayer player = new DicePlayer(context.getGuildId(), context.getAuthorId(),

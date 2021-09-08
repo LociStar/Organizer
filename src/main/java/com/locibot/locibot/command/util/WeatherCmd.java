@@ -9,7 +9,7 @@ import com.locibot.locibot.data.credential.Credential;
 import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.EnumUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import com.locibot.locibot.utils.weather.HourlyWeatherForecastClass;
 import discord4j.core.spec.EmbedCreateFields;
@@ -125,7 +125,7 @@ public class WeatherCmd extends BaseCmd {
         final String humidity = "%s%%".formatted(context.localize(weather.getHumidity()));
         final String temperature = "%s°C".formatted(context.localize(weather.getTemp()));
 
-        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+        return LociBotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
                 .author(EmbedCreateFields.Author.of(title, url, context.getAuthorAvatar()))
                 .thumbnail(weather.getIconLink())
                 .description(context.localize("weather.last.updated").formatted(lastUpdated))

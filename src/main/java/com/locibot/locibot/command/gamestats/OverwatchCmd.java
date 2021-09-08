@@ -15,7 +15,7 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.NetUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
@@ -47,7 +47,7 @@ public class OverwatchCmd extends BaseCmd {
 
     private static EmbedCreateSpec formatEmbed(Context context, OverwatchProfile overwatchProfile, Platform platform) {
         final ProfileResponse profile = overwatchProfile.profile();
-        return ShadbotUtil.getDefaultEmbed(
+        return LociBotUtil.getDefaultEmbed(
                 EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("overwatch.title"),
                         "https://playoverwatch.com/en-gb/career/%s/%s"
                                 .formatted(platform.getName(), profile.username()),

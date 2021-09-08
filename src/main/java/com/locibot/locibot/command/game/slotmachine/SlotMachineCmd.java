@@ -8,7 +8,7 @@ import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.RandUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class SlotMachineCmd extends BaseCmd {
     public Mono<?> execute(Context context) {
         final GamblerPlayer player = new GamblerPlayer(context.getGuildId(), context.getAuthorId(), Constants.PAID_COST);
 
-        return ShadbotUtil.requireValidBet(context.getLocale(), context.getGuildId(), context.getAuthorId(), Constants.PAID_COST)
+        return LociBotUtil.requireValidBet(context.getLocale(), context.getGuildId(), context.getAuthorId(), Constants.PAID_COST)
                 .then(player.bet())
                 .then(Mono.defer(() -> {
                     final List<SlotOptions> slots = SlotMachineCmd.randSlots();

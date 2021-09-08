@@ -18,7 +18,7 @@ import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.NetUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
@@ -86,7 +86,7 @@ public class DiabloCmd extends BaseCmd {
         final String damages = FormatUtil.format(heroResponses,
                 hero -> context.localize("diablo3.hero.dps").formatted(context.localize(hero.stats().damage())), "\n");
 
-        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+        return LociBotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
                 .author(EmbedCreateFields.Author.of(context.localize("diablo3.title"), null, context.getAuthorAvatar()))
                 .thumbnail("https://i.imgur.com/QUS9QkX.png")
                 .description(description)

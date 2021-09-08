@@ -6,7 +6,7 @@ import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.guilds.entity.Settings;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.object.entity.Role;
 import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.object.entity.channel.TextChannel;
@@ -141,7 +141,7 @@ public class SettingShow extends BaseCmd {
                     if (embed.build().asRequest().fields().toOptional().map(List::isEmpty).orElse(true)) {
                         embed.description(context.localize("settings.none"));
                     }
-                    return ShadbotUtil.getDefaultEmbed(embed.build());
+                    return LociBotUtil.getDefaultEmbed(embed.build());
                 }))
                 .flatMap(context::createFollowupMessage);
     }

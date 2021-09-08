@@ -6,7 +6,7 @@ import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.object.entity.Message;
 import discord4j.core.spec.EmbedCreateFields;
@@ -85,7 +85,7 @@ public class DiceGame extends MultiplayerGame<DicePlayer> {
                     } else {
                         embed.footer(EmbedCreateFields.Footer.of(this.context.localize("dice.footer.finished"), null));
                     }
-                    return ShadbotUtil.getDefaultEmbed(embed.build());
+                    return LociBotUtil.getDefaultEmbed(embed.build());
                 })
                 .flatMap(this.context::editFollowupMessage);
     }

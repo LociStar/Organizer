@@ -9,7 +9,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.NetUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import discord4j.core.object.Embed;
 import discord4j.core.object.Embed.Field;
@@ -49,7 +49,7 @@ public class UrbanCmd extends BaseCmd {
         if (!example.isBlank()) {
             embed.fields(List.of(EmbedCreateFields.Field.of(context.localize("urban.example"), example, false)));
         }
-        return ShadbotUtil.getDefaultEmbed(embed.build());
+        return LociBotUtil.getDefaultEmbed(embed.build());
     }
 
     private static Mono<UrbanDefinition> getUrbanDefinition(String query) {

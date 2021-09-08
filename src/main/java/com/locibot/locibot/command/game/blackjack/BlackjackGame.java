@@ -8,7 +8,7 @@ import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.casino.Deck;
 import com.locibot.locibot.object.casino.Hand;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.object.entity.Message;
 import discord4j.core.spec.EmbedCreateSpec;
@@ -17,7 +17,6 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -96,7 +95,7 @@ public class BlackjackGame extends MultiplayerGame<BlackjackPlayer> {
                             .map(player -> player.format(this.context.getLocale()))
                             .forEach(field -> embed.addFields(Field.of(field.name(), field.value(), field.inline().get())));
 
-                    return ShadbotUtil.getDefaultEmbed(embed.build());
+                    return LociBotUtil.getDefaultEmbed(embed.build());
                 })
                 .flatMap(this.context::editInitialFollowupMessage);
     }

@@ -5,9 +5,8 @@ import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.TimeUtil;
-import discord4j.core.object.Region;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.channel.GuildChannel;
@@ -16,7 +15,6 @@ import discord4j.core.object.entity.channel.VoiceChannel;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Image.Format;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 
@@ -66,7 +64,7 @@ public class ServerInfoCmd extends BaseCmd {
                 .formatted(Emoji.MICROPHONE, voiceChannels, Emoji.KEYBOARD, textChannels);
         final String membersTitle = Emoji.BUSTS_IN_SILHOUETTE + " " + context.localize("serverinfo.members");
 
-        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+        return LociBotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
                 .author(EmbedCreateFields.Author.of(context.localize("serverinfo.title").formatted(guild.getName()), null,
                         context.getAuthorAvatar()))
                 .thumbnail(guild.getIconUrl(Format.JPEG).orElse(""))

@@ -7,7 +7,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.core.i18n.I18nManager;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
@@ -31,7 +31,7 @@ public class TranslateCmd extends BaseCmd {
 
     private static EmbedCreateSpec formatEmbed(Context context, TranslateRequest request,
                                                TranslateResponse response) {
-        return ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
+        return LociBotUtil.getDefaultEmbed(EmbedCreateSpec.builder()
                 .author(EmbedCreateFields.Author.of(context.localize("translate.title"), null, context.getAuthorAvatar()))
                 .description("**%s**%n%s%n%n**%s**%n%s".formatted(
                         StringUtil.capitalize(request.isoToLang(response.sourceLang())),

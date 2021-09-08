@@ -6,7 +6,7 @@ import reactor.util.annotation.Nullable;
 
 public class LogUtil {
 
-    private static final String ROOT_NAME = "shadbot";
+    private static final String ROOT_NAME = "locibot";
     private static final String DELIMITER = ".";
 
     public static Logger getLogger() {
@@ -31,7 +31,7 @@ public class LogUtil {
     }
 
     public enum Category {
-        DATABASE, TEST, MUSIC, COMMAND
+        DATABASE, TEST, MUSIC, COMMAND, SERVICE, TASK
     }
 
 }

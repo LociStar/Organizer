@@ -20,7 +20,7 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.NumberUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
@@ -92,7 +92,7 @@ public class CounterStrikeCmd extends BaseCmd {
         final int killsHeadshot = statsMap.get("total_kills_headshot");
         final float headshotRate = (float) killsHeadshot / kills * 100;
 
-        return ShadbotUtil.getDefaultEmbed(
+        return LociBotUtil.getDefaultEmbed(
                 EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("cs.title"),
                         "http://steamcommunity.com/profiles/%s".formatted(player.steamId()), context.getAuthorAvatar()))
                         .thumbnail(player.avatarFull())

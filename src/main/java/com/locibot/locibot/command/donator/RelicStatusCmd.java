@@ -9,7 +9,7 @@ import com.locibot.locibot.database.premium.RelicType;
 import com.locibot.locibot.database.premium.entity.Relic;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.spec.EmbedCreateFields;
@@ -89,7 +89,7 @@ public class RelicStatusCmd extends BaseCmd {
                             .thumbnail("https://i.imgur.com/R0N6kW3.png");
 
                     fields.forEach(field -> embed.addFields(EmbedCreateFields.Field.of(field.name(), field.value(), field.inline().get())));
-                    return ShadbotUtil.getDefaultEmbed(embed.build());
+                    return LociBotUtil.getDefaultEmbed(embed.build());
                 })
                 .flatMap(context::createFollowupMessage)
                 .switchIfEmpty(context.createFollowupMessage(Emoji.INFO, context.localize("relicstatus.not.donator")

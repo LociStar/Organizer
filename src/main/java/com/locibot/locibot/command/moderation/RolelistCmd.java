@@ -4,7 +4,7 @@ import com.locibot.locibot.core.command.BaseCmd;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Member;
@@ -71,7 +71,7 @@ public class RolelistCmd extends BaseCmd {
 
                     FormatUtil.createColumns(usernames, 25)
                             .forEach(field -> embed.addFields(EmbedCreateFields.Field.of(field.name(), field.value(), true)));
-                    return ShadbotUtil.getDefaultEmbed(embed.build());
+                    return LociBotUtil.getDefaultEmbed(embed.build());
                 }))
                 .flatMap(context::createFollowupMessage);
     }

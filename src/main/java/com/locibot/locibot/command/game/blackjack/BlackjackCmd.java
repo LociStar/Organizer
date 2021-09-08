@@ -3,7 +3,7 @@ package com.locibot.locibot.command.game.blackjack;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.core.game.GameCmd;
 import com.locibot.locibot.object.Emoji;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +22,7 @@ public class BlackjackCmd extends GameCmd<BlackjackGame> {
     public Mono<?> execute(Context context) {
         final long bet = context.getOptionAsLong("bet").orElseThrow();
 
-        return ShadbotUtil.requireValidBet(context.getLocale(), context.getGuildId(), context.getAuthorId(), bet)
+        return LociBotUtil.requireValidBet(context.getLocale(), context.getGuildId(), context.getAuthorId(), bet)
                 .flatMap(__ -> {
                     if (this.isGameStarted(context.getChannelId())) {
                         return Mono.just(this.getGame(context.getChannelId()));

@@ -2,7 +2,7 @@ package com.locibot.locibot.object.help;
 
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
@@ -101,7 +101,7 @@ public abstract class HelpBuilder {
         if (this.footer != null && !this.footer.isBlank()) {
             embed.footer(EmbedCreateFields.Footer.of(this.footer, null));
         }
-        return ShadbotUtil.getDefaultEmbed(embed.build());
+        return LociBotUtil.getDefaultEmbed(embed.build());
     }
 
     protected abstract String getCommandName();

@@ -5,7 +5,7 @@ import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Role;
@@ -94,7 +94,7 @@ public class UserInfoCmd extends BaseCmd {
             final String rolesTitle = Emoji.LOCK + " " + context.localize("userinfo.roles");
             embed.addFields(EmbedCreateFields.Field.of(rolesTitle, rolesField, true));
         }
-        return ShadbotUtil.getDefaultEmbed(embed.build());
+        return LociBotUtil.getDefaultEmbed(embed.build());
     }
 
 }

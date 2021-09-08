@@ -7,7 +7,6 @@ import discord4j.discordjson.json.EmbedData;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
-import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,15 +16,15 @@ public class LociBotUtilTest {
     public void testCleanLavaplayerErr() {
         final FriendlyException errWithMsg = new FriendlyException("<url src=\"youtube\">Watch on YouTube</url>Error",
                 FriendlyException.Severity.COMMON, null);
-        assertEquals("Error", ShadbotUtil.cleanLavaplayerErr(errWithMsg));
+        assertEquals("Error", LociBotUtil.cleanLavaplayerErr(errWithMsg));
 
         final FriendlyException errWithoutMsg = new FriendlyException(null, FriendlyException.Severity.COMMON, null);
-        assertEquals("Error not specified.", ShadbotUtil.cleanLavaplayerErr(errWithoutMsg));
+        assertEquals("Error not specified.", LociBotUtil.cleanLavaplayerErr(errWithoutMsg));
     }
 
     @Test
     public void testGetDefaultEmbed() {
-        final EmbedCreateSpec consumer = ShadbotUtil.getDefaultEmbed(EmbedCreateSpec.builder().build());
+        final EmbedCreateSpec consumer = LociBotUtil.getDefaultEmbed(EmbedCreateSpec.builder().build());
         final EmbedData expected = EmbedData.builder()
                 .color(Config.BOT_COLOR.getRGB())
                 .fields(Collections.emptyList())

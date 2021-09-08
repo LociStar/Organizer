@@ -7,7 +7,7 @@ import com.locibot.locibot.core.ratelimiter.RateLimiter;
 import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.object.entity.Message;
@@ -99,7 +99,7 @@ public class HangmanGame extends MultiplayerGame<Player> {
             if (this.failCount > 0) {
                 embed.image(IMG_LIST.get(Math.min(IMG_LIST.size(), this.failCount) - 1));
             }
-            return ShadbotUtil.getDefaultEmbed(embed.build());
+            return LociBotUtil.getDefaultEmbed(embed.build());
         })
                 .flatMap(this.context::editFollowupMessage);
     }

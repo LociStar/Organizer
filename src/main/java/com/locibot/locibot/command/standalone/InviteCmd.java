@@ -4,7 +4,7 @@ import com.locibot.locibot.core.command.BaseCmd;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.data.Config;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import reactor.core.publisher.Mono;
@@ -19,7 +19,7 @@ public class InviteCmd extends BaseCmd {
 
     @Override
     public Mono<?> execute(Context context) {
-        return context.createFollowupMessage(ShadbotUtil.getDefaultEmbed(
+        return context.createFollowupMessage(LociBotUtil.getDefaultEmbed(
                 EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("invite.title"), Config.INVITE_URL, context.getAuthorAvatar()))
                         .fields(List.of(
                                 EmbedCreateFields.Field.of(context.localize("invite.bot"), context.localize("invite.link")

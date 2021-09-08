@@ -5,7 +5,7 @@ import com.locibot.locibot.database.guilds.bean.setting.IamBean;
 import com.locibot.locibot.database.guilds.entity.setting.Iam;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.object.entity.Role;
 import discord4j.core.object.reaction.ReactionEmoji;
 import discord4j.core.object.reaction.ReactionEmoji.Unicode;
@@ -69,7 +69,7 @@ public class IamCmd extends BaseCmd {
                                     .formatted(REACTION.getRaw(), FormatUtil.format(roles,
                                             role -> "`@%s`".formatted(role.getName()), "\n")));
 
-                            final EmbedCreateSpec embedConsumer = ShadbotUtil.getDefaultEmbed(
+                            final EmbedCreateSpec embedConsumer = LociBotUtil.getDefaultEmbed(
                                     EmbedCreateSpec.builder()
                                             .author(EmbedCreateFields.Author.of("Iam: %s"
                                                             .formatted(FormatUtil.format(roles,

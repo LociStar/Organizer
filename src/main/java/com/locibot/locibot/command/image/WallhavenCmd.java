@@ -12,7 +12,7 @@ import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.RandUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
@@ -51,7 +51,7 @@ public class WallhavenCmd extends BaseCmd {
                 .thumbnail("https://wallhaven.cc/images/layout/logo_sm.png")
                 .image(wallpaper.path())
                 .addFields(EmbedCreateFields.Field.of(context.localize("wallhaven.resolution"), wallpaper.resolution(), false));
-        return ShadbotUtil.getDefaultEmbed(embed.build());
+        return LociBotUtil.getDefaultEmbed(embed.build());
     }
 
     @Override

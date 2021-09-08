@@ -5,7 +5,7 @@ import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.core.i18n.I18nContext;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.guilds.entity.Settings;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
@@ -43,7 +43,7 @@ public class HelpCmd extends BaseCmd {
                         String.join(" ", cmds), false));
             }
         }
-        return ShadbotUtil.getDefaultEmbed(embed.build());
+        return LociBotUtil.getDefaultEmbed(embed.build());
     }
 
     private static Mono<Map<CommandCategory, Collection<String>>> getMultiMap(Context context, List<CommandPermission> authorPermissions) {

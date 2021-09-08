@@ -5,7 +5,7 @@ import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.guilds.entity.DBMember;
 import com.locibot.locibot.utils.FormatUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.object.entity.User;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
@@ -44,7 +44,7 @@ public class LeaderboardCmd extends BaseCmd {
                                         .formatted(count, tuple.getT1(), context.localize(tuple.getT2()));
                             });
                 })
-                .map(description -> ShadbotUtil.getDefaultEmbed(
+                .map(description -> LociBotUtil.getDefaultEmbed(
                         EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("leaderboard.title"), null, context.getAuthorAvatar()))
                                 .description(description).build()))
                 .flatMap(context::createFollowupMessage);

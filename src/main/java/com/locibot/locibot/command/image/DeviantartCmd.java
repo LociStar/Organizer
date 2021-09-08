@@ -14,7 +14,7 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.RandUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.ApplicationCommandOptionType;
@@ -50,7 +50,7 @@ public class DeviantartCmd extends BaseCmd {
     }
 
     private static EmbedCreateSpec formatEmbed(Context context, String query, Image image) {
-        return ShadbotUtil.getDefaultEmbed(
+        return LociBotUtil.getDefaultEmbed(
                 EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of("DeviantArt: %s".formatted(query), image.url(), context.getAuthorAvatar()))
                         .thumbnail("https://i.imgur.com/gT4hHUB.png")
                         .fields(List.of(

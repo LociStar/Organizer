@@ -5,7 +5,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.core.game.GameCmd;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.NumberUtil;
-import com.locibot.locibot.utils.ShadbotUtil;
+import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
@@ -34,7 +34,7 @@ public class RouletteCmd extends GameCmd<RouletteGame> {
         final Place place = context.getOptionAsEnum(Place.class, "place").orElseThrow();
         final Long number = context.getOptionAsLong("number").orElse(null);
 
-        return ShadbotUtil.requireValidBet(context.getLocale(), context.getGuildId(), context.getAuthorId(), bet)
+        return LociBotUtil.requireValidBet(context.getLocale(), context.getGuildId(), context.getAuthorId(), bet)
                 .flatMap(__ -> {
                     if (place == Place.NUMBER && (number == null || !NumberUtil.isBetween(number, 1, 36))) {
                         return Mono.error(new CommandException(context.localize("roulette.invalid.number")));
