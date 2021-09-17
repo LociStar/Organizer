@@ -1,6 +1,5 @@
 package com.locibot.locibot;
 
-import com.locibot.locibot.api.BotListStats;
 import com.locibot.locibot.core.command.CommandManager;
 import com.locibot.locibot.core.retriever.SpyRestEntityRetriever;
 import com.locibot.locibot.data.Config;
@@ -36,13 +35,10 @@ import discord4j.store.api.mapping.MappingStoreService;
 import discord4j.store.caffeine.CaffeineStoreService;
 import discord4j.store.jdk.JdkStoreService;
 import io.netty.resolver.DefaultAddressResolverGroup;
-import io.prometheus.client.exporter.HTTPServer;
-import io.sentry.Sentry;
 import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 import reactor.util.Logger;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.util.Locale;
 import java.util.Objects;
@@ -121,7 +117,7 @@ public class LociBot {
 
                     DEFAULT_LOGGER.info("Registering listeners");
                     /* Intent.GUILDS */
-                    LociBot.register(gateway, new GuildCreateListener());
+                    LociBot.register(gateway, new GuildCreateListener(client));
                     LociBot.register(gateway, new RoleDeleteListener());
                     LociBot.register(gateway, new ChannelDeleteListener.TextChannelDeleteListener());
                     LociBot.register(gateway, new ChannelDeleteListener.VoiceChannelDeleteListener());
