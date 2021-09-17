@@ -17,7 +17,8 @@ public enum CommandCategory {
     OWNER("Owner"),
     SETTING("Setting"),
     GROUP("Group"),
-    REGISTER("Register");
+    REGISTER("Register"),
+    EVENT("EVENT");
 
     private final String name;
 
