@@ -81,26 +81,29 @@ public class CommandManager {
 
     public static Mono<Void> register(ApplicationService applicationService, long applicationId) {
         final Mono<Long> registerGuildCommands = Flux.fromIterable(COMMANDS_MAP.values())
-                .filter(cmd -> cmd.getCategory() == CommandCategory.OWNER || cmd.getPermission() == CommandPermission.USER_GUILD || cmd.getPermission() == CommandPermission.ADMIN)
+                .filter(cmd -> cmd.getPermission() != CommandPermission.USER_GLOBAL)
                 .map(BaseCmd::asRequest)
                 .collectList()
-                .flatMapMany(requests -> applicationService
-                        .bulkOverwriteGuildApplicationCommand(applicationId, Config.OWNER_GUILD_ID, requests))
+                .flatMapMany(requests -> {
+                    requests.forEach(applicationCommandRequest -> System.out.println(applicationCommandRequest.name()));
+                    return applicationService
+                            .bulkOverwriteGuildApplicationCommand(applicationId, Config.OWNER_GUILD_ID, requests);
+                })
                 .count()
                 .doOnNext(cmdCount -> LociBot.DEFAULT_LOGGER.info("{} guild commands registered (ID: {})",
                         cmdCount, Config.OWNER_GUILD_ID))
                 .onErrorResume(err -> Mono.fromRunnable(() -> ExceptionHandler.handleUnknownError(err)));
 
-        final Mono<Long> registerGuildCommands2 = Flux.fromIterable(COMMANDS_MAP.values())
-                .filter(cmd -> cmd.getCategory() == CommandCategory.OWNER || cmd.getPermission() == CommandPermission.USER_GUILD || cmd.getPermission() == CommandPermission.ADMIN)
-                .map(BaseCmd::asRequest)
-                .collectList()
-                .flatMapMany(requests -> applicationService
-                        .bulkOverwriteGuildApplicationCommand(applicationId, 317219629611089921L, requests))
-                .count()
-                .doOnNext(cmdCount -> LociBot.DEFAULT_LOGGER.info("{} guild commands registered (ID: {})",
-                        cmdCount, 317219629611089921L))
-                .onErrorResume(err -> Mono.fromRunnable(() -> ExceptionHandler.handleUnknownError(err)));
+//        final Mono<Long> registerGuildCommands2 = Flux.fromIterable(COMMANDS_MAP.values())
+//                .filter(cmd -> cmd.getCategory() == CommandCategory.OWNER || cmd.getPermission() == CommandPermission.USER_GUILD || cmd.getPermission() == CommandPermission.ADMIN)
+//                .map(BaseCmd::asRequest)
+//                .collectList()
+//                .flatMapMany(requests -> applicationService
+//                        .bulkOverwriteGuildApplicationCommand(applicationId, 317219629611089921L, requests))
+//                .count()
+//                .doOnNext(cmdCount -> LociBot.DEFAULT_LOGGER.info("{} guild commands registered (ID: {})",
+//                        cmdCount, 317219629611089921L))
+//                .onErrorResume(err -> Mono.fromRunnable(() -> ExceptionHandler.handleUnknownError(err)));
 
         final Mono<Long> registerGlobalCommands = Flux.fromIterable(COMMANDS_MAP.values())
                 .filter(cmd -> cmd.getCategory() != CommandCategory.OWNER)
@@ -113,8 +116,22 @@ public class CommandManager {
                 .doOnNext(cmdCount -> LociBot.DEFAULT_LOGGER.info("{} global commands registered", cmdCount))
                 .onErrorResume(err -> Mono.fromRunnable(() -> ExceptionHandler.handleUnknownError(err)));
 
-        return registerGlobalCommands
-                .and(registerGuildCommands).and(registerGuildCommands2);
+        return registerGuildCommands.and(registerGlobalCommands);
+    }
+
+    public static Mono<Void> registerGuildCommands(ApplicationService applicationService, long applicationId, long guildId) {
+        final Mono<Long> registerGuildCommands = Flux.fromIterable(COMMANDS_MAP.values())
+                .filter(cmd -> cmd.getCategory() != CommandCategory.OWNER || cmd.getPermission() == CommandPermission.USER_GUILD || cmd.getPermission() == CommandPermission.ADMIN)
+                .map(BaseCmd::asRequest)
+                .collectList()
+                .flatMapMany(requests ->
+                        applicationService.bulkOverwriteGuildApplicationCommand(applicationId, guildId, requests))
+                .count()
+                .doOnNext(cmdCount -> LociBot.DEFAULT_LOGGER.info("{} guild commands registered (ID: {})",
+                        cmdCount, Config.OWNER_GUILD_ID))
+                .onErrorResume(err -> Mono.fromRunnable(() -> ExceptionHandler.handleUnknownError(err)));
+
+        return registerGuildCommands.and(Mono.empty());
     }
 
     public static Map<String, BaseCmd> getCommands() {
