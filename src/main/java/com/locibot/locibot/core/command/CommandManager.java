@@ -5,7 +5,7 @@ import com.locibot.locibot.command.currency.CoinsCmd;
 import com.locibot.locibot.command.currency.LeaderboardCmd;
 import com.locibot.locibot.command.currency.TransferCoinsCmd;
 import com.locibot.locibot.command.donator.DonatorGroup;
-import com.locibot.locibot.command.event_commands.GroupEvent;
+import com.locibot.locibot.command.event_commands.EventGroup;
 import com.locibot.locibot.command.fun.ChatCmd;
 import com.locibot.locibot.command.fun.Hello;
 import com.locibot.locibot.command.fun.JokeCmd;
@@ -48,7 +48,7 @@ public class CommandManager {
                 new InfoGroup(), new ImageGroup(), new ModerationGroup(), new OwnerGroup(),
                 new GameStatsGroup(), new SettingGroup(),
                 new DonatorGroup(), new GameGroup(), new GroupGroup(),
-                new RegisterGroup(), new GroupEvent(),
+                new RegisterGroup(), new EventGroup(),
                 // Image
                 new Rule34Cmd(), // TODO Improvement: Add to Image group when Discord autocompletion is implemented
                 // Standalone

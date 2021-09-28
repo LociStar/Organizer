@@ -6,10 +6,10 @@ import com.locibot.locibot.core.command.CommandPermission;
 
 import java.util.List;
 
-public class GroupEvent extends BaseCmdGroup {
-    public GroupEvent() {
+public class EventGroup extends BaseCmdGroup {
+    public EventGroup() {
         super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "event", "Event Commands",
-                List.of()
+                List.of(new CreateEvent())
         );
     }
 }
