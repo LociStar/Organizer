@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 public class Delete extends BaseCmd {
 
     protected Delete() {
-        super(CommandCategory.GROUP, "delete", "delete a group");
+        super(CommandCategory.GROUP, "deleteGroup", "delete a group");
         this.addOption("group_name", "group name", true, ApplicationCommandOptionType.STRING);
     }
 
