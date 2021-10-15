@@ -15,25 +15,25 @@ import reactor.util.annotation.Nullable;
 
 public class DBEventMember extends SerializableEntity<DBEventMemberBean> implements DatabaseEntity {
 
-    private final String groupName;
+    private final String eventName;
 
-    public DBEventMember(DBEventMemberBean bean, String groupName) {
+    public DBEventMember(DBEventMemberBean bean, String eventName) {
         super(bean);
-        this.groupName = groupName;
+        this.eventName = eventName;
     }
 
-    public DBEventMember(Snowflake id, String groupName) {
+    public DBEventMember(Snowflake id, String eventName) {
         super(new DBEventMemberBean(id.asLong()));
-        this.groupName = groupName;
+        this.eventName = eventName;
     }
 
     public DBEventMember(Long id, @Nullable String name, int accepted, boolean owner) {
         super(new DBEventMemberBean(id, name, accepted, owner));
-        this.groupName = name;
+        this.eventName = name;
     }
 
-    public String getGroupName() {
-        return this.groupName;
+    public String getEventName() {
+        return this.eventName;
     }
 
     public Snowflake getId() {
@@ -44,16 +44,16 @@ public class DBEventMember extends SerializableEntity<DBEventMemberBean> impleme
     public Mono<Void> insert() {
         return Mono.from(DatabaseManager.getEvents()
                 .getCollection()
-                .updateOne(Filters.eq("_id", this.getGroupName()),
+                .updateOne(Filters.eq("_id", this.getEventName()),
                         Updates.push("members", this.toDocument()),
                         new UpdateOptions().upsert(true)))
                 .doOnSubscribe(__ -> {
-                    GroupsCollection.LOGGER.debug("[DBEventMember {}/{}] Insertion", this.getId().asString(), this.getGroupName());
+                    GroupsCollection.LOGGER.debug("[DBEventMember {}/{}] Insertion", this.getId().asString(), this.getEventName());
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getEvents().getName()).inc();
                 })
                 .doOnNext(result -> GroupsCollection.LOGGER.trace("[DBEventMember {}/{}] Insertion result: {}",
-                        this.getId().asString(), this.getGroupName(), result))
-                //.doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getGroupName()))
+                        this.getId().asString(), this.getEventName(), result))
+                .doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getEventName()))
                 .then();
     }
 

@@ -30,7 +30,7 @@ public class CreateEvent extends BaseCmd {
         String eventName = context.getOptionAsString("title").orElse("error");
         if (DatabaseManager.getEvents().containsEvent(eventName))
             return context.createFollowupMessage("This group name is already taken. Pls try another one.");
-        DBEvent event = new DBEvent(eventName);
+        DBEvent event = new DBEvent(eventName, context.getOptionAsString("description"). orElse(null));
         List<Mono<User>> users = new ArrayList<>();
 
         for (int i = 1; i < 11; i++) {

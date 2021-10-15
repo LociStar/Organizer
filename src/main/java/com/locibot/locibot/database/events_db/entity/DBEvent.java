@@ -6,7 +6,12 @@ import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.SerializableEntity;
 import com.locibot.locibot.database.events_db.bean.DBEventBean;
 import com.locibot.locibot.database.groups.GroupsCollection;
+import com.locibot.locibot.database.guilds.GuildsCollection;
+import com.mongodb.client.model.Filters;
 import reactor.core.publisher.Mono;
+
+import java.util.Collections;
+import java.util.List;
 
 public class DBEvent extends SerializableEntity<DBEventBean> implements DatabaseEntity {
     public DBEvent(DBEventBean bean) {
@@ -17,8 +22,12 @@ public class DBEvent extends SerializableEntity<DBEventBean> implements Database
         super(new DBEventBean(groupName));
     }
 
-    public String getGroupName() {
-        return this.getBean().getGroupName();
+    public DBEvent(String groupName, String description) {
+        super(new DBEventBean(groupName, description));
+    }
+
+    public String getEventName() {
+        return this.getBean().getEventName();
     }
 
     @Override
@@ -27,17 +36,47 @@ public class DBEvent extends SerializableEntity<DBEventBean> implements Database
                 .getCollection()
                 .insertOne(this.toDocument()))
                 .doOnSubscribe(__ -> {
-                    GroupsCollection.LOGGER.debug("[DBGroup {}] Insertion", this.getGroupName());
+                    GroupsCollection.LOGGER.debug("[DBGroup {}] Insertion", this.getEventName());
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getEvents().getName()).inc();
                 })
                 .doOnNext(result -> GroupsCollection.LOGGER.trace("[DBGroup {}] Insertion result: {}",
-                        this.getGroupName(), result))
-                //.doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getGroupName()))
+                        this.getEventName(), result))
+                .doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getEventName()))
                 .then();
     }
 
     @Override
     public Mono<Void> delete() {
-        return null;
+        return Mono.from(DatabaseManager.getEvents()
+                .getCollection()
+                .deleteOne(Filters.eq("_id", this.getEventName())))
+                .doOnSubscribe(__ -> {
+                    GuildsCollection.LOGGER.debug("[DBEvent {}] Deletion", this.getEventName());
+                    Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getEvents().getName()).inc();
+                })
+                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBEvent {}] Deletion result: {}", this.getEventName(), result))
+                .doOnTerminate(() -> DatabaseManager.getGroups().invalidateCache(this.getEventName()))
+                .then();
+    }
+
+    public List<DBEventMember> getMembers() {
+        if (this.getBean().getMembers() == null) {
+            return Collections.emptyList();
+        }
+
+        return this.getBean()
+                .getMembers()
+                .stream()
+                .map(memberBean -> new DBEventMember(memberBean, getEventName()))
+                .toList();
+    }
+
+    public DBEventMember getOwner() {
+        for (DBEventMember member : getMembers()) {
+            if (member.getBean().isOwner()) {
+                return member;
+            }
+        }
+        return getMembers().get(0);
     }
 }

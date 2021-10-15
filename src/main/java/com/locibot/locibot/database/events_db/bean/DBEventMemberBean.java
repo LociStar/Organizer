@@ -10,10 +10,8 @@ public class DBEventMemberBean implements Bean {
     @Nullable
     @JsonProperty("eventName")
     private String name;
-    @Nullable
     @JsonProperty("accepted") // 0==invited; 1==accepted; 2==declined
     private int accepted;
-    @Nullable
     @JsonProperty("owner")
     private boolean owner;
 
@@ -26,6 +24,9 @@ public class DBEventMemberBean implements Bean {
 
     public DBEventMemberBean(long id) {
         this.id = id;
+    }
+
+    public DBEventMemberBean() {
     }
 
     public Long getId() {

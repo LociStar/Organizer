@@ -1,32 +1,73 @@
 package com.locibot.locibot.database.events_db;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.locibot.locibot.core.cache.MultiValueCache;
+import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.database.DatabaseCollection;
-import com.locibot.locibot.database.groups.bean.DBGroupBean;
+import com.locibot.locibot.database.events_db.bean.DBEventBean;
+import com.locibot.locibot.database.events_db.entity.DBEvent;
+import com.locibot.locibot.utils.LogUtil;
 import com.locibot.locibot.utils.NetUtil;
+import com.mongodb.client.model.Filters;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import org.bson.Document;
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.util.Logger;
 
 import java.util.List;
 
-public class EventsCollection extends DatabaseCollection {
+public class EventsCollection extends DatabaseCollection { //TODO: replace console prints with logs
+
+    public static final Logger LOGGER = LogUtil.getLogger(EventsCollection.class, LogUtil.Category.DATABASE);
+    private final MultiValueCache<String, DBEvent> eventCache;
+
     public EventsCollection(MongoDatabase database) {
         super(database, "events");
+        this.eventCache = MultiValueCache.Builder.<String, DBEvent>builder().withInfiniteTtl().build();
     }
 
-    public boolean containsEvent(String groupName) {
+    public boolean containsEvent(String eventName) {
         List<Document> documents = Flux.from(this.getCollection().find()).collectList().block();
         if (documents != null) {
             for (Document document : documents) {
                 try {
-                    if (NetUtil.MAPPER.readValue(document.toJson(JSON_WRITER_SETTINGS), DBGroupBean.class).getGroupName().equals(groupName))
+                    if (NetUtil.MAPPER.readValue(document.toJson(JSON_WRITER_SETTINGS), DBEventBean.class).getEventName().equals(eventName))
                         return true;
                 } catch (JsonProcessingException e) {
-                    e.printStackTrace();
+                    LOGGER.error(e.getMessage());
                 }
             }
         }
         return false;
+    }
+
+    public Mono<DBEvent> getDBEvent(String eventName) {
+        final Publisher<Document> request = this.getCollection()
+                .find(Filters.eq("_id", eventName))
+                .first();
+
+        final Mono<DBEvent> getDBEvent = Mono.from(request)
+                .map(document -> document.toJson(JSON_WRITER_SETTINGS))
+                .flatMap(json -> Mono.fromCallable(() -> NetUtil.MAPPER.readValue(json, DBEventBean.class)))
+                .map(DBEvent::new)
+                .doOnSuccess(consumer -> {
+                    if (consumer == null) {
+                        LOGGER.debug("[DBEvent {}] Not found", eventName);
+                    }
+                })
+                .defaultIfEmpty(new DBEvent(eventName))
+                .doOnSubscribe(__ -> {
+                    LOGGER.debug("[DBEvent {}] Request", eventName);
+                    Telemetry.DB_REQUEST_COUNTER.labels(this.getName()).inc();
+                });
+
+        return this.eventCache.getOrCache(eventName, getDBEvent);
+    }
+
+    public void invalidateCache(String eventName) {
+        LOGGER.trace("{Event ID: {}} Cache invalidated", eventName);
+        this.eventCache.remove(eventName);
     }
 }
