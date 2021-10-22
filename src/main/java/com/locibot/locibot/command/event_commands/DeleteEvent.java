@@ -5,13 +5,13 @@ import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 public class DeleteEvent extends BaseCmd {
     protected DeleteEvent() {
         super(CommandCategory.EVENT, CommandPermission.USER_GLOBAL, "delete", "delete an event");
-        this.addOption("title", "event title", true, ApplicationCommandOptionType.STRING);
+        this.addOption("title", "event title", true, ApplicationCommandOption.Type.STRING);
     }
 
     @Override
