@@ -9,7 +9,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.squareup.gifencoder.*;
 import com.twelvemonkeys.image.ResampleOp;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 import javax.imageio.ImageIO;
@@ -30,7 +30,7 @@ public class PetPet extends BaseCmd {
 
     protected PetPet() {
         super(CommandCategory.IMAGE, CommandPermission.USER_GUILD, "petpet", "create a petpet gif");
-        this.addOption("url", "url", false, ApplicationCommandOptionType.STRING);
+        this.addOption("url", "url", false, ApplicationCommandOption.Type.STRING);
     }
 
     @Override

@@ -11,7 +11,7 @@ import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.LogUtil;
 import com.locibot.locibot.utils.NetUtil;
 import discord4j.common.util.Snowflake;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.Logger;
@@ -43,7 +43,7 @@ public class ChatCmd extends BaseCmd {
         this.addOption(option -> option.name("message")
                 .description("The message to send, must not exceed %d characters".formatted(MAX_CHARACTERS))
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
 
         this.channelsCustid = new ConcurrentHashMap<>();
     }

@@ -2,12 +2,12 @@ package com.locibot.locibot.core.command;
 
 import com.locibot.locibot.core.ratelimiter.RateLimiter;
 import com.locibot.locibot.object.help.CommandHelpBuilder;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.discordjson.json.ApplicationCommandOptionChoiceData;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
 import discord4j.discordjson.json.ApplicationCommandRequest;
 import discord4j.discordjson.json.ImmutableApplicationCommandOptionData;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.Nullable;
 
@@ -32,14 +32,14 @@ public abstract class BaseCmd {
     private final String description;
     private final List<ApplicationCommandOptionData> options;
     @Nullable
-    private final ApplicationCommandOptionType type;
+    private final ApplicationCommandOption.Type type;
 
     @Nullable
     private RateLimiter rateLimiter;
     private boolean isEnabled;
 
     protected BaseCmd(CommandCategory category, CommandPermission permission, String name, String description,
-                      @Nullable ApplicationCommandOptionType type) {
+                      @Nullable ApplicationCommandOption.Type type) {
         this.category = category;
         this.permission = permission;
         this.name = name;
@@ -92,7 +92,7 @@ public abstract class BaseCmd {
         return Collections.unmodifiableList(this.options);
     }
 
-    public Optional<ApplicationCommandOptionType> getType() {
+    public Optional<ApplicationCommandOption.Type> getType() {
         return Optional.ofNullable(this.type);
     }
 
@@ -117,12 +117,12 @@ public abstract class BaseCmd {
     }
 
     // TODO: Remove
-    public void addOption(String name, String description, boolean required, ApplicationCommandOptionType type) {
+    public void addOption(String name, String description, boolean required, ApplicationCommandOption.Type type) {
         this.addOption(option -> option.name(name).description(description).required(required).type(type.getValue()));
     }
 
     // TODO: Remove
-    public void addOption(String name, String description, boolean required, ApplicationCommandOptionType type,
+    public void addOption(String name, String description, boolean required, ApplicationCommandOption.Type type,
                           List<ApplicationCommandOptionChoiceData> choices) {
         this.addOption(option -> option.name(name).description(description)
                 .required(required).type(type.getValue()).choices(choices));

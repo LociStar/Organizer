@@ -1,7 +1,7 @@
 package com.locibot.locibot.core.command;
 
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -43,7 +43,7 @@ public abstract class BaseCmdGroup extends BaseCmd {
             options.add(ApplicationCommandOptionData.builder()
                     .name(cmd.getName())
                     .description(cmd.getDescription())
-                    .type(cmd.getType().orElse(ApplicationCommandOptionType.SUB_COMMAND).getValue())
+                    .type(cmd.getType().orElse(ApplicationCommandOption.Type.SUB_COMMAND).getValue())
                     .options(cmd.getOptions())
                     .build());
         }

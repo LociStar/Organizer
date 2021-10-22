@@ -8,9 +8,9 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.NumberUtil;
 import discord4j.common.util.Snowflake;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.Guild;
 import discord4j.rest.http.client.ClientException;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import reactor.core.publisher.Mono;
 
@@ -21,7 +21,7 @@ public class LeaveGuildCmd extends BaseCmd {
         this.addOption(option -> option.name("guild_id")
                 .description("The ID of the guild to leave")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
     }
 
     @Override

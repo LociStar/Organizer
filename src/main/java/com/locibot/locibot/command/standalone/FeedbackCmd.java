@@ -7,8 +7,8 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.core.ratelimiter.RateLimiter;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.User;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -18,7 +18,7 @@ public class FeedbackCmd extends BaseCmd {
     public FeedbackCmd() {
         super(CommandCategory.INFO, "feedback", "Send a feedback");
         this.setRateLimiter(new RateLimiter(1, Duration.ofMinutes(10)));
-        this.addOption("message", "Your feedback", true, ApplicationCommandOptionType.STRING);
+        this.addOption("message", "Your feedback", true, ApplicationCommandOption.Type.STRING);
     }
 
     @Override

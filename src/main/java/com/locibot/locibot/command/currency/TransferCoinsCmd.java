@@ -9,15 +9,15 @@ import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.guilds.entity.DBMember;
 import com.locibot.locibot.object.Emoji;
 import discord4j.common.util.Snowflake;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 public class TransferCoinsCmd extends BaseCmd {
 
     public TransferCoinsCmd() {
         super(CommandCategory.CURRENCY, "transfer", "Transfer coins to a user");
-        this.addOption("coins", "Number of coins to transfer", true, ApplicationCommandOptionType.INTEGER);
-        this.addOption("user", "User to transfer coins to", true, ApplicationCommandOptionType.USER);
+        this.addOption("coins", "Number of coins to transfer", true, ApplicationCommandOption.Type.INTEGER);
+        this.addOption("user", "User to transfer coins to", true, ApplicationCommandOption.Type.USER);
     }
 
     @Override

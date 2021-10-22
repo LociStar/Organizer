@@ -7,8 +7,8 @@ import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.groups.entity.DBGroup;
 import com.locibot.locibot.database.groups.entity.DBGroupMember;
 import discord4j.common.util.Snowflake;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.User;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -31,12 +31,12 @@ public abstract class Create extends BaseCmd {
         this.min = min;
         this.opt = opt;
         this.groupType = groupType;
-        this.addOption("team_name", "Give us a Name", true, ApplicationCommandOptionType.STRING);
+        this.addOption("team_name", "Give us a Name", true, ApplicationCommandOption.Type.STRING);
         for (int i = 0; i < min; i++) {
-            this.addOption("member_" + i, "User", true, ApplicationCommandOptionType.USER);
+            this.addOption("member_" + i, "User", true, ApplicationCommandOption.Type.USER);
         }
         for (int i = 0; i < opt; i++) {
-            this.addOption("optional_member_" + i, "User", false, ApplicationCommandOptionType.USER);
+            this.addOption("optional_member_" + i, "User", false, ApplicationCommandOption.Type.USER);
         }
     }
 

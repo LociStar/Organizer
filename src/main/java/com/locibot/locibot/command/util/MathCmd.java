@@ -6,7 +6,7 @@ import com.locibot.locibot.core.command.BaseCmd;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 import java.text.DecimalFormat;
@@ -19,7 +19,7 @@ public class MathCmd extends BaseCmd {
     public MathCmd() {
         super(CommandCategory.UTILS, "math", "Evaluate an expression");
         this.addOption("expression", "Expression to evaluate (example: 2*cos(pi))", true,
-                ApplicationCommandOptionType.STRING);
+                ApplicationCommandOption.Type.STRING);
 
         this.evaluator = new DoubleEvaluator();
     }

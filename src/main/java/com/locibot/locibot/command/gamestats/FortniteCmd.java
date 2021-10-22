@@ -14,9 +14,9 @@ import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.LociBotUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Mono;
 
@@ -29,9 +29,9 @@ public class FortniteCmd extends BaseCmd {
     private final String apiKey;
     public FortniteCmd() {
         super(CommandCategory.GAMESTATS, "fortnite", "Search for Fortnite statistics");
-        this.addOption("platform", "User's platform", true, ApplicationCommandOptionType.STRING,
+        this.addOption("platform", "User's platform", true, ApplicationCommandOption.Type.STRING,
                 DiscordUtil.toOptions(Platform.class));
-        this.addOption("username", "Epic nickname", true, ApplicationCommandOptionType.STRING);
+        this.addOption("username", "Epic nickname", true, ApplicationCommandOption.Type.STRING);
 
         this.cachedValues = MultiValueCache.Builder.<String, FortniteResponse>builder()
                 .withTtl(Config.CACHE_TTL)

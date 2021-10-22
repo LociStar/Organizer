@@ -9,10 +9,10 @@ import com.locibot.locibot.database.users.entity.DBUser;
 import com.locibot.locibot.database.users.entity.achievement.Achievement;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.LociBotUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.Member;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.EnumSet;
@@ -24,7 +24,7 @@ public class AchievementsCmd extends BaseCmd {
         this.addOption(option -> option.name("user")
                 .description("If not specified, it will show your achievements")
                 .required(false)
-                .type(ApplicationCommandOptionType.USER.getValue()));
+                .type(ApplicationCommandOption.Type.USER.getValue()));
     }
 
     private static EmbedCreateSpec formatEmbed(I18nContext context, EnumSet<Achievement> achievements,

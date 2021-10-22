@@ -13,9 +13,9 @@ import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.RandUtil;
 import com.locibot.locibot.utils.LociBotUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 
@@ -32,7 +32,7 @@ public class WallhavenCmd extends BaseCmd {
 
     public WallhavenCmd() {
         super(CommandCategory.IMAGE, "wallhaven", "Search random wallpaper from Wallhaven");
-        this.addOption("query", "Search for a wallpaper", false, ApplicationCommandOptionType.STRING);
+        this.addOption("query", "Search for a wallpaper", false, ApplicationCommandOption.Type.STRING);
 
         this.apiKey = CredentialManager.get(Credential.WALLHAVEN_API_KEY);
     }

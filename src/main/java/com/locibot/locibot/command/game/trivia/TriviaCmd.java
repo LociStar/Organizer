@@ -4,7 +4,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.core.game.GameCmd;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
@@ -47,7 +47,7 @@ public class TriviaCmd extends GameCmd<TriviaGame> {
         this.addOption(option -> option.name("category")
                 .description("The category of the question")
                 .required(false)
-                .type(ApplicationCommandOptionType.STRING.getValue())
+                .type(ApplicationCommandOption.Type.STRING.getValue())
                 .choices(DiscordUtil.toOptions(CATEGORIES.keySet())));
     }
 

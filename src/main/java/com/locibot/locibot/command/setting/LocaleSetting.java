@@ -7,7 +7,7 @@ import com.locibot.locibot.core.command.Setting;
 import com.locibot.locibot.core.i18n.I18nManager;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
@@ -26,7 +26,7 @@ public class LocaleSetting extends BaseCmd {
 
         this.addOption(option -> option.name("value")
                 .description("The default language of the server")
-                .type(ApplicationCommandOptionType.STRING.getValue())
+                .type(ApplicationCommandOption.Type.STRING.getValue())
                 .required(true)
                 .choices(DiscordUtil.toOptions(locales)));
     }

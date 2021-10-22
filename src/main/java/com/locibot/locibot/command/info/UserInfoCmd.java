@@ -7,11 +7,11 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.TimeUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Role;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 
@@ -27,7 +27,7 @@ public class UserInfoCmd extends BaseCmd {
     public UserInfoCmd() {
         super(CommandCategory.INFO, "user", "Show user info");
         this.addOption("user", "If not specified, it will show your info", false,
-                ApplicationCommandOptionType.USER);
+                ApplicationCommandOption.Type.USER);
 
         this.dateFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG, FormatStyle.MEDIUM);
     }

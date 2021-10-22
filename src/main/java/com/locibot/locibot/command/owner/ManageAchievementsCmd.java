@@ -10,8 +10,8 @@ import com.locibot.locibot.database.users.entity.achievement.Achievement;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.FormatUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.rest.http.client.ClientException;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import reactor.core.publisher.Mono;
 
@@ -19,11 +19,11 @@ public class ManageAchievementsCmd extends BaseCmd {
 
     public ManageAchievementsCmd() {
         super(CommandCategory.OWNER, CommandPermission.OWNER, "manage_achievements", "Manage user's achievements");
-        this.addOption("action", "Whether to add or remove an achievment", true, ApplicationCommandOptionType.STRING,
+        this.addOption("action", "Whether to add or remove an achievment", true, ApplicationCommandOption.Type.STRING,
                 DiscordUtil.toOptions(Action.class));
         this.addOption("achievement", "The achievement", true,
-                ApplicationCommandOptionType.STRING, DiscordUtil.toOptions(Achievement.class));
-        this.addOption("user", "The user", true, ApplicationCommandOptionType.USER);
+                ApplicationCommandOption.Type.STRING, DiscordUtil.toOptions(Achievement.class));
+        this.addOption("user", "The user", true, ApplicationCommandOption.Type.USER);
     }
 
     @Override

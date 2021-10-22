@@ -6,7 +6,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.guilds.entity.DBMember;
 import com.locibot.locibot.object.Emoji;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommand;
 import reactor.core.publisher.Mono;
 
 public class CoinsCmd extends BaseCmd {
@@ -16,7 +16,7 @@ public class CoinsCmd extends BaseCmd {
         this.addOption(option -> option.name("user")
                 .description("If not specified, it will show your coins")
                 .required(false)
-                .type(ApplicationCommandOptionType.USER.getValue()));
+                .type(ApplicationCommand.Type.USER.getValue()));
     }
 
     @Override

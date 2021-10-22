@@ -6,8 +6,8 @@ import com.locibot.locibot.core.game.GameCmd;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.NumberUtil;
 import com.locibot.locibot.utils.LociBotUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 public class DiceCmd extends GameCmd<DiceGame> {
@@ -17,26 +17,26 @@ public class DiceCmd extends GameCmd<DiceGame> {
 
     public DiceCmd() {
         super("dice", "Start or join a Dice game with a common bet",
-                ApplicationCommandOptionType.SUB_COMMAND_GROUP);
+                ApplicationCommandOption.Type.SUB_COMMAND_GROUP);
 
         final ApplicationCommandOptionData numberOption = ApplicationCommandOptionData.builder()
                 .name("number")
                 .description("The number you're betting on")
                 .required(true)
-                .type(ApplicationCommandOptionType.INTEGER.getValue())
+                .type(ApplicationCommandOption.Type.INTEGER.getValue())
                 .build();
 
         this.addOption(option -> option.name(JOIN_SUB_COMMAND)
                 .description("Join a Dice game")
-                .type(ApplicationCommandOptionType.SUB_COMMAND.getValue())
+                .type(ApplicationCommandOption.Type.SUB_COMMAND.getValue())
                 .addOption(numberOption));
         this.addOption(option -> option.name(CREATE_SUB_COMMAND)
                 .description("Start a Dice game")
-                .type(ApplicationCommandOptionType.SUB_COMMAND.getValue())
+                .type(ApplicationCommandOption.Type.SUB_COMMAND.getValue())
                 .addOption(ApplicationCommandOptionData.builder().name("bet")
                         .description("The common bet")
                         .required(true)
-                        .type(ApplicationCommandOptionType.INTEGER.getValue())
+                        .type(ApplicationCommandOption.Type.INTEGER.getValue())
                         .build())
                 .addOption(numberOption));
     }

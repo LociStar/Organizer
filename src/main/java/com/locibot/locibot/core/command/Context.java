@@ -14,6 +14,7 @@ import discord4j.core.event.domain.interaction.InteractionCreateEvent;
 import discord4j.core.object.command.ApplicationCommandInteraction;
 import discord4j.core.object.command.ApplicationCommandInteractionOption;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.*;
 import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.object.entity.channel.TextChannel;
@@ -21,7 +22,6 @@ import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 import discord4j.discordjson.json.ImmutableWebhookMessageEditRequest;
 import discord4j.discordjson.json.WebhookExecuteRequest;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import discord4j.rest.util.MultipartRequest;
 import discord4j.rest.util.Permission;
 import reactor.bool.BooleanUtils;
@@ -69,7 +69,7 @@ public class Context implements InteractionContext, I18nContext {
     public Optional<String> getSubCommandGroupName() {
         return DiscordUtil.flattenOptions(this.event.getInteraction().getCommandInteraction().orElseThrow())
                 .stream()
-                .filter(option -> option.getType() == ApplicationCommandOptionType.SUB_COMMAND_GROUP)
+                .filter(option -> option.getType() == ApplicationCommandOption.Type.SUB_COMMAND_GROUP)
                 .map(ApplicationCommandInteractionOption::getName)
                 .findFirst();
     }
@@ -77,7 +77,7 @@ public class Context implements InteractionContext, I18nContext {
     public Optional<String> getSubCommandName() {
         return DiscordUtil.flattenOptions(this.event.getInteraction().getCommandInteraction().orElseThrow())
                 .stream()
-                .filter(option -> option.getType() == ApplicationCommandOptionType.SUB_COMMAND)
+                .filter(option -> option.getType() == ApplicationCommandOption.Type.SUB_COMMAND)
                 .map(ApplicationCommandInteractionOption::getName)
                 .findFirst();
     }

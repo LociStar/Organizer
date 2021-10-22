@@ -15,9 +15,9 @@ import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.RandUtil;
 import com.locibot.locibot.utils.LociBotUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class DeviantartCmd extends BaseCmd {
         this.addOption(option -> option.name("query")
                 .description("Search for an image")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
 
         this.clientId = CredentialManager.get(Credential.DEVIANTART_CLIENT_ID);
         this.apiSecret = CredentialManager.get(Credential.DEVIANTART_API_SECRET);

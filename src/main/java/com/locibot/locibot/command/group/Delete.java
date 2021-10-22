@@ -4,14 +4,14 @@ import com.locibot.locibot.core.command.BaseCmd;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 public class Delete extends BaseCmd {
 
     protected Delete() {
         super(CommandCategory.GROUP, "delete_group", "delete a group");
-        this.addOption("group_name", "group name", true, ApplicationCommandOptionType.STRING);
+        this.addOption("group_name", "group name", true, ApplicationCommandOption.Type.STRING);
     }
 
     @Override

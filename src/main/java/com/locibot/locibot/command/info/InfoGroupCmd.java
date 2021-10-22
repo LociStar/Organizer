@@ -5,10 +5,10 @@ import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.groups.entity.DBGroup;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.User;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import discord4j.rest.util.Color;
 import reactor.core.publisher.Mono;
 
@@ -20,7 +20,7 @@ import java.util.Optional;
 public class InfoGroupCmd extends BaseCmd {
     protected InfoGroupCmd() {
         super(CommandCategory.INFO, "groups", "get a list of all groups");
-        this.addOption("group_name", "group name", false, ApplicationCommandOptionType.STRING);
+        this.addOption("group_name", "group name", false, ApplicationCommandOption.Type.STRING);
     }
 
     @Override

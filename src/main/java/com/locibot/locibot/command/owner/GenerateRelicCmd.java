@@ -9,7 +9,7 @@ import com.locibot.locibot.database.premium.RelicType;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.StringUtil;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 public class GenerateRelicCmd extends BaseCmd {
@@ -17,7 +17,7 @@ public class GenerateRelicCmd extends BaseCmd {
     public GenerateRelicCmd() {
         super(CommandCategory.OWNER, CommandPermission.OWNER, "generate_relic", "Generate a relic");
         this.addOption("type", "Relic type", true,
-                ApplicationCommandOptionType.STRING, DiscordUtil.toOptions(RelicType.class));
+                ApplicationCommandOption.Type.STRING, DiscordUtil.toOptions(RelicType.class));
     }
 
     @Override

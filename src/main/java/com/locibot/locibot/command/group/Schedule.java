@@ -5,9 +5,9 @@ import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.groups.entity.DBGroup;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.User;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
@@ -20,9 +20,9 @@ import static com.locibot.locibot.command.group.GroupUtil.sendInviteMessage;
 public class Schedule extends BaseCmd {
     protected Schedule() {
         super(CommandCategory.GROUP, "schedule", "schedule a group event");
-        this.addOption("team_name", "Team Name", true, ApplicationCommandOptionType.STRING);
-        this.addOption("date", "dd.MM.yyyy", true, ApplicationCommandOptionType.STRING);
-        this.addOption("time", "hh:mm", true, ApplicationCommandOptionType.STRING);
+        this.addOption("team_name", "Team Name", true, ApplicationCommandOption.Type.STRING);
+        this.addOption("date", "dd.MM.yyyy", true, ApplicationCommandOption.Type.STRING);
+        this.addOption("time", "hh:mm", true, ApplicationCommandOption.Type.STRING);
     }
 
     @Override

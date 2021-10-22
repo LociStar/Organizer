@@ -6,12 +6,12 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.LociBotUtil;
 import discord4j.common.util.Snowflake;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Role;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
@@ -26,9 +26,9 @@ public class RolelistCmd extends BaseCmd {
     public RolelistCmd() {
         super(CommandCategory.MODERATION, "rolelist", "Show a list of members with specific role(s)");
 
-        this.addOption("role1", "The first role to have", true, ApplicationCommandOptionType.ROLE);
-        this.addOption("role2", "The second role to have", false, ApplicationCommandOptionType.ROLE);
-        this.addOption("role3", "The third role to have", false, ApplicationCommandOptionType.ROLE);
+        this.addOption("role1", "The first role to have", true, ApplicationCommandOption.Type.ROLE);
+        this.addOption("role2", "The second role to have", false, ApplicationCommandOption.Type.ROLE);
+        this.addOption("role3", "The third role to have", false, ApplicationCommandOption.Type.ROLE);
     }
 
     @Override

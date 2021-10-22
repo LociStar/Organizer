@@ -16,10 +16,10 @@ import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.NumberUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.core.GatewayDiscordClient;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.rest.http.client.ClientException;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import reactor.bool.BooleanUtils;
 import reactor.core.publisher.Flux;
@@ -41,7 +41,7 @@ public class LotteryCmd extends BaseCmd {
         super(CommandCategory.GAME, "lottery",
                 "Buy a ticket for the lottery or display the current lottery status");
         this.addOption("number", "The number you bet on", false,
-                ApplicationCommandOptionType.INTEGER);
+                ApplicationCommandOption.Type.INTEGER);
     }
 
     private static Mono<Message> show(Context context) {

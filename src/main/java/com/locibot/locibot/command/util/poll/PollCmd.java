@@ -9,8 +9,8 @@ import com.locibot.locibot.utils.NumberUtil;
 import com.locibot.locibot.utils.TimeUtil;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.command.ApplicationCommandInteraction;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.reaction.ReactionEmoji;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import discord4j.rest.util.Permission;
 import reactor.core.publisher.Mono;
 
@@ -41,18 +41,18 @@ public class PollCmd extends BaseCmd {
         this.managers = new ConcurrentHashMap<>();
 
         this.addOption("duration", "Number of seconds or formatted time (e.g. 72 or 1m12s), 1h max",
-                true, ApplicationCommandOptionType.STRING);
-        this.addOption("question", "The question to ask", true, ApplicationCommandOptionType.STRING);
-        this.addOption("choice1", "The first choice", true, ApplicationCommandOptionType.STRING);
-        this.addOption("choice2", "The second choice", true, ApplicationCommandOptionType.STRING);
-        this.addOption("choice3", "The third choice", false, ApplicationCommandOptionType.STRING);
-        this.addOption("choice4", "The fourth choice", false, ApplicationCommandOptionType.STRING);
-        this.addOption("choice5", "The fifth choice", false, ApplicationCommandOptionType.STRING);
-        this.addOption("choice6", "The sixth choice", false, ApplicationCommandOptionType.STRING);
-        this.addOption("choice7", "The seventh choice", false, ApplicationCommandOptionType.STRING);
-        this.addOption("choice8", "The eighth choice", false, ApplicationCommandOptionType.STRING);
-        this.addOption("choice9", "The ninth choice", false, ApplicationCommandOptionType.STRING);
-        this.addOption("choice10", "The tenth choice", false, ApplicationCommandOptionType.STRING);
+                true, ApplicationCommandOption.Type.STRING);
+        this.addOption("question", "The question to ask", true, ApplicationCommandOption.Type.STRING);
+        this.addOption("choice1", "The first choice", true, ApplicationCommandOption.Type.STRING);
+        this.addOption("choice2", "The second choice", true, ApplicationCommandOption.Type.STRING);
+        this.addOption("choice3", "The third choice", false, ApplicationCommandOption.Type.STRING);
+        this.addOption("choice4", "The fourth choice", false, ApplicationCommandOption.Type.STRING);
+        this.addOption("choice5", "The fifth choice", false, ApplicationCommandOption.Type.STRING);
+        this.addOption("choice6", "The sixth choice", false, ApplicationCommandOption.Type.STRING);
+        this.addOption("choice7", "The seventh choice", false, ApplicationCommandOption.Type.STRING);
+        this.addOption("choice8", "The eighth choice", false, ApplicationCommandOption.Type.STRING);
+        this.addOption("choice9", "The ninth choice", false, ApplicationCommandOption.Type.STRING);
+        this.addOption("choice10", "The tenth choice", false, ApplicationCommandOption.Type.STRING);
     }
 
     @Override

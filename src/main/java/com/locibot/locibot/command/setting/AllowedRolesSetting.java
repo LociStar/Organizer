@@ -6,8 +6,8 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.FormatUtil;
 import discord4j.common.util.Snowflake;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.Role;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -23,29 +23,29 @@ public class AllowedRolesSetting extends BaseCmd {
 
         this.addOption(option -> option.name("action")
                 .description("Whether to add or remove a role from the allowed ones")
-                .type(ApplicationCommandOptionType.STRING.getValue())
+                .type(ApplicationCommandOption.Type.STRING.getValue())
                 .required(true)
                 .choices(DiscordUtil.toOptions(Action.class)));
         this.addOption(option -> option.name("role1")
                 .description("The first role")
                 .required(true)
-                .type(ApplicationCommandOptionType.ROLE.getValue()));
+                .type(ApplicationCommandOption.Type.ROLE.getValue()));
         this.addOption(option -> option.name("role2")
                 .description("The second role")
                 .required(false)
-                .type(ApplicationCommandOptionType.ROLE.getValue()));
+                .type(ApplicationCommandOption.Type.ROLE.getValue()));
         this.addOption(option -> option.name("role3")
                 .description("The third role")
                 .required(false)
-                .type(ApplicationCommandOptionType.ROLE.getValue()));
+                .type(ApplicationCommandOption.Type.ROLE.getValue()));
         this.addOption(option -> option.name("role4")
                 .description("The fourth role")
                 .required(false)
-                .type(ApplicationCommandOptionType.ROLE.getValue()));
+                .type(ApplicationCommandOption.Type.ROLE.getValue()));
         this.addOption(option -> option.name("role5")
                 .description("The fifth role")
                 .required(false)
-                .type(ApplicationCommandOptionType.ROLE.getValue()));
+                .type(ApplicationCommandOption.Type.ROLE.getValue()));
 
 /* TODO               .fields("Info", "**server owner** and **administrators** "
                         + "will always be able to interact with Shadbot.", false)
