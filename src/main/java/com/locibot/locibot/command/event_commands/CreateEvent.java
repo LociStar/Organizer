@@ -7,8 +7,8 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.events_db.entity.DBEvent;
 import com.locibot.locibot.database.events_db.entity.DBEventMember;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.User;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -18,10 +18,10 @@ import java.util.List;
 public class CreateEvent extends BaseCmd {
     protected CreateEvent() {
         super(CommandCategory.EVENT, CommandPermission.USER_GLOBAL, "create", "create a new event");
-        this.addOption("title", "event name", true, ApplicationCommandOptionType.STRING);
-        this.addOption("description", "add a brief event description", false, ApplicationCommandOptionType.STRING);
+        this.addOption("title", "event name", true, ApplicationCommandOption.Type.STRING);
+        this.addOption("description", "add a brief event description", false, ApplicationCommandOption.Type.STRING);
         for (int i = 0; i < 10; i++) {
-            this.addOption("member_" + (i + 1), "Add a member", false, ApplicationCommandOptionType.USER);
+            this.addOption("member_" + (i + 1), "Add a member", false, ApplicationCommandOption.Type.USER);
         }
     }
 
