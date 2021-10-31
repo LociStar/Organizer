@@ -11,7 +11,7 @@ import java.util.List;
 
 public class GroupGroup extends BaseCmdGroup {
     public GroupGroup() {
-        super(CommandCategory.GROUP, CommandPermission.USER_GUILD, "group", "Group Commands",
+        super(CommandCategory.GROUP, CommandPermission.USER_GUILD, "Group Commands",
                 List.of(
                         //core
                         new Schedule(), new Delete(), new AddToGroup(),

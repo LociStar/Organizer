@@ -80,6 +80,18 @@ public class CommandManager {
         return Collections.unmodifiableMap(map);
     }
 
+    private static Map<String, BaseCmd> initializeButtons(BaseCmd... cmds) {
+        final Map<String, BaseCmd> map = new LinkedHashMap<>(cmds.length);
+        for (final BaseCmd cmd : cmds) {
+            if (map.putIfAbsent(cmd.getName(), cmd) != null) {
+                LociBot.DEFAULT_LOGGER.error("Command name collision between {} and {}",
+                        cmd.getClass().getSimpleName(), map.get(cmd.getName()).getClass().getSimpleName());
+            }
+        }
+        LociBot.DEFAULT_LOGGER.info("{} commands initialized", map.size());
+        return Collections.unmodifiableMap(map);
+    }
+
     public static Mono<Void> register(ApplicationService applicationService, long applicationId) {
         final Mono<Long> registerGuildCommands = Flux.fromIterable(COMMANDS_MAP.values())
                 .filter(cmd -> cmd.getPermission() != CommandPermission.USER_GLOBAL)
@@ -144,7 +156,7 @@ public class CommandManager {
         if (cmd != null) {
             return cmd;
         }
-
+        System.out.println("TEST Base 1");
         return COMMANDS_MAP.values().stream()
                 .filter(it -> it instanceof BaseCmdGroup)
                 .flatMap(it -> ((BaseCmdGroup) it).getCommands().stream())
