@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <a href="bot-dicord-invite-link">
+    <a href="https://discord.com/api/oauth2/authorize?client_id=597091642440155158&permissions=8&scope=bot%20applications.commands">
         <img align="right" src="https://image.flaticon.com/icons/png/512/544/544539.png" height="220" width="220">
     </a>
     <h1>Organizer</h1>
