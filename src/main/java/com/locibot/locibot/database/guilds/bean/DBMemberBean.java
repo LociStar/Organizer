@@ -16,15 +16,19 @@ public class DBMemberBean implements Bean {
     @Nullable
     @JsonProperty("weatherRegistered")
     private ArrayList<String> weatherRegistered;
+    @Nullable
+    @JsonProperty("botRegistered")
+    private boolean botRegistered;
 
-    public DBMemberBean(String id, @Nullable Long coins, @Nullable ArrayList<String> weatherRegistered) {
+    public DBMemberBean(String id, @Nullable Long coins, @Nullable ArrayList<String> weatherRegistered, @Nullable boolean botRegistered) {
         this.id = id;
         this.coins = coins;
         this.weatherRegistered = weatherRegistered;
+        this.botRegistered = botRegistered;
     }
 
     public DBMemberBean(String id) {
-        this(id, null, null);
+        this(id, null, null, false);
     }
 
     public DBMemberBean() {
@@ -40,6 +44,10 @@ public class DBMemberBean implements Bean {
 
     public ArrayList<String> getWeatherRegistered() {
         return this.weatherRegistered == null ? new ArrayList<>() : this.weatherRegistered;
+    }
+
+    public boolean getBotRegister(){
+        return this.botRegistered;
     }
 
     @Override
