@@ -1,6 +1,7 @@
 package com.locibot.locibot.core.command;
 
 import com.locibot.locibot.LociBot;
+import com.locibot.locibot.command.buttons.RegisterButtonCmd;
 import com.locibot.locibot.command.currency.CoinsCmd;
 import com.locibot.locibot.command.currency.LeaderboardCmd;
 import com.locibot.locibot.command.currency.TransferCoinsCmd;
@@ -42,6 +43,7 @@ import java.util.Map;
 public class CommandManager {
 
     private static final Map<String, BaseCmd> COMMANDS_MAP;
+    private static final Map<String, BaseCmdButton> BUTTONS_MAP;
 
     static {
         COMMANDS_MAP = CommandManager.initialize(
@@ -53,10 +55,6 @@ public class CommandManager {
                 new Rule34Cmd(), // TODO Improvement: Add to Image group when Discord autocompletion is implemented
                 // Standalone
                 new PingCmd(), new HelpCmd(), new AchievementsCmd(), new FeedbackCmd(), new InviteCmd(),
-                // Music
-//                new BackwardCmd(), new BassBoostCmd(), new ClearCmd(), new ForwardCmd(), new NameCmd(),
-//                new PauseCmd(), new PlaylistCmd(), new RepeatCmd(), new ShuffleCmd(), new SkipCmd(),
-//                new StopCmd(), new VolumeCmd(), new PlayCmd(),
                 // Currency
                 new CoinsCmd(), new LeaderboardCmd(), new TransferCoinsCmd(),
                 // Fun
@@ -66,6 +64,9 @@ public class CommandManager {
                 new TranslateCmd(), new PollCmd(),
                 //Global
                 new Hello(), new Accept(), new Decline());
+        BUTTONS_MAP = CommandManager.initializeButtons(
+                new RegisterButtonCmd()
+        );
     }
 
     private static Map<String, BaseCmd> initialize(BaseCmd... cmds) {
@@ -80,15 +81,15 @@ public class CommandManager {
         return Collections.unmodifiableMap(map);
     }
 
-    private static Map<String, BaseCmd> initializeButtons(BaseCmd... cmds) {
-        final Map<String, BaseCmd> map = new LinkedHashMap<>(cmds.length);
-        for (final BaseCmd cmd : cmds) {
+    private static Map<String, BaseCmdButton> initializeButtons(BaseCmdButton... cmds) {
+        final Map<String, BaseCmdButton> map = new LinkedHashMap<>(cmds.length);
+        for (final BaseCmdButton cmd : cmds) {
             if (map.putIfAbsent(cmd.getName(), cmd) != null) {
-                LociBot.DEFAULT_LOGGER.error("Command name collision between {} and {}",
+                LociBot.DEFAULT_LOGGER.error("Button command name collision between {} and {}",
                         cmd.getClass().getSimpleName(), map.get(cmd.getName()).getClass().getSimpleName());
             }
         }
-        LociBot.DEFAULT_LOGGER.info("{} commands initialized", map.size());
+        LociBot.DEFAULT_LOGGER.info("{} button commands initialized", map.size());
         return Collections.unmodifiableMap(map);
     }
 
@@ -151,12 +152,26 @@ public class CommandManager {
         return COMMANDS_MAP;
     }
 
+    public static Map<String, BaseCmdButton> getButtonCommands() {
+        return BUTTONS_MAP;
+    }
+
+    public static BaseCmdButton getButtonCommand(String name) {
+        final BaseCmdButton cmd = BUTTONS_MAP.get(name);
+        if (cmd != null) {
+            return cmd;
+        }
+        return BUTTONS_MAP.values().stream()
+                .filter(it -> it.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
     public static BaseCmd getCommand(String name) {
         final BaseCmd cmd = COMMANDS_MAP.get(name);
         if (cmd != null) {
             return cmd;
         }
-        System.out.println("TEST Base 1");
         return COMMANDS_MAP.values().stream()
                 .filter(it -> it instanceof BaseCmdGroup)
                 .flatMap(it -> ((BaseCmdGroup) it).getCommands().stream())

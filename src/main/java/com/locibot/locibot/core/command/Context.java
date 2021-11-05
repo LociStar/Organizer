@@ -15,6 +15,8 @@ import discord4j.core.object.command.ApplicationCommandInteraction;
 import discord4j.core.object.command.ApplicationCommandInteractionOption;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
 import discord4j.core.object.command.ApplicationCommandOption;
+import discord4j.core.object.component.ActionRow;
+import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.*;
 import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.object.entity.channel.TextChannel;
@@ -238,6 +240,11 @@ public class Context implements InteractionContext, I18nContext {
                 .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
     }
 
+    public Mono<Message> createFollowupMessageEphemeral(String str) {
+        return this.event.createFollowup(str).withEphemeral(true)
+                .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
+    }
+
     @Override
     public Mono<Message> createFollowupMessage(Emoji emoji, String str) {
         return this.createFollowupMessage("%s %s".formatted(emoji, str));
@@ -264,6 +271,10 @@ public class Context implements InteractionContext, I18nContext {
                 .map(data -> new Message(this.getClient(), data))
                 .doOnNext(message -> this.replyId.set(message.getId().asLong()))
                 .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
+    }
+
+    public Mono<Message>  createFollowupButton(EmbedCreateSpec embed, Button... buttons) {
+        return this.event.createFollowup().withEmbeds(embed).withComponents(ActionRow.of(buttons));
     }
 
     @Override

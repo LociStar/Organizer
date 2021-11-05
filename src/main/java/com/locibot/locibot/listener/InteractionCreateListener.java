@@ -9,6 +9,8 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.ReactorUtil;
 import discord4j.core.event.domain.interaction.InteractionCreateEvent;
 import discord4j.core.object.command.ApplicationCommandInteraction;
+import discord4j.core.object.command.Interaction;
+import discord4j.core.object.component.MessageComponent;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 import discord4j.rest.util.Permission;
@@ -24,6 +26,11 @@ public class InteractionCreateListener implements EventListener<InteractionCreat
     @Override
     public Mono<?> execute(InteractionCreateEvent event) {
         Telemetry.INTERACTING_USERS.add(event.getInteraction().getUser().getId().asLong());
+
+        if (event.getInteraction().getCommandInteraction().flatMap(ApplicationCommandInteraction::getComponentType).orElse(MessageComponent.Type.UNKNOWN).equals(MessageComponent.Type.BUTTON)){
+            final BaseCmdButton command = CommandManager.getButtonCommand(event.getInteraction().getCommandInteraction().flatMap(ApplicationCommandInteraction::getCustomId).orElseThrow());
+            return event.acknowledge().then(command.execute(new PrivateContext(event)));
+        }
 
         // TODO Feature: Interactions from DM
         if (event.getInteraction().getGuildId().isEmpty()) {

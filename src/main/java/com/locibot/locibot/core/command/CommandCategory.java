@@ -10,7 +10,7 @@ public enum CommandCategory {
     GAME("Game"),
     CURRENCY("Currency"),
     MUSIC("Music"),
-    GAMESTATS("Game Stats"),
+    GAMESTATS("GameStats"),
     INFO("Info"),
     ADMIN("Admin"),
     MODERATION("Moderation"),
@@ -18,7 +18,8 @@ public enum CommandCategory {
     SETTING("Setting"),
     GROUP("Group"),
     REGISTER("Register"),
-    EVENT("EVENT");
+    EVENT("EVENT"),
+    BUTTON("BUTTON");
 
     private final String name;
 
