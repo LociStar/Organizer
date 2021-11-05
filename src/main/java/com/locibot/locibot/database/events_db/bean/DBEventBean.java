@@ -22,29 +22,37 @@ public class DBEventBean implements Bean {
     @Nullable
     @JsonProperty("scheduledDate")
     private Long scheduledDate;
+    @Nullable
+    @JsonProperty("icon")
+    private String icon;
 
-    public DBEventBean(String eventName, @Nullable String description, @Nullable List<DBEventMemberBean> members, @Nullable Long scheduledDate) {
+    public DBEventBean(String eventName, @Nullable String description, @Nullable List<DBEventMemberBean> members, @Nullable Long scheduledDate, String icon) {
         this.eventName = eventName;
         this.description = description;
         this.creationDate = ZonedDateTime.now(ZoneId.of("Europe/Berlin")).toEpochSecond(); //TODO: Make ZoneOffset dependent on event location
         this.members = members;
         this.scheduledDate = scheduledDate;
+        this.icon = icon;
     }
 
     public DBEventBean(String eventName) {
-        this(eventName, null, null, null);
+        this(eventName, null, null, null, null);
     }
 
-    public DBEventBean(String eventName, String description) {
-        this(eventName, description, null, null);
+    public DBEventBean(String eventName, String description, String icon) {
+        this(eventName, description, null, null, icon);
     }
 
-    public DBEventBean(){
+    public DBEventBean() {
         this.creationDate = ZonedDateTime.now(ZoneId.of("Europe/Berlin")).toEpochSecond(); //TODO: Make ZoneOffset dependent on event location
     }
 
     public String getEventName() {
         return eventName;
+    }
+
+    public String getIcon() {
+        return icon;
     }
 
     public void setGroupName(String groupName) {
@@ -53,6 +61,8 @@ public class DBEventBean implements Bean {
 
     @Nullable
     public String getDescription() {
+        if (description == null)
+            return "empty";
         return description;
     }
 

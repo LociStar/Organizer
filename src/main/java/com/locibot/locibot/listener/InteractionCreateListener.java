@@ -29,6 +29,8 @@ public class InteractionCreateListener implements EventListener<InteractionCreat
 
         if (event.getInteraction().getCommandInteraction().flatMap(ApplicationCommandInteraction::getComponentType).orElse(MessageComponent.Type.UNKNOWN).equals(MessageComponent.Type.BUTTON)){
             final BaseCmdButton command = CommandManager.getButtonCommand(event.getInteraction().getCommandInteraction().flatMap(ApplicationCommandInteraction::getCustomId).orElseThrow());
+            if (command == null)
+                return Mono.empty();
             return event.acknowledge().then(command.execute(new PrivateContext(event)));
         }
 

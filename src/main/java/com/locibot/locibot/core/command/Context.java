@@ -22,6 +22,8 @@ import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
+import discord4j.core.spec.InteractionFollowupCreateSpec;
+import discord4j.core.spec.MessageCreateSpec;
 import discord4j.discordjson.json.ImmutableWebhookMessageEditRequest;
 import discord4j.discordjson.json.WebhookExecuteRequest;
 import discord4j.rest.util.MultipartRequest;
@@ -270,6 +272,12 @@ public class Context implements InteractionContext, I18nContext {
                         .build()))
                 .map(data -> new Message(this.getClient(), data))
                 .doOnNext(message -> this.replyId.set(message.getId().asLong()))
+                .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
+    }
+
+    @Override
+    public Mono<Message> createFollowupMessage(InteractionFollowupCreateSpec spec){
+        return this.event.createFollowup(spec)
                 .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
     }
 

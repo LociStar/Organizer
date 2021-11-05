@@ -6,9 +6,11 @@ import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.SerializableEntity;
 import com.locibot.locibot.database.events_db.bean.DBEventMemberBean;
 import com.locibot.locibot.database.groups.GroupsCollection;
+import com.locibot.locibot.database.guilds.GuildsCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import discord4j.common.util.Snowflake;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.Nullable;
@@ -43,10 +45,10 @@ public class DBEventMember extends SerializableEntity<DBEventMemberBean> impleme
     @Override
     public Mono<Void> insert() {
         return Mono.from(DatabaseManager.getEvents()
-                .getCollection()
-                .updateOne(Filters.eq("_id", this.getEventName()),
-                        Updates.push("members", this.toDocument()),
-                        new UpdateOptions().upsert(true)))
+                        .getCollection()
+                        .updateOne(Filters.eq("_id", this.getEventName()),
+                                Updates.push("members", this.toDocument()),
+                                new UpdateOptions().upsert(true)))
                 .doOnSubscribe(__ -> {
                     GroupsCollection.LOGGER.debug("[DBEventMember {}/{}] Insertion", this.getId().asString(), this.getEventName());
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getEvents().getName()).inc();
@@ -55,6 +57,22 @@ public class DBEventMember extends SerializableEntity<DBEventMemberBean> impleme
                         this.getId().asString(), this.getEventName(), result))
                 .doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getEventName()))
                 .then();
+    }
+
+    public Mono<UpdateResult> updateAccepted(int state) {
+        return Mono.from(DatabaseManager.getEvents()
+                        .getCollection()
+                        .updateOne(
+                                Filters.and(Filters.eq("_id", this.getEventName()),
+                                        Filters.eq("members._id", this.getId().asLong())),
+                                Updates.set("members.$.accepted", state)))
+                .doOnSubscribe(__ -> {
+                    GuildsCollection.LOGGER.debug("[DBEvent {}] Event update: {}", this.getEventName(), state);
+                    Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
+                })
+                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBEvent {}] Event update result: {}",
+                        this.getEventName(), result))
+                .doOnTerminate(() -> DatabaseManager.getGroups().invalidateCache(this.getEventName()));
     }
 
     @Override

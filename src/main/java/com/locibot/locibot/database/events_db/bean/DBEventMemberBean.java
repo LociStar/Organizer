@@ -38,7 +38,7 @@ public class DBEventMemberBean implements Bean {
     }
 
     @Nullable
-    public String getName() {
+    public String getEventName() {
         return name;
     }
 

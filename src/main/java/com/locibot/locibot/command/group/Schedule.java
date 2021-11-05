@@ -19,7 +19,7 @@ import static com.locibot.locibot.command.group.GroupUtil.sendInviteMessage;
 
 public class Schedule extends BaseCmd {
     protected Schedule() {
-        super(CommandCategory.GROUP, "schedule", "schedule a group event");
+        super(CommandCategory.GROUP, "schedule_group", "schedule a group event");
         this.addOption("team_name", "Team Name", true, ApplicationCommandOption.Type.STRING);
         this.addOption("date", "dd.MM.yyyy", true, ApplicationCommandOption.Type.STRING);
         this.addOption("time", "hh:mm", true, ApplicationCommandOption.Type.STRING);
