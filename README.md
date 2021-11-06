@@ -9,7 +9,9 @@
     <hr>
     <h2>Usage</h2>
     <a></a>
-    <p><b>Contact me on Discord if your are interested in adding this bot to your own server!</b></p>
+    <p><b>Contact me on Discord if you have questions in adding this bot to your own server!</b></p>
+    <p><b>You can use the <a href="https://discord.com/api/oauth2/authorize?client_id=597091642440155158&permissions=8&scope=bot%20applications.commands">
+        link</a>, to add ORganizer to your server.</b></p>
     <hr>
     <h2>Support</h2>
     <p><b><a href="https://discord.gg/tAeFra36KX">Join</a> the support server if you have any questions, suggestions or if you just want to talk.</b></p>
