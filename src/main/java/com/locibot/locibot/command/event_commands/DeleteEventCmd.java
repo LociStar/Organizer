@@ -8,8 +8,8 @@ import com.locibot.locibot.database.DatabaseManager;
 import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
-public class DeleteEvent extends BaseCmd {
-    protected DeleteEvent() {
+public class DeleteEventCmd extends BaseCmd {
+    protected DeleteEventCmd() {
         super(CommandCategory.EVENT, CommandPermission.USER_GLOBAL, "delete", "delete an event");
         this.addOption("title", "event title", true, ApplicationCommandOption.Type.STRING);
     }

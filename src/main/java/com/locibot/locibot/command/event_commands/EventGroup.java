@@ -9,7 +9,7 @@ import java.util.List;
 public class EventGroup extends BaseCmdGroup {
     public EventGroup() {
         super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "Event Commands",
-                List.of(new CreateEvent(), new DeleteEvent(), new ScheduleEvent())
+                List.of(new CreateEventCmd(), new DeleteEventCmd(), new ScheduleEventCmd())
         );
     }
 }

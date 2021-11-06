@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ScheduleEvent extends BaseCmd {
+public class ScheduleEventCmd extends BaseCmd {
 
-    public ScheduleEvent() {
+    public ScheduleEventCmd() {
         super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "schedule", "schedule a event");
         this.addOption("event_title", "Event name", true, ApplicationCommandOption.Type.STRING);
         this.addOption("date", "dd.MM.yyyy", true, ApplicationCommandOption.Type.STRING);
