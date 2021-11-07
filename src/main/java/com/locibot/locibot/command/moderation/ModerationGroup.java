@@ -1,5 +1,6 @@
 package com.locibot.locibot.command.moderation;
 
+import com.locibot.locibot.command.moderation.botRegister.BotRegisterSetup;
 import com.locibot.locibot.command.moderation.member.BanCmd;
 import com.locibot.locibot.command.moderation.member.KickCmd;
 import com.locibot.locibot.command.moderation.member.SoftBanCmd;
