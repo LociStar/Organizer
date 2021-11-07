@@ -28,7 +28,8 @@ public class InteractionCreateListener implements EventListener<InteractionCreat
         Telemetry.INTERACTING_USERS.add(event.getInteraction().getUser().getId().asLong());
 
         if (event.getInteraction().getCommandInteraction().flatMap(ApplicationCommandInteraction::getComponentType).orElse(MessageComponent.Type.UNKNOWN).equals(MessageComponent.Type.BUTTON)){
-            final BaseCmdButton command = CommandManager.getButtonCommand(event.getInteraction().getCommandInteraction().flatMap(ApplicationCommandInteraction::getCustomId).orElseThrow());
+            String commandName = event.getInteraction().getCommandInteraction().map(applicationCommandInteraction -> applicationCommandInteraction.getCustomId().orElse("").split("_")[0]).orElseThrow();
+            final BaseCmdButton command = CommandManager.getButtonCommand(commandName);
             if (command == null)
                 return Mono.empty();
             return event.acknowledge().then(command.execute(new PrivateContext(event)));
