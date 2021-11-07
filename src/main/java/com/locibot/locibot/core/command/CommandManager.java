@@ -1,7 +1,8 @@
 package com.locibot.locibot.core.command;
 
 import com.locibot.locibot.LociBot;
-import com.locibot.locibot.command.buttons.RegisterButtonCmd;
+import com.locibot.locibot.command.event_commands.buttons.AcceptButtonCmd;
+import com.locibot.locibot.command.moderation.botRegister.RegisterButtonCmd;
 import com.locibot.locibot.command.currency.CoinsCmd;
 import com.locibot.locibot.command.currency.LeaderboardCmd;
 import com.locibot.locibot.command.currency.TransferCoinsCmd;
@@ -65,7 +66,7 @@ public class CommandManager {
                 //Global
                 new Hello(), new Accept(), new Decline());
         BUTTONS_MAP = CommandManager.initializeButtons(
-                new RegisterButtonCmd()
+                new RegisterButtonCmd(), new AcceptButtonCmd()
         );
     }
 
