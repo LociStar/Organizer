@@ -101,7 +101,7 @@ public class ScheduleEventCmd extends BaseCmd {
     private ActionRow createButtons(DBEvent dbEvent) {
         return ActionRow.of(
                 Button.success("acceptInviteButton_" + dbEvent.getEventName(), "Accept"),
-                Button.danger("declineInviteButton_", "Decline"));
+                Button.danger("declineInviteButton_" + dbEvent.getEventName(), "Decline"));
     }
 
     @NotNull
