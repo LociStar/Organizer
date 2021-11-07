@@ -1,4 +1,4 @@
-package com.locibot.locibot.command.moderation;
+package com.locibot.locibot.command.moderation.botRegister;
 
 import com.locibot.locibot.core.command.BaseCmd;
 import com.locibot.locibot.core.command.CommandCategory;
@@ -11,7 +11,7 @@ import discord4j.rest.util.Color;
 import reactor.core.publisher.Mono;
 
 public class BotRegisterSetup extends BaseCmd {
-    protected BotRegisterSetup() {
+    public BotRegisterSetup() {
         super(CommandCategory.MODERATION, CommandPermission.ADMIN, "bot_server_setup", "register to weather");
     }
 
