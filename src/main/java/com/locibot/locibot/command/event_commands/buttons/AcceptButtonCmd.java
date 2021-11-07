@@ -6,8 +6,11 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.events_db.entity.DBEvent;
 import com.locibot.locibot.database.events_db.entity.DBEventMember;
+import discord4j.core.object.component.ActionRow;
+import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.Message;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 
@@ -18,12 +21,9 @@ public class AcceptButtonCmd extends BaseCmdButton {
 
     @Override
     public Mono<?> execute(Context context) {
-        System.out.println(context.getEvent().getInteraction().getCommandInteraction().orElseThrow());
         String eventTitle = context.getEvent().getInteraction().getCommandInteraction().orElseThrow().getCustomId().orElse("error_error").split("_")[1];
-        //return context.createFollowupMessage(context.getEvent().getInteraction().getCommandInteraction().get().getCustomId().get());
-        if (!DatabaseManager.getEvents().containsEvent(eventTitle)) {
-            return context.createFollowupMessage("Nice try! But you can't join an event that does not exist!");
-        }
+        Mono<Message> context1 = disableIfNoEvent(context, eventTitle);
+        if (context1 != null) return context1;
         return DatabaseManager.getEvents().getDBEvent(eventTitle).flatMap(event -> {
             for (DBEventMember member : event.getMembers()) {
                 if (member.getId().asLong() == context.getAuthorId().asLong() && member.getAccepted() == 0) {
@@ -36,6 +36,20 @@ public class AcceptButtonCmd extends BaseCmdButton {
             }
             return context.createFollowupMessage("Nice try! But you are not invited to this event...");
         });
+    }
+
+    @Nullable
+    private Mono<Message> disableIfNoEvent(Context context, String eventTitle) {
+        if (!DatabaseManager.getEvents().containsEvent(eventTitle)) {
+            ActionRow a = (ActionRow) ActionRow.fromData(context.getEvent().getInteraction().getMessage().get().getComponents().get(0).getData());
+            Button accept = (Button) Button.fromData(a.getChildren().get(0).getData());
+            Button decline = (Button) Button.fromData(a.getChildren().get(1).getData());
+            return context.createFollowupMessage("Nice try! But you can't join an event that does not exist!").then(context.getEvent().getInteraction().getMessage().get().edit().withComponents(
+                    ActionRow.of(
+                            accept.disabled(), decline.disabled()
+                    )));
+        }
+        return null;
     }
 
     @NotNull
