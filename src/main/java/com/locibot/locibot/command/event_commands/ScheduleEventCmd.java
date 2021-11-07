@@ -5,6 +5,7 @@ import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
+import com.locibot.locibot.database.events_db.entity.DBEvent;
 import com.locibot.locibot.database.events_db.entity.DBEventMember;
 import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.component.ActionRow;
@@ -64,15 +65,14 @@ public class ScheduleEventCmd extends BaseCmd {
                                                                             .footer(EmbedCreateFields.Footer.of("Author: " + owner.getUsername(), owner.getAvatarUrl()))
                                                                             .addField(EmbedCreateFields.Field.of("Description", dbEvent.getEventDescription() + "\n", false))
                                                                             .build())
-                                                                    .addComponent(ActionRow.of(
-                                                                            Button.success("acceptInviteButton", "Accept"),
-                                                                            Button.danger("declineInviteButton", "Decline"))).build())));
+                                                                    .addComponent(createButtons(dbEvent)).build())));
                                         else {
                                             eventMembers.add(dbEventMember);
                                             return Mono.empty();
                                         }
                                     }))
                             ).collectList())
+                            //Channel (public) invitation
                             .then(convertToUsers(context, eventMembers))
                             .flatMap(users -> {
                                 if (users.isEmpty())
@@ -90,13 +90,18 @@ public class ScheduleEventCmd extends BaseCmd {
                                                         .addField(EmbedCreateFields.Field.of("Users", usersString.stream().map(String::toString).collect(Collectors.joining(",")) + "\n", false))
                                                         .build())
                                                 .content(usersString.stream().map(String::toString).collect(Collectors.joining(",")))
-                                                .addComponent(ActionRow.of(
-                                                        Button.success("acceptInviteButton", "Accept"),
-                                                        Button.danger("declineInviteButton", "Decline")))
+                                                .addComponent(createButtons(dbEvent))
                                                 .build()));
                             });
                 })
         );
+    }
+
+    @NotNull
+    private ActionRow createButtons(DBEvent dbEvent) {
+        return ActionRow.of(
+                Button.success("acceptInviteButton_" + dbEvent.getEventName(), "Accept"),
+                Button.danger("declineInviteButton_", "Decline"));
     }
 
     @NotNull
