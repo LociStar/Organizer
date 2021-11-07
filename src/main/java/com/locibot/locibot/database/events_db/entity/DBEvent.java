@@ -67,7 +67,7 @@ public class DBEvent extends SerializableEntity<DBEventBean> implements Database
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getEvents().getName()).inc();
                 })
                 .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBEvent {}] Deletion result: {}", this.getEventName(), result))
-                .doOnTerminate(() -> DatabaseManager.getGroups().invalidateCache(this.getEventName()))
+                .doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getEventName()))
                 .then();
     }
 
@@ -105,6 +105,6 @@ public class DBEvent extends SerializableEntity<DBEventBean> implements Database
                 })
                 .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBEvent {}] Event update result: {}",
                         this.getEventName(), result))
-                .doOnTerminate(() -> DatabaseManager.getGroups().invalidateCache(this.getEventName()));
+                .doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getEventName()));
     }
 }

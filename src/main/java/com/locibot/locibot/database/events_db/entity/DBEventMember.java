@@ -42,6 +42,10 @@ public class DBEventMember extends SerializableEntity<DBEventMemberBean> impleme
         return Snowflake.of(this.getBean().getId());
     }
 
+    public int getAccepted() {
+        return this.getBean().getAccepted();
+    }
+
     @Override
     public Mono<Void> insert() {
         return Mono.from(DatabaseManager.getEvents()
@@ -72,7 +76,7 @@ public class DBEventMember extends SerializableEntity<DBEventMemberBean> impleme
                 })
                 .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBEvent {}] Event update result: {}",
                         this.getEventName(), result))
-                .doOnTerminate(() -> DatabaseManager.getGroups().invalidateCache(this.getEventName()));
+                .doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getEventName()));
     }
 
     @Override
