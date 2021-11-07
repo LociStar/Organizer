@@ -28,6 +28,11 @@ public class CreateEventCmd extends BaseCmd {
 
     @Override
     public Mono<?> execute(Context context) {
+
+        if (DatabaseManager.getGuilds().getDBMember(context.getGuildId(), context.getAuthorId()) == null)
+            return context.createFollowupMessage("You can only create an event if you have registered with the bot.\n" +
+                    "If your server does not have a register button, contact a moderator.");
+
         String eventName = context.getOptionAsString("title").orElse("error");
         if (DatabaseManager.getEvents().containsEvent(eventName))
             return context.createFollowupMessage("This group name is already taken. Pls try another one.");
