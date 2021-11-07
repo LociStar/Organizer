@@ -1,4 +1,4 @@
-package com.locibot.locibot.command.buttons;
+package com.locibot.locibot.command.moderation.botRegister;
 
 import com.locibot.locibot.core.command.BaseCmdButton;
 import com.locibot.locibot.core.command.CommandPermission;
