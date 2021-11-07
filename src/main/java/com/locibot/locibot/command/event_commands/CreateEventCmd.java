@@ -17,7 +17,7 @@ import java.util.List;
 
 public class CreateEventCmd extends BaseCmd {
     protected CreateEventCmd() {
-        super(CommandCategory.EVENT, CommandPermission.USER_GLOBAL, "create", "create a new event");
+        super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "create", "create a new event");
         this.addOption("title", "event name", true, ApplicationCommandOption.Type.STRING);
         this.addOption("description", "add a brief event description", false, ApplicationCommandOption.Type.STRING);
         this.addOption("icon", "icon image url", false, ApplicationCommandOption.Type.STRING);

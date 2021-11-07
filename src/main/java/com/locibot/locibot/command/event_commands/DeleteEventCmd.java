@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 public class DeleteEventCmd extends BaseCmd {
     protected DeleteEventCmd() {
-        super(CommandCategory.EVENT, CommandPermission.USER_GLOBAL, "delete", "delete an event");
+        super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "delete", "delete an event");
         this.addOption("title", "event title", true, ApplicationCommandOption.Type.STRING);
     }
 
