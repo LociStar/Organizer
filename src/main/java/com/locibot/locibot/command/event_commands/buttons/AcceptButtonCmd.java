@@ -26,7 +26,7 @@ public class AcceptButtonCmd extends BaseCmdButton {
         if (context1 != null) return context1;
         return DatabaseManager.getEvents().getDBEvent(eventTitle).flatMap(event -> {
             for (DBEventMember member : event.getMembers()) {
-                if (member.getId().asLong() == context.getAuthorId().asLong() && member.getAccepted() == 0) {
+                if (member.getId().asLong() == context.getAuthorId().asLong() && member.getAccepted() != 1) {
                     System.out.println(member.getAccepted());
                     return context.createFollowupMessage("You have accepted the invitation! Have fun!").then(member.updateAccepted(1))
                             .then(informOwner(context, event));
@@ -41,7 +41,7 @@ public class AcceptButtonCmd extends BaseCmdButton {
     @Nullable
     private Mono<Message> disableIfNoEvent(Context context, String eventTitle) {
         if (!DatabaseManager.getEvents().containsEvent(eventTitle)) {
-            ActionRow a = (ActionRow) ActionRow.fromData(context.getEvent().getInteraction().getMessage().get().getComponents().get(0).getData());
+            ActionRow a = (ActionRow) ActionRow.fromData(context.getEvent().getInteraction().getMessage().orElseThrow().getComponents().get(0).getData());
             Button accept = (Button) Button.fromData(a.getChildren().get(0).getData());
             Button decline = (Button) Button.fromData(a.getChildren().get(1).getData());
             return context.createFollowupMessage("Nice try! But you can't join an event that does not exist!").then(context.getEvent().getInteraction().getMessage().get().edit().withComponents(
