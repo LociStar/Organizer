@@ -5,12 +5,15 @@ import com.locibot.locibot.database.DatabaseEntity;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.SerializableEntity;
 import com.locibot.locibot.database.events_db.bean.DBEventBean;
+import com.locibot.locibot.database.events_db.bean.DBEventMemberBean;
 import com.locibot.locibot.database.groups.GroupsCollection;
+import com.locibot.locibot.database.groups.bean.DBGroupMemberBean;
 import com.locibot.locibot.database.guilds.GuildsCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import discord4j.core.object.entity.User;
 import reactor.core.publisher.Mono;
 
 import java.time.ZonedDateTime;
@@ -106,5 +109,26 @@ public class DBEvent extends SerializableEntity<DBEventBean> implements Database
                 .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBEvent {}] Event update result: {}",
                         this.getEventName(), result))
                 .doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getEventName()));
+    }
+
+    public Mono<UpdateResult> addMember(User user) {
+        assert this.getBean().getMembers() != null;
+        this.getBean().getMembers().add(new DBEventMemberBean(user.getId().asLong(), this.getEventName(), 0, false));
+        return Mono.from(DatabaseManager.getEvents()
+                        .getCollection()
+                        .updateOne(
+                                Filters.eq("_id", this.getEventName()),
+                                Updates.set("members", this.toDocument().get("members"))))
+                .doOnSubscribe(__ -> {
+                    GuildsCollection.LOGGER.debug("[DBEvent {}] EventMember added: {}", this.getEventName(), user.getId());
+                    Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
+                })
+                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBEvent {}] EventMember added result: {}",
+                        this.getEventName(), result))
+                .doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getEventName()));
+    }
+
+    public boolean isScheduled() {
+        return this.getBean().getScheduledDate() != null;
     }
 }

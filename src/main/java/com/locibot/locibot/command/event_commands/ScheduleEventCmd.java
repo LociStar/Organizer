@@ -10,6 +10,7 @@ import com.locibot.locibot.database.events_db.entity.DBEventMember;
 import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.component.ActionRow;
 import discord4j.core.object.component.Button;
+import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
@@ -54,18 +55,7 @@ public class ScheduleEventCmd extends BaseCmd {
                                             return context.getChannel().flatMap(textChannel -> textChannel.getGuild().flatMap(guild -> guild.getMemberById(user.getId()).flatMap(member ->
                                                     context.createFollowupMessageEphemeral(member.getNickname().orElse(user.getUsername()) + " is a bot and can not be messaged."))));
                                         } else if (dbMember.getBotRegister())
-                                            return user.getPrivateChannel().flatMap(privateChannel ->
-                                                    context.getClient().getUserById(dbEvent.getOwner().getId()).flatMap(owner ->
-                                                            privateChannel.createMessage(MessageCreateSpec.builder()
-                                                                    .addEmbed(EmbedCreateSpec.builder()
-                                                                            .color(Color.BLUE)
-                                                                            .title("Event invitation")
-                                                                            .thumbnail(dbEvent.getIcon() == null ? owner.getAvatarUrl() : dbEvent.getIcon())
-                                                                            .description("You got invited to **" + dbEvent.getEventName() + "**")
-                                                                            .footer(EmbedCreateFields.Footer.of("Author: " + owner.getUsername(), owner.getAvatarUrl()))
-                                                                            .addField(EmbedCreateFields.Field.of("Description", dbEvent.getEventDescription() + "\n", false))
-                                                                            .build())
-                                                                    .addComponent(createButtons(dbEvent)).build())));
+                                            return EventUtil.privateInvite(context, dbEvent, user);
                                         else {
                                             eventMembers.add(dbEventMember);
                                             return Mono.empty();
@@ -78,30 +68,10 @@ public class ScheduleEventCmd extends BaseCmd {
                                 if (users.isEmpty())
                                     return Mono.empty();
                                 List<String> usersString = users.stream().map(User::getMention).collect(Collectors.toList());
-                                return context.getClient().getUserById(dbEvent.getOwner().getId()).flatMap(owner ->
-                                        context.createFollowupMessage(InteractionFollowupCreateSpec.builder()
-                                                .addEmbed(EmbedCreateSpec.builder()
-                                                        .color(Color.BLUE)
-                                                        .title("Event invitation")
-                                                        .thumbnail(dbEvent.getIcon() == null ? owner.getAvatarUrl() : dbEvent.getIcon())
-                                                        .description("Invitation to **" + dbEvent.getEventName() + "**")
-                                                        .footer(EmbedCreateFields.Footer.of("Only users who do not want to receive direct messages from the bot are listed above.\nAuthor: " + owner.getUsername(), owner.getAvatarUrl()))
-                                                        .addField(EmbedCreateFields.Field.of("Description", dbEvent.getEventDescription() + "\n", false))
-                                                        .addField(EmbedCreateFields.Field.of("Users", usersString.stream().map(String::toString).collect(Collectors.joining(",")) + "\n", false))
-                                                        .build())
-                                                .content(usersString.stream().map(String::toString).collect(Collectors.joining(",")))
-                                                .addComponent(createButtons(dbEvent))
-                                                .build()));
+                                return EventUtil.publicInvite(context, dbEvent, usersString);
                             });
                 })
         );
-    }
-
-    @NotNull
-    private ActionRow createButtons(DBEvent dbEvent) {
-        return ActionRow.of(
-                Button.success("acceptInviteButton_" + dbEvent.getEventName(), "Accept"),
-                Button.danger("declineInviteButton_" + dbEvent.getEventName(), "Decline"));
     }
 
     @NotNull
