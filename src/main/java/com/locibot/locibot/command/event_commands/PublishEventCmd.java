@@ -16,7 +16,6 @@ import reactor.core.publisher.Mono;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.stream.Collectors;
 
 public class PublishEventCmd extends BaseCmd {
     protected PublishEventCmd() {
