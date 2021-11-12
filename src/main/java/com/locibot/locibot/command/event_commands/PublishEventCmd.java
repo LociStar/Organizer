@@ -34,6 +34,7 @@ public class PublishEventCmd extends BaseCmd {
             if (!dbEvent.isScheduled())
                 return context.createFollowupMessage("The event must first be scheduled to be published!");
             if (dbEvent.getOwner().getId().asLong() == context.getAuthor().getId().asLong())
+                //noinspection ConstantConditions
                 return context.getGuild().flatMap(guild -> guild.getMemberById(dbEvent.getOwner().getId())).flatMap(owner ->
                         context.createFollowupMessage(InteractionFollowupCreateSpec.builder()
                                 .content("@everyone")
