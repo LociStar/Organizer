@@ -23,6 +23,7 @@ public class TaskService implements Service {
                 new ScheduleGroupsTask(gateway),
                 new DeleteOldGroupsTask(),
                 new DeleteOldEventsTask(),
+                new EventReminderTask(gateway),
                 new WeatherSubscriptionsTask(gateway));
         this.disposables = new ArrayList<>(this.tasks.size());
     }
