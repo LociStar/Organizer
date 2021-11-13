@@ -4,7 +4,7 @@ import com.locibot.locibot.core.command.BaseCmd;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.CommandPermission;
 import discord4j.common.util.Snowflake;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.util.annotation.Nullable;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ public abstract class GameCmd<G extends Game> extends BaseCmd implements GameLis
 
     private final Map<Snowflake, G> managers;
 
-    protected GameCmd(String name, String description, @Nullable ApplicationCommandOptionType type) {
+    protected GameCmd(String name, String description, @Nullable ApplicationCommandOption.Type type) {
         super(CommandCategory.GAME, CommandPermission.USER_GUILD, name, description, type);
         this.setGameRateLimiter();
         this.managers = new ConcurrentHashMap<>();

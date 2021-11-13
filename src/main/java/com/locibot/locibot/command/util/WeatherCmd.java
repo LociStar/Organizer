@@ -12,9 +12,9 @@ import com.locibot.locibot.utils.EnumUtil;
 import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import com.locibot.locibot.utils.weather.HourlyWeatherForecastClass;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import net.aksingh.owmjapis.api.APIException;
 import net.aksingh.owmjapis.core.OWM;
 import net.aksingh.owmjapis.core.OWM.Country;
@@ -37,8 +37,8 @@ public class WeatherCmd extends BaseCmd {
 
     public WeatherCmd() {
         super(CommandCategory.UTILS, "weather", "Search weather report for a city");
-        this.addOption("city", "The city", true, ApplicationCommandOptionType.STRING);
-        this.addOption("country", "The country", false, ApplicationCommandOptionType.STRING);
+        this.addOption("city", "The city", true, ApplicationCommandOption.Type.STRING);
+        this.addOption("country", "The country", false, ApplicationCommandOption.Type.STRING);
 
         this.dateFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG, FormatStyle.MEDIUM);
         final String apiKey = CredentialManager.get(Credential.OPENWEATHERMAP_API_KEY);

@@ -7,9 +7,9 @@ import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.rest.http.client.ClientException;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import reactor.core.publisher.Mono;
 
@@ -20,11 +20,11 @@ public class SendMessageCmd extends BaseCmd {
         this.addOption(option -> option.name("user")
                 .description("The user to send a message to")
                 .required(true)
-                .type(ApplicationCommandOptionType.USER.getValue()));
+                .type(ApplicationCommandOption.Type.USER.getValue()));
         this.addOption(option -> option.name("message")
                 .description("The message to send")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
     }
 
     @Override

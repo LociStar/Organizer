@@ -11,9 +11,9 @@ import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.RandUtil;
 import com.locibot.locibot.utils.LociBotUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class Rule34Cmd extends BaseCmd {
 
     public Rule34Cmd() {
         super(CommandCategory.IMAGE, "rule34", "Search random image from Rule34");
-        this.addOption("query", "Search for a Rule34 image", true, ApplicationCommandOptionType.STRING);
+        this.addOption("query", "Search for a Rule34 image", true, ApplicationCommandOption.Type.STRING);
     }
 
     private static Mono<R34Post> getR34Post(String tag) {

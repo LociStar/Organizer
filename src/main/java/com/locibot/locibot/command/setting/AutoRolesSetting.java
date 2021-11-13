@@ -6,8 +6,8 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.FormatUtil;
 import discord4j.common.util.Snowflake;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.Role;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import discord4j.rest.util.Permission;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -23,17 +23,17 @@ public class AutoRolesSetting extends BaseCmd {
                 "auto_roles", "Manage auto assigned role(s)");
 
         this.addOption("action", "Whether to add or remove a role from the auto ones", true,
-                ApplicationCommandOptionType.STRING, DiscordUtil.toOptions(Action.class));
+                ApplicationCommandOption.Type.STRING, DiscordUtil.toOptions(Action.class));
         this.addOption("role1", "The first role", true,
-                ApplicationCommandOptionType.ROLE);
+                ApplicationCommandOption.Type.ROLE);
         this.addOption("role2", "The second role", false,
-                ApplicationCommandOptionType.ROLE);
+                ApplicationCommandOption.Type.ROLE);
         this.addOption("role3", "The third role", false,
-                ApplicationCommandOptionType.ROLE);
+                ApplicationCommandOption.Type.ROLE);
         this.addOption("role4", "The fourth role", false,
-                ApplicationCommandOptionType.ROLE);
+                ApplicationCommandOption.Type.ROLE);
         this.addOption("role5", "The fifth role", false,
-                ApplicationCommandOptionType.ROLE);
+                ApplicationCommandOption.Type.ROLE);
     }
 
     private static Mono<?> checkPermissions(Context context, Set<Snowflake> roleIds) {

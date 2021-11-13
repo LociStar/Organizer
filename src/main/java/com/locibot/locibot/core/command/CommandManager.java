@@ -1,10 +1,16 @@
 package com.locibot.locibot.core.command;
 
 import com.locibot.locibot.LociBot;
+import com.locibot.locibot.command.event_commands.buttons.AcceptButtonCmd;
+import com.locibot.locibot.command.event_commands.buttons.DeclineButtonCmd;
+import com.locibot.locibot.command.event_commands.buttons.JoinEventButtonCmd;
+import com.locibot.locibot.command.event_commands.buttons.LeaveEventButtonCmd;
+import com.locibot.locibot.command.moderation.botRegister.RegisterButtonCmd;
 import com.locibot.locibot.command.currency.CoinsCmd;
 import com.locibot.locibot.command.currency.LeaderboardCmd;
 import com.locibot.locibot.command.currency.TransferCoinsCmd;
 import com.locibot.locibot.command.donator.DonatorGroup;
+import com.locibot.locibot.command.event_commands.EventGroup;
 import com.locibot.locibot.command.fun.ChatCmd;
 import com.locibot.locibot.command.fun.Hello;
 import com.locibot.locibot.command.fun.JokeCmd;
@@ -41,21 +47,18 @@ import java.util.Map;
 public class CommandManager {
 
     private static final Map<String, BaseCmd> COMMANDS_MAP;
+    private static final Map<String, BaseCmdButton> BUTTONS_MAP;
 
     static {
         COMMANDS_MAP = CommandManager.initialize(
                 new InfoGroup(), new ImageGroup(), new ModerationGroup(), new OwnerGroup(),
                 new GameStatsGroup(), new SettingGroup(),
                 new DonatorGroup(), new GameGroup(), new GroupGroup(),
-                new RegisterGroup(),
+                new RegisterGroup(), new EventGroup(),
                 // Image
                 new Rule34Cmd(), // TODO Improvement: Add to Image group when Discord autocompletion is implemented
                 // Standalone
                 new PingCmd(), new HelpCmd(), new AchievementsCmd(), new FeedbackCmd(), new InviteCmd(),
-                // Music
-//                new BackwardCmd(), new BassBoostCmd(), new ClearCmd(), new ForwardCmd(), new NameCmd(),
-//                new PauseCmd(), new PlaylistCmd(), new RepeatCmd(), new ShuffleCmd(), new SkipCmd(),
-//                new StopCmd(), new VolumeCmd(), new PlayCmd(),
                 // Currency
                 new CoinsCmd(), new LeaderboardCmd(), new TransferCoinsCmd(),
                 // Fun
@@ -65,6 +68,9 @@ public class CommandManager {
                 new TranslateCmd(), new PollCmd(),
                 //Global
                 new Hello(), new Accept(), new Decline());
+        BUTTONS_MAP = CommandManager.initializeButtons(
+                new RegisterButtonCmd(), new AcceptButtonCmd(), new DeclineButtonCmd(), new JoinEventButtonCmd(), new LeaveEventButtonCmd()
+        );
     }
 
     private static Map<String, BaseCmd> initialize(BaseCmd... cmds) {
@@ -76,6 +82,18 @@ public class CommandManager {
             }
         }
         LociBot.DEFAULT_LOGGER.info("{} commands initialized", map.size());
+        return Collections.unmodifiableMap(map);
+    }
+
+    private static Map<String, BaseCmdButton> initializeButtons(BaseCmdButton... cmds) {
+        final Map<String, BaseCmdButton> map = new LinkedHashMap<>(cmds.length);
+        for (final BaseCmdButton cmd : cmds) {
+            if (map.putIfAbsent(cmd.getName(), cmd) != null) {
+                LociBot.DEFAULT_LOGGER.error("Button command name collision between {} and {}",
+                        cmd.getClass().getSimpleName(), map.get(cmd.getName()).getClass().getSimpleName());
+            }
+        }
+        LociBot.DEFAULT_LOGGER.info("{} button commands initialized", map.size());
         return Collections.unmodifiableMap(map);
     }
 
@@ -138,12 +156,26 @@ public class CommandManager {
         return COMMANDS_MAP;
     }
 
+    public static Map<String, BaseCmdButton> getButtonCommands() {
+        return BUTTONS_MAP;
+    }
+
+    public static BaseCmdButton getButtonCommand(String name) {
+        final BaseCmdButton cmd = BUTTONS_MAP.get(name);
+        if (cmd != null) {
+            return cmd;
+        }
+        return BUTTONS_MAP.values().stream()
+                .filter(it -> it.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
     public static BaseCmd getCommand(String name) {
         final BaseCmd cmd = COMMANDS_MAP.get(name);
         if (cmd != null) {
             return cmd;
         }
-
         return COMMANDS_MAP.values().stream()
                 .filter(it -> it instanceof BaseCmdGroup)
                 .flatMap(it -> ((BaseCmdGroup) it).getCommands().stream())

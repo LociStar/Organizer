@@ -5,9 +5,9 @@ import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.database.guilds.bean.setting.AutoMessageBean;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.TextChannel;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
@@ -19,11 +19,11 @@ public class AutoMessagesSetting extends BaseCmd {
                 "auto_messages", "Manage auto-message(s) on user join/leave");
 
         this.addOption("action", "Whether to enable or disable automatic messages", true,
-                ApplicationCommandOptionType.STRING, DiscordUtil.toOptions(Action.class));
+                ApplicationCommandOption.Type.STRING, DiscordUtil.toOptions(Action.class));
         this.addOption("type", "The type of automatic message to configure", true,
-                ApplicationCommandOptionType.STRING, DiscordUtil.toOptions(Type.class));
-        this.addOption("message", "The message to automatically send", false, ApplicationCommandOptionType.STRING);
-        this.addOption("channel", "The channel in which send the automatic message", false, ApplicationCommandOptionType.CHANNEL);
+                ApplicationCommandOption.Type.STRING, DiscordUtil.toOptions(Type.class));
+        this.addOption("message", "The message to automatically send", false, ApplicationCommandOption.Type.STRING);
+        this.addOption("channel", "The channel in which send the automatic message", false, ApplicationCommandOption.Type.CHANNEL);
     }
 
     @Override

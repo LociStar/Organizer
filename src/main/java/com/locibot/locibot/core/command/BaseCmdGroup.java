@@ -1,7 +1,7 @@
 package com.locibot.locibot.core.command;
 
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -12,13 +12,13 @@ public abstract class BaseCmdGroup extends BaseCmd {
 
     private final Map<String, BaseCmd> cmds;
 
-    public BaseCmdGroup(CommandCategory category, CommandPermission permission, String name, String description, List<BaseCmd> cmds) {
-        super(category, permission, name, description);
+    public BaseCmdGroup(CommandCategory category, CommandPermission permission, String description, List<BaseCmd> cmds) {
+        super(category, permission, category.getName().toLowerCase(), description);
         this.cmds = BaseCmdGroup.buildCmdsMap(cmds);
     }
 
-    public BaseCmdGroup(CommandCategory category, String name, String description, List<BaseCmd> cmds) {
-        super(category, name, description);
+    public BaseCmdGroup(CommandCategory category, String description, List<BaseCmd> cmds) {
+        super(category, category.getName().toLowerCase(), description);
         this.cmds = BaseCmdGroup.buildCmdsMap(cmds);
     }
 
@@ -43,7 +43,7 @@ public abstract class BaseCmdGroup extends BaseCmd {
             options.add(ApplicationCommandOptionData.builder()
                     .name(cmd.getName())
                     .description(cmd.getDescription())
-                    .type(cmd.getType().orElse(ApplicationCommandOptionType.SUB_COMMAND).getValue())
+                    .type(cmd.getType().orElse(ApplicationCommandOption.Type.SUB_COMMAND).getValue())
                     .options(cmd.getOptions())
                     .build());
         }

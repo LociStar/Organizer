@@ -11,11 +11,11 @@ import com.locibot.locibot.core.i18n.I18nManager;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
 import discord4j.core.object.audit.AuditLogEntry;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 import discord4j.rest.http.client.ClientException;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import discord4j.rest.util.Permission;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import reactor.core.publisher.Flux;
@@ -35,16 +35,16 @@ public abstract class RemoveMembersCmd extends BaseCmd {
         this.permission = permission;
         this.keyword = keyword;
 
-        this.addOption("user1", "The first user to %s".formatted(keyword), true, ApplicationCommandOptionType.USER);
-        this.addOption("user2", "The second user to %s".formatted(keyword), false, ApplicationCommandOptionType.USER);
-        this.addOption("user3", "The third user to %s".formatted(keyword), false, ApplicationCommandOptionType.USER);
-        this.addOption("user4", "The fourth user to %s".formatted(keyword), false, ApplicationCommandOptionType.USER);
-        this.addOption("user5", "The fifth user to %s".formatted(keyword), false, ApplicationCommandOptionType.USER);
-        this.addOption("user6", "The sixth user to %s".formatted(keyword), false, ApplicationCommandOptionType.USER);
-        this.addOption("user7", "The seventh user to %s".formatted(keyword), false, ApplicationCommandOptionType.USER);
-        this.addOption("user8", "The eighth user to %s".formatted(keyword), false, ApplicationCommandOptionType.USER);
-        this.addOption("user9", "The ninth user to %s".formatted(keyword), false, ApplicationCommandOptionType.USER);
-        this.addOption("reason", "The reason", false, ApplicationCommandOptionType.STRING);
+        this.addOption("user1", "The first user to %s".formatted(keyword), true, ApplicationCommandOption.Type.USER);
+        this.addOption("user2", "The second user to %s".formatted(keyword), false, ApplicationCommandOption.Type.USER);
+        this.addOption("user3", "The third user to %s".formatted(keyword), false, ApplicationCommandOption.Type.USER);
+        this.addOption("user4", "The fourth user to %s".formatted(keyword), false, ApplicationCommandOption.Type.USER);
+        this.addOption("user5", "The fifth user to %s".formatted(keyword), false, ApplicationCommandOption.Type.USER);
+        this.addOption("user6", "The sixth user to %s".formatted(keyword), false, ApplicationCommandOption.Type.USER);
+        this.addOption("user7", "The seventh user to %s".formatted(keyword), false, ApplicationCommandOption.Type.USER);
+        this.addOption("user8", "The eighth user to %s".formatted(keyword), false, ApplicationCommandOption.Type.USER);
+        this.addOption("user9", "The ninth user to %s".formatted(keyword), false, ApplicationCommandOption.Type.USER);
+        this.addOption("reason", "The reason", false, ApplicationCommandOption.Type.STRING);
     }
 
     @Override

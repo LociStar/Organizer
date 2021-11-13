@@ -9,9 +9,9 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.StringUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import reactor.core.publisher.Mono;
@@ -23,10 +23,10 @@ public class TranslateCmd extends BaseCmd {
     public TranslateCmd() {
         super(CommandCategory.UTILS, "translate", "Translate a text");
         this.addOption("source_lang", "Source language, 'auto' to automatically detect",
-                true, ApplicationCommandOptionType.STRING);
+                true, ApplicationCommandOption.Type.STRING);
         this.addOption("destination_lang", "Destination language", true,
-                ApplicationCommandOptionType.STRING);
-        this.addOption("text", "The text to translate", true, ApplicationCommandOptionType.STRING);
+                ApplicationCommandOption.Type.STRING);
+        this.addOption("text", "The text to translate", true, ApplicationCommandOption.Type.STRING);
     }
 
     private static EmbedCreateSpec formatEmbed(Context context, TranslateRequest request,

@@ -6,14 +6,14 @@ import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.groups.entity.DBGroupMember;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 
 public class Accept extends BaseCmd {
     public Accept() {
         super(CommandCategory.GROUP, CommandPermission.USER_GLOBAL, "accept", "accept a Group invite");
-        this.addOption("group_name", "group name", true, ApplicationCommandOptionType.STRING);
+        this.addOption("group_name", "group name", true, ApplicationCommandOption.Type.STRING);
     }
 
     @Override

@@ -8,9 +8,9 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.LociBotUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -27,7 +27,7 @@ public class XkcdCmd extends BaseCmd {
         super(CommandCategory.IMAGE, "xkcd", "Show random comic from XKCD");
         this.latestId = new AtomicInteger();
 
-        this.addOption("sort", "Sorting option", true, ApplicationCommandOptionType.STRING,
+        this.addOption("sort", "Sorting option", true, ApplicationCommandOption.Type.STRING,
                 DiscordUtil.toOptions(Sort.class));
     }
 

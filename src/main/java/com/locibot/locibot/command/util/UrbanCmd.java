@@ -13,9 +13,9 @@ import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.StringUtil;
 import discord4j.core.object.Embed;
 import discord4j.core.object.Embed.Field;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
@@ -34,7 +34,7 @@ public class UrbanCmd extends BaseCmd {
         this.addOption(option -> option.name("word")
                 .description("Search for a word")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
     }
 
     private static EmbedCreateSpec formatEmbed(Context context, UrbanDefinition urbanDef) {

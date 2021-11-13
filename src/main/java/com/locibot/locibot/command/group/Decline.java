@@ -8,9 +8,9 @@ import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.groups.entity.DBGroup;
 import com.locibot.locibot.database.groups.entity.DBGroupMember;
 import discord4j.common.util.Snowflake;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
@@ -19,8 +19,8 @@ import static com.locibot.locibot.command.group.GroupUtil.sendInviteMessage;
 
 public class Decline extends BaseCmd {
     public Decline() {
-        super(CommandCategory.GROUP, CommandPermission.USER_GLOBAL, "decline", "decline the invitation", ApplicationCommandOptionType.STRING);
-        this.addOption("group_name", "group name", true, ApplicationCommandOptionType.STRING);
+        super(CommandCategory.GROUP, CommandPermission.USER_GLOBAL, "decline", "decline the invitation", ApplicationCommandOption.Type.STRING);
+        this.addOption("group_name", "group name", true, ApplicationCommandOption.Type.STRING);
     }
 
     @Override

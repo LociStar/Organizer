@@ -9,7 +9,7 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.RandUtil;
 import discord4j.common.util.Snowflake;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 import reactor.util.function.Tuple2;
@@ -30,7 +30,7 @@ public class RpsCmd extends BaseCmd {
         this.addOption(option -> option.name("handsign")
                 .description("Your next move")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue())
+                .type(ApplicationCommandOption.Type.STRING.getValue())
                 .choices(DiscordUtil.toOptions(Handsign.class)));
 
         this.players = new ConcurrentHashMap<>();

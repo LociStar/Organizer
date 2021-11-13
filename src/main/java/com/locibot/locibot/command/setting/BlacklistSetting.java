@@ -6,7 +6,7 @@ import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.EnumUtil;
 import com.locibot.locibot.utils.FormatUtil;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 import java.util.HashSet;
@@ -25,33 +25,33 @@ public class BlacklistSetting extends BaseCmd {
         this.addOption(option -> option.name("action")
                 .description("Whether to add or remove a command/category from the blacklisted ones")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue())
+                .type(ApplicationCommandOption.Type.STRING.getValue())
                 .choices(DiscordUtil.toOptions(Action.class)));
         this.addOption(option -> option.name("type")
                 .description("Blacklist a command or a category")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue())
+                .type(ApplicationCommandOption.Type.STRING.getValue())
                 .choices(DiscordUtil.toOptions(Type.class)));
         this.addOption(option -> option.name("cmd1")
                 .description("The first command/category")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
         this.addOption(option -> option.name("cmd2")
                 .description("The second command/category")
                 .required(false)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
         this.addOption(option -> option.name("cmd3")
                 .description("The third command/category")
                 .required(false)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
         this.addOption(option -> option.name("cmd4")
                 .description("The fourth command/category")
                 .required(false)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
         this.addOption(option -> option.name("cmd5")
                 .description("The fifth command/category")
                 .required(false)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
     }
 
     @Override

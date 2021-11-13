@@ -7,7 +7,7 @@ import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.premium.RelicType;
 import com.locibot.locibot.object.Emoji;
 import discord4j.common.util.Snowflake;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
@@ -18,7 +18,7 @@ public class ActivateRelicCmd extends BaseCmd {
 
     public ActivateRelicCmd() {
         super(CommandCategory.DONATOR, "activate_relic", "Activate a relic");
-        this.addOption("relic", "The relic to activate", true, ApplicationCommandOptionType.STRING);
+        this.addOption("relic", "The relic to activate", true, ApplicationCommandOption.Type.STRING);
     }
 
     @Override

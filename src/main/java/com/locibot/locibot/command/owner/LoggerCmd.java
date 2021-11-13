@@ -9,7 +9,7 @@ import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
@@ -22,11 +22,11 @@ public class LoggerCmd extends BaseCmd {
         this.addOption(option -> option.name("name")
                 .description("Can be 'root' to change root logger")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
         this.addOption(option -> option.name("level")
                 .description("The new logger level")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue())
+                .type(ApplicationCommandOption.Type.STRING.getValue())
                 .choices(DiscordUtil.toOptions(LogLevel.class)));
     }
 

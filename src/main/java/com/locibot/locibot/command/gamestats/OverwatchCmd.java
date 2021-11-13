@@ -16,9 +16,9 @@ import com.locibot.locibot.object.RequestHelper;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.LociBotUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 
@@ -35,10 +35,10 @@ public class OverwatchCmd extends BaseCmd {
 
     public OverwatchCmd() {
         super(CommandCategory.GAMESTATS, "overwatch", "Search for Overwatch statistics");
-        this.addOption("platform", "User's platform", true, ApplicationCommandOptionType.STRING,
+        this.addOption("platform", "User's platform", true, ApplicationCommandOption.Type.STRING,
                 DiscordUtil.toOptions(Platform.class));
         this.addOption("battletag", "User's battletag, case sensitive", true,
-                ApplicationCommandOptionType.STRING);
+                ApplicationCommandOption.Type.STRING);
 
         this.cachedValues = MultiValueCache.Builder.<String, OverwatchProfile>builder()
                 .withTtl(Config.CACHE_TTL)

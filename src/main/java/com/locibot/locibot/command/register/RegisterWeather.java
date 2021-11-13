@@ -8,7 +8,7 @@ import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.guilds.entity.WeatherChoice;
 import com.locibot.locibot.object.ExceptionHandler;
 import com.locibot.locibot.utils.DiscordUtil;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -18,8 +18,8 @@ public class RegisterWeather extends BaseCmd {
 
     protected RegisterWeather() {
         super(CommandCategory.REGISTER, CommandPermission.USER_GUILD, "weather_subscription", "register to weather");
-        this.addOption("option", "subscribe or unsubscribe", true, ApplicationCommandOptionType.STRING, DiscordUtil.toOptions(WeatherChoice.class));
-        this.addOption("city", "a city name", true, ApplicationCommandOptionType.STRING);
+        this.addOption("option", "subscribe or unsubscribe", true, ApplicationCommandOption.Type.STRING, DiscordUtil.toOptions(WeatherChoice.class));
+        this.addOption("city", "a city name", true, ApplicationCommandOption.Type.STRING);
     }
 
     public static Duration getDelay() {

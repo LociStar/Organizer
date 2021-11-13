@@ -6,15 +6,15 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.groups.entity.DBGroup;
 import com.locibot.locibot.database.groups.entity.DBGroupMember;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.User;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 public class AddToGroup extends BaseCmd {
     protected AddToGroup() {
         super(CommandCategory.GROUP, "add_member", "add a member to a group");
-        this.addOption("group_name", "group name", true, ApplicationCommandOptionType.STRING);
-        this.addOption("user", "member name", true, ApplicationCommandOptionType.USER);
+        this.addOption("group_name", "group name", true, ApplicationCommandOption.Type.STRING);
+        this.addOption("user", "member name", true, ApplicationCommandOption.Type.USER);
     }
 
     @Override

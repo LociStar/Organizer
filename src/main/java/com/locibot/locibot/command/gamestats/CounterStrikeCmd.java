@@ -22,9 +22,9 @@ import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.NumberUtil;
 import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.StringUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class CounterStrikeCmd extends BaseCmd {
         this.addOption(option -> option.name("steamid")
                 .description("Steam ID, custom ID or profile URL")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
 
         this.apiKey = CredentialManager.get(Credential.STEAM_API_KEY);
         this.steamIdCache = MultiValueCache.Builder.<String, String>builder().withTtl(Config.CACHE_TTL).build();

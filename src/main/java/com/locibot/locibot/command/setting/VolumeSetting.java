@@ -5,7 +5,7 @@ import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.NumberUtil;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 public class VolumeSetting extends BaseCmd {
@@ -21,7 +21,7 @@ public class VolumeSetting extends BaseCmd {
                 .description("New default volume (min:%d / max:%d / default:%d)"
                         .formatted(MIN_VOLUME, MAX_VOLUME, Config.DEFAULT_VOLUME))
                 .required(true)
-                .type(ApplicationCommandOptionType.INTEGER.getValue()));
+                .type(ApplicationCommandOption.Type.INTEGER.getValue()));
     }
 
     @Override

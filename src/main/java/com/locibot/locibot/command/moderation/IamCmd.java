@@ -6,12 +6,12 @@ import com.locibot.locibot.database.guilds.entity.setting.Iam;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.LociBotUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.Role;
 import discord4j.core.object.reaction.ReactionEmoji;
 import discord4j.core.object.reaction.ReactionEmoji.Unicode;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import discord4j.rest.util.Permission;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -31,27 +31,27 @@ public class IamCmd extends BaseCmd {
 
         this.addOption(option -> option.name("role1")
                 .description("The first role to grant")
-                .type(ApplicationCommandOptionType.ROLE.getValue())
+                .type(ApplicationCommandOption.Type.ROLE.getValue())
                 .required(true));
         this.addOption(option -> option.name("role2")
                 .description("The second role to grant")
-                .type(ApplicationCommandOptionType.ROLE.getValue())
+                .type(ApplicationCommandOption.Type.ROLE.getValue())
                 .required(false));
         this.addOption(option -> option.name("role3")
                 .description("The third role to grant")
-                .type(ApplicationCommandOptionType.ROLE.getValue())
+                .type(ApplicationCommandOption.Type.ROLE.getValue())
                 .required(false));
         this.addOption(option -> option.name("role4")
                 .description("The fourth role to grant")
-                .type(ApplicationCommandOptionType.ROLE.getValue())
+                .type(ApplicationCommandOption.Type.ROLE.getValue())
                 .required(false));
         this.addOption(option -> option.name("role5")
                 .description("The fifth role to grant")
-                .type(ApplicationCommandOptionType.ROLE.getValue())
+                .type(ApplicationCommandOption.Type.ROLE.getValue())
                 .required(false));
         this.addOption(option -> option.name("text")
                 .description("Replace the default text")
-                .type(ApplicationCommandOptionType.STRING.getValue())
+                .type(ApplicationCommandOption.Type.STRING.getValue())
                 .required(false));
     }
 

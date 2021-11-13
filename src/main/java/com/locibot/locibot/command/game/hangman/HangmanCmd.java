@@ -6,8 +6,8 @@ import com.locibot.locibot.core.game.GameCmd;
 import com.locibot.locibot.core.game.player.Player;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -21,17 +21,17 @@ public class HangmanCmd extends GameCmd<HangmanGame> {
     private final WordsList easyWords;
     private final WordsList hardWords;
     public HangmanCmd() {
-        super("hangman", "Start or join a Hangman game", ApplicationCommandOptionType.SUB_COMMAND_GROUP);
+        super("hangman", "Start or join a Hangman game", ApplicationCommandOption.Type.SUB_COMMAND_GROUP);
         this.addOption(option -> option.name(JOIN_SUB_COMMAND)
                 .description("Join a Hangman game")
-                .type(ApplicationCommandOptionType.SUB_COMMAND.getValue()));
+                .type(ApplicationCommandOption.Type.SUB_COMMAND.getValue()));
         this.addOption(option -> option.name(CREATE_SUB_COMMAND)
                 .description("Start a Hangman game")
-                .type(ApplicationCommandOptionType.SUB_COMMAND.getValue())
+                .type(ApplicationCommandOption.Type.SUB_COMMAND.getValue())
                 .addOption(ApplicationCommandOptionData.builder().name("difficulty")
                         .description("The difficulty of the word to find, easy by default")
                         .required(false)
-                        .type(ApplicationCommandOptionType.STRING.getValue())
+                        .type(ApplicationCommandOption.Type.STRING.getValue())
                         .choices(DiscordUtil.toOptions(Difficulty.class))
                         .build()));
 

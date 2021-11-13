@@ -6,9 +6,9 @@ import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.TextChannelEditSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import discord4j.rest.util.Permission;
 import reactor.core.publisher.Mono;
 
@@ -21,7 +21,7 @@ public class NSFWSetting extends BaseCmd {
         this.addOption(option -> option.name("action")
                 .description("Change the NSFW state of the server")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue())
+                .type(ApplicationCommandOption.Type.STRING.getValue())
                 .choices(DiscordUtil.toOptions(Action.class)));
     }
 

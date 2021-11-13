@@ -117,6 +117,9 @@ public class DBMember extends SerializableEntity<DBMemberBean> implements Databa
     public ArrayList<String> getWeatherRegistered() {
         return this.getBean().getWeatherRegistered();
     }
+    public boolean getBotRegister() {
+        return this.getBean().getBotRegister();
+    }
 
     public Mono<UpdateResult> subscribeWeatherRegistered(String city) {
         ArrayList<String> cities = getWeatherRegistered();
@@ -127,6 +130,12 @@ public class DBMember extends SerializableEntity<DBMemberBean> implements Databa
                             this.getId().asString(), this.getGuildId().asString(), cities));
         }
         return Mono.error(new CommandException("City already subscribed"));
+    }
+
+    public Mono<UpdateResult> setBotRegister(Boolean state) {
+        return this.update(Updates.set("members.$.botRegistered", state), this.toDocument().append("botRegistered", state))
+                    .doOnSubscribe(__ -> GuildsCollection.LOGGER.debug("[DBMember {}/{}] Register update: {} botRegistered",
+                            this.getId().asString(), this.getGuildId().asString(), state));
     }
 
     public Mono<UpdateResult> unsubscribeWeatherRegistered(String city) {

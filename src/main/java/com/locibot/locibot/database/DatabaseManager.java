@@ -7,6 +7,7 @@ import com.locibot.locibot.database.codec.AutoMessageCodec;
 import com.locibot.locibot.database.codec.IamCodec;
 import com.locibot.locibot.database.codec.LongCodec;
 import com.locibot.locibot.database.codec.SnowflakeCodec;
+import com.locibot.locibot.database.events_db.EventsCollection;
 import com.locibot.locibot.database.groups.GroupsCollection;
 import com.locibot.locibot.database.guilds.GuildsCollection;
 import com.locibot.locibot.database.lottery.LotteryCollection;
@@ -32,6 +33,7 @@ public class DatabaseManager {
     private static final LotteryCollection LOTTERY_COLLECTION;
     private static final UsersCollection USERS_COLLECTION;
     private static final GroupsCollection GROUPS_COLLECTION;
+    private static final EventsCollection EVENTS_COLLECTION;
 
     static {
         final MongoClientSettings.Builder settingsBuilder = MongoClientSettings.builder()
@@ -58,6 +60,7 @@ public class DatabaseManager {
         LOTTERY_COLLECTION = new LotteryCollection(database);
         USERS_COLLECTION = new UsersCollection(database);
         GROUPS_COLLECTION = new GroupsCollection(database);
+        EVENTS_COLLECTION = new EventsCollection(database);
     }
 
     public static PremiumCollection getPremium() {
@@ -78,6 +81,10 @@ public class DatabaseManager {
 
     public static GroupsCollection getGroups() {
         return GROUPS_COLLECTION;
+    }
+
+    public static EventsCollection getEvents() {
+        return EVENTS_COLLECTION;
     }
 
     public static void close() {

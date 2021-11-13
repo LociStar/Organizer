@@ -10,14 +10,16 @@ public enum CommandCategory {
     GAME("Game"),
     CURRENCY("Currency"),
     MUSIC("Music"),
-    GAMESTATS("Game Stats"),
+    GAMESTATS("GameStats"),
     INFO("Info"),
     ADMIN("Admin"),
     MODERATION("Moderation"),
     OWNER("Owner"),
     SETTING("Setting"),
     GROUP("Group"),
-    REGISTER("Register");
+    REGISTER("Register"),
+    EVENT("EVENT"),
+    BUTTON("BUTTON");
 
     private final String name;
 

@@ -19,9 +19,9 @@ import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.LociBotUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -47,12 +47,12 @@ public class DiabloCmd extends BaseCmd {
         this.addOption(option -> option.name("region")
                 .description("User's region")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue())
+                .type(ApplicationCommandOption.Type.STRING.getValue())
                 .choices(DiscordUtil.toOptions(Region.class)));
         this.addOption(option -> option.name("battletag")
                 .description("User's battletag")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
 
         this.clientId = CredentialManager.get(Credential.BLIZZARD_CLIENT_ID);
         this.clientSecret = CredentialManager.get(Credential.BLIZZARD_CLIENT_SECRET);

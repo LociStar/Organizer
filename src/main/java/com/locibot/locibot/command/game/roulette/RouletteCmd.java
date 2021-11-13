@@ -6,7 +6,7 @@ import com.locibot.locibot.core.game.GameCmd;
 import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.NumberUtil;
 import com.locibot.locibot.utils.LociBotUtil;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 public class RouletteCmd extends GameCmd<RouletteGame> {
@@ -16,16 +16,16 @@ public class RouletteCmd extends GameCmd<RouletteGame> {
         this.addOption(option -> option.name("bet")
                 .description("Your bet")
                 .required(true)
-                .type(ApplicationCommandOptionType.INTEGER.getValue()));
+                .type(ApplicationCommandOption.Type.INTEGER.getValue()));
         this.addOption(option -> option.name("place")
                 .description("The place of your bet")
                 .required(true)
-                .type(ApplicationCommandOptionType.STRING.getValue())
+                .type(ApplicationCommandOption.Type.STRING.getValue())
                 .choices(DiscordUtil.toOptions(Place.class)));
         this.addOption(option -> option.name("number")
                 .description("The number you're betting on, if the place chosen is 'number'")
                 .required(false)
-                .type(ApplicationCommandOptionType.INTEGER.getValue()));
+                .type(ApplicationCommandOption.Type.INTEGER.getValue()));
     }
 
     @Override

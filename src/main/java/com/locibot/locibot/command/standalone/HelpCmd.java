@@ -6,10 +6,10 @@ import com.locibot.locibot.core.i18n.I18nContext;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.guilds.entity.Settings;
 import com.locibot.locibot.utils.LociBotUtil;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import reactor.bool.BooleanUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,7 +25,7 @@ public class HelpCmd extends BaseCmd {
 
     public HelpCmd() {
         super(CommandCategory.INFO, "help", "Show the list of available commands");
-        this.addOption("command", "Show help about a specific command", false, ApplicationCommandOptionType.STRING);
+        this.addOption("command", "Show help about a specific command", false, ApplicationCommandOption.Type.STRING);
     }
 
     private static EmbedCreateSpec formatEmbed(I18nContext context, Map<CommandCategory, Collection<String>> map, String avatarUrl) {

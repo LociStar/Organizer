@@ -12,10 +12,10 @@ import com.locibot.locibot.utils.StringUtil;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.Embed;
 import discord4j.core.object.Embed.Field;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.GuildMessageChannel;
-import discord4j.rest.util.ApplicationCommandOptionType;
 import discord4j.rest.util.Permission;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -39,15 +39,15 @@ public class PruneCmd extends BaseCmd {
         this.addOption(option -> option.name("author")
                 .description("Author of the messages")
                 .required(false)
-                .type(ApplicationCommandOptionType.USER.getValue()));
+                .type(ApplicationCommandOption.Type.USER.getValue()));
         this.addOption(option -> option.name("words")
                 .description("Words contained in the messages, separated by comma")
                 .required(false)
-                .type(ApplicationCommandOptionType.STRING.getValue()));
+                .type(ApplicationCommandOption.Type.STRING.getValue()));
         this.addOption(option -> option.name("limit")
                 .description("Maximum number of messages to delete (max: %d)".formatted(MAX_MESSAGES))
                 .required(false)
-                .type(ApplicationCommandOptionType.INTEGER.getValue()));
+                .type(ApplicationCommandOption.Type.INTEGER.getValue()));
     }
 
     private static Predicate<Message> filterMessage(@Nullable Snowflake authorId, List<String> words) {

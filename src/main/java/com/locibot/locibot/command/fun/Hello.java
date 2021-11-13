@@ -4,12 +4,12 @@ import com.locibot.locibot.core.command.BaseCmd;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
-import discord4j.rest.util.ApplicationCommandOptionType;
+import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
 public class Hello extends BaseCmd {
     public Hello() {
-        super(CommandCategory.FUN, CommandPermission.USER_GLOBAL, "hello", "You might get greeted", ApplicationCommandOptionType.STRING);
+        super(CommandCategory.FUN, CommandPermission.USER_GLOBAL, "hello", "You might get greeted", ApplicationCommandOption.Type.STRING);
     }
 
     @Override
