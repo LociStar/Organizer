@@ -4,7 +4,6 @@ import com.locibot.locibot.core.command.BaseCmdButton;
 import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
-import com.locibot.locibot.database.events_db.bean.DBEventMemberBean;
 import com.locibot.locibot.database.events_db.entity.DBEvent;
 import com.locibot.locibot.database.events_db.entity.DBEventMember;
 import reactor.core.publisher.Mono;
