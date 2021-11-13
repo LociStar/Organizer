@@ -60,7 +60,7 @@ public class AddUserEventCmd extends BaseCmd {
                                     else {
                                         return EventUtil.publicInvite(context, dbEvent, new ArrayList<>(Collections.singleton(user.getUsername())));
                                     }
-                                }).then(dbEvent.addMember(user))
+                                }).then(dbEvent.addMember(user, 0))
                         )).collectList()));
     }
 }

@@ -111,9 +111,9 @@ public class DBEvent extends SerializableEntity<DBEventBean> implements Database
                 .doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getEventName()));
     }
 
-    public Mono<UpdateResult> addMember(User user) {
+    public Mono<UpdateResult> addMember(User user, int accepted) {
         assert this.getBean().getMembers() != null;
-        this.getBean().getMembers().add(new DBEventMemberBean(user.getId().asLong(), this.getEventName(), 0, false));
+        this.getBean().getMembers().add(new DBEventMemberBean(user.getId().asLong(), this.getEventName(), accepted, false));
         return Mono.from(DatabaseManager.getEvents()
                         .getCollection()
                         .updateOne(
