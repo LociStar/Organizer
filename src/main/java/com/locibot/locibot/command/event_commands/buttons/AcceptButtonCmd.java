@@ -34,7 +34,7 @@ public class AcceptButtonCmd extends BaseCmdButton {
                    return context.createFollowupMessage("You have already accepted the invitation! Have fun!");
                 }
             }
-            return context.createFollowupMessage("Nice try! But you are not invited to this event...");
+            return context.createFollowupMessage("Sry! But you are not invited to this event...");
         });
     }
 
