@@ -26,5 +26,4 @@ public abstract class DatabaseCollection {
     public String getName() {
         return this.name;
     }
-
 }

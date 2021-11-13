@@ -7,6 +7,7 @@ import com.locibot.locibot.database.DatabaseCollection;
 import com.locibot.locibot.database.events_db.bean.DBEventBean;
 import com.locibot.locibot.database.events_db.entity.DBEvent;
 import com.locibot.locibot.database.events_db.entity.DBEventMember;
+import com.locibot.locibot.database.groups.bean.DBGroupBean;
 import com.locibot.locibot.database.groups.entity.DBGroup;
 import com.locibot.locibot.database.groups.entity.DBGroupMember;
 import com.locibot.locibot.utils.LogUtil;
@@ -20,6 +21,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.Logger;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -90,5 +92,19 @@ public class EventsCollection extends DatabaseCollection { //TODO: replace conso
                     }
                     return members;
                 });
+    }
+
+    public List<DBEvent> getAllEvents (){
+        List<DBEvent> dbGroups = new ArrayList<>();
+        List<Document> documents = Flux.from(this.getCollection().find()).collectList().block();
+        if (documents != null)
+            documents.forEach(document -> {
+                try {
+                    dbGroups.add(new DBEvent(NetUtil.MAPPER.readValue(document.toJson(JSON_WRITER_SETTINGS), DBEventBean.class)));
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            });
+        return dbGroups;
     }
 }
