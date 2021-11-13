@@ -7,7 +7,6 @@ import com.locibot.locibot.database.SerializableEntity;
 import com.locibot.locibot.database.events_db.bean.DBEventBean;
 import com.locibot.locibot.database.events_db.bean.DBEventMemberBean;
 import com.locibot.locibot.database.groups.GroupsCollection;
-import com.locibot.locibot.database.groups.bean.DBGroupMemberBean;
 import com.locibot.locibot.database.guilds.GuildsCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
@@ -19,6 +18,7 @@ import reactor.core.publisher.Mono;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DBEvent extends SerializableEntity<DBEventBean> implements DatabaseEntity {
     public DBEvent(DBEventBean bean) {
@@ -130,5 +130,24 @@ public class DBEvent extends SerializableEntity<DBEventBean> implements Database
 
     public boolean isScheduled() {
         return this.getBean().getScheduledDate() != null;
+    }
+
+    public Mono<UpdateResult> removeMember(DBEventMember dbEventMember) {
+        DBEventMember member = this.getMembers().stream().filter(eventMember -> eventMember.getId().asLong() == dbEventMember.getId().asLong()).collect(Collectors.toList()).get(0);
+        if (member == null || this.getBean().getMembers() == null)
+            return Mono.empty();
+        this.getBean().getMembers().remove(member.getBean());
+        return Mono.from(DatabaseManager.getEvents()
+                        .getCollection()
+                        .updateOne(
+                                Filters.eq("_id", this.getEventName()),
+                                Updates.set("members", this.toDocument().get("members"))))
+                .doOnSubscribe(__ -> {
+                    GuildsCollection.LOGGER.debug("[DBEvent {}] DBEventMember removed: {}", this.getEventName());
+                    Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
+                })
+                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBEvent {}] DBEventMember remove result: {}",
+                        this.getEventName(), result))
+                .doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getEventName()));
     }
 }

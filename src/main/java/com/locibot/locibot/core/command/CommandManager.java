@@ -4,6 +4,7 @@ import com.locibot.locibot.LociBot;
 import com.locibot.locibot.command.event_commands.buttons.AcceptButtonCmd;
 import com.locibot.locibot.command.event_commands.buttons.DeclineButtonCmd;
 import com.locibot.locibot.command.event_commands.buttons.JoinEventButtonCmd;
+import com.locibot.locibot.command.event_commands.buttons.LeaveEventButtonCmd;
 import com.locibot.locibot.command.moderation.botRegister.RegisterButtonCmd;
 import com.locibot.locibot.command.currency.CoinsCmd;
 import com.locibot.locibot.command.currency.LeaderboardCmd;
@@ -68,7 +69,7 @@ public class CommandManager {
                 //Global
                 new Hello(), new Accept(), new Decline());
         BUTTONS_MAP = CommandManager.initializeButtons(
-                new RegisterButtonCmd(), new AcceptButtonCmd(), new DeclineButtonCmd(), new JoinEventButtonCmd()
+                new RegisterButtonCmd(), new AcceptButtonCmd(), new DeclineButtonCmd(), new JoinEventButtonCmd(), new LeaveEventButtonCmd()
         );
     }
 
