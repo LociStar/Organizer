@@ -5,6 +5,7 @@ import com.locibot.locibot.command.event_commands.buttons.AcceptButtonCmd;
 import com.locibot.locibot.command.event_commands.buttons.DeclineButtonCmd;
 import com.locibot.locibot.command.event_commands.buttons.JoinEventButtonCmd;
 import com.locibot.locibot.command.event_commands.buttons.LeaveEventButtonCmd;
+import com.locibot.locibot.command.game.hangman.JoinHangmanButton;
 import com.locibot.locibot.command.moderation.botRegister.RegisterButtonCmd;
 import com.locibot.locibot.command.currency.CoinsCmd;
 import com.locibot.locibot.command.currency.LeaderboardCmd;
@@ -34,26 +35,26 @@ import com.locibot.locibot.command.util.WeatherCmd;
 import com.locibot.locibot.command.util.WikipediaCmd;
 import com.locibot.locibot.command.util.poll.PollCmd;
 import com.locibot.locibot.command.util.translate.TranslateCmd;
+import com.locibot.locibot.core.game.Game;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.object.ExceptionHandler;
 import discord4j.rest.service.ApplicationService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CommandManager {
 
     private static final Map<String, BaseCmd> COMMANDS_MAP;
     private static final Map<String, BaseCmdButton> BUTTONS_MAP;
+    private static final List<Game> games = new ArrayList<>();
 
     static {
         COMMANDS_MAP = CommandManager.initialize(
                 new InfoGroup(), new ImageGroup(), new ModerationGroup(), new OwnerGroup(),
                 new GameStatsGroup(), new SettingGroup(),
-                new DonatorGroup(), new GameGroup(), new GroupGroup(),
+                new DonatorGroup(), new GameGroup(games), new GroupGroup(),
                 new RegisterGroup(), new EventGroup(),
                 // Image
                 new Rule34Cmd(), // TODO Improvement: Add to Image group when Discord autocompletion is implemented
@@ -69,7 +70,7 @@ public class CommandManager {
                 //Global
                 new Hello(), new Accept(), new Decline());
         BUTTONS_MAP = CommandManager.initializeButtons(
-                new RegisterButtonCmd(), new AcceptButtonCmd(), new DeclineButtonCmd(), new JoinEventButtonCmd(), new LeaveEventButtonCmd()
+                new RegisterButtonCmd(), new AcceptButtonCmd(), new DeclineButtonCmd(), new JoinEventButtonCmd(), new LeaveEventButtonCmd(), new JoinHangmanButton(games)
         );
     }
 

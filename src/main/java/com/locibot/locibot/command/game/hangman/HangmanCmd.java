@@ -1,15 +1,22 @@
 package com.locibot.locibot.command.game.hangman;
 
 import com.locibot.locibot.command.CommandException;
+import com.locibot.locibot.core.command.BaseCmdButton;
+import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
+import com.locibot.locibot.core.game.Game;
 import com.locibot.locibot.core.game.GameCmd;
 import com.locibot.locibot.core.game.player.Player;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.DiscordUtil;
 import discord4j.core.object.command.ApplicationCommandOption;
+import discord4j.core.object.component.ActionRow;
+import discord4j.core.object.component.Button;
+import discord4j.core.spec.InteractionFollowupCreateSpec;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.locibot.locibot.LociBot.DEFAULT_LOGGER;
@@ -20,8 +27,10 @@ public class HangmanCmd extends GameCmd<HangmanGame> {
     protected static final String CREATE_SUB_COMMAND = "create";
     private final WordsList easyWords;
     private final WordsList hardWords;
-    public HangmanCmd() {
+    private final List<Game> games;
+    public HangmanCmd(List<Game> games) {
         super("hangman", "Start or join a Hangman game", ApplicationCommandOption.Type.SUB_COMMAND_GROUP);
+        this.games = games;
         this.addOption(option -> option.name(JOIN_SUB_COMMAND)
                 .description("Join a Hangman game")
                 .type(ApplicationCommandOption.Type.SUB_COMMAND.getValue()));
@@ -45,6 +54,7 @@ public class HangmanCmd extends GameCmd<HangmanGame> {
     public Mono<?> execute(Context context) {
         final String subCmd = context.getSubCommandName().orElseThrow();
         if (subCmd.equals(JOIN_SUB_COMMAND)) {
+            System.out.println(subCmd);
             return this.join(context);
         } else if (subCmd.equals(CREATE_SUB_COMMAND)) {
             return this.create(context);
@@ -75,12 +85,17 @@ public class HangmanCmd extends GameCmd<HangmanGame> {
 
                     final String word = this.getWord(difficulty);
                     final HangmanGame game = new HangmanGame(context, difficulty, word);
+                    games.add(game); //TODO: Remove game from List
                     game.addPlayerIfAbsent(new Player(context.getGuildId(), context.getAuthorId()));
                     this.addGame(context.getChannelId(), game);
                     return game.start()
                             .then(game.show())
                             .doOnError(err -> game.destroy());
-                }));
+                }))
+                .then(context.createFollowupMessage(InteractionFollowupCreateSpec.builder()
+                        .content("Use this Button to join the game:")
+                        .addComponent(ActionRow.of(Button.success("joinHangman", "Join")))
+                        .build()));
     }
 
     private Mono<List<String>> loadWords(Difficulty difficulty) {

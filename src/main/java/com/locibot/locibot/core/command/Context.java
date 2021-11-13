@@ -3,6 +3,7 @@ package com.locibot.locibot.core.command;
 import com.locibot.locibot.LociBot;
 import com.locibot.locibot.core.i18n.I18nContext;
 import com.locibot.locibot.core.i18n.I18nManager;
+import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.database.guilds.entity.DBGuild;
 import com.locibot.locibot.object.Emoji;
@@ -202,6 +203,8 @@ public class Context implements InteractionContext, I18nContext {
 
     @Override
     public Locale getLocale() {
+        if (this.getDbGuild() == null)
+            return Config.DEFAULT_LOCALE;
         return this.getDbGuild().getLocale();
     }
 
