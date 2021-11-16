@@ -24,7 +24,7 @@ public class DeleteEventCmd extends BaseCmd {
                 {
                     //check if author is owner
                     if (event.getOwner().getId().equals(context.getAuthorId())) {
-                        return event.delete().then(context.createFollowupMessage(eventName + " has been deleted!"));
+                        return event.delete().then(context.createFollowupMessage("Event **" + eventName + "** has been deleted!"));
                     }
                     return context.createFollowupMessage("You are not the owner of " + eventName + "!");
                 });
