@@ -28,13 +28,13 @@ public class DeclineButtonCmd extends BaseCmdButton {
                     for (DBEventMember member : group.getMembers()) {
                         if (member.getId().asLong() == context.getAuthorId().asLong() && member.getAccepted() != 2) {
                             return member.updateAccepted(2)
-                                    .then(context.createFollowupMessage("You have declined the invitation!"))
+                                    .then(context.createFollowupMessageEphemeral("You have declined the invitation!"))
                                     .then(informOwner(context, group, member));
                         }else if (member.getId().asLong() == context.getAuthorId().asLong() && member.getAccepted() == 2){
-                            return context.createFollowupMessage("You have already declined the invitation!");
+                            return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral("You have already declined the invitation!"));
                         }
                     }
-                    return context.createFollowupMessage("Nice try! But you are not invited to this event...");
+                    return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral("Nice try! But you are not invited to this event..."));
                 }
         );
     }
@@ -45,7 +45,8 @@ public class DeclineButtonCmd extends BaseCmdButton {
             ActionRow a = (ActionRow) ActionRow.fromData(context.getEvent().getInteraction().getMessage().get().getComponents().get(0).getData());
             Button accept = (Button) Button.fromData(a.getChildren().get(0).getData());
             Button decline = (Button) Button.fromData(a.getChildren().get(1).getData());
-            return context.createFollowupMessage("Sry! But you cannot decline an event invitation that does not exist!").then(context.getEvent().getInteraction().getMessage().get().edit().withComponents(
+            return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral("Sry! It looks like the event has been deleted!!"))
+                    .then(context.getEvent().getInteraction().getMessage().get().edit().withComponents(
                     ActionRow.of(
                             accept.disabled(), decline.disabled()
                     )));
@@ -59,6 +60,6 @@ public class DeclineButtonCmd extends BaseCmdButton {
                         context.getClient().getUserById(event.getOwner().getId()))
                 .flatMap(TupleUtils.function((declinedUser, owner) ->
                         owner.getPrivateChannel().flatMap(privateChannel -> privateChannel.createMessage(
-                                declinedUser.getUsername() + " declined your invitation to " + event.getEventName() + "!"))));
+                                "**%s** declined your invitation to the event: **%s**!".formatted(declinedUser.getMention(), event.getEventName())))));
     }
 }

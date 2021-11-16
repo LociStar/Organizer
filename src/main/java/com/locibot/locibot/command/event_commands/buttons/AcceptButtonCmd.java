@@ -28,13 +28,13 @@ public class AcceptButtonCmd extends BaseCmdButton {
             for (DBEventMember member : event.getMembers()) {
                 if (member.getId().asLong() == context.getAuthorId().asLong() && member.getAccepted() != 1) {
                     System.out.println(member.getAccepted());
-                    return context.createFollowupMessage("You have accepted the invitation! Have fun!").then(member.updateAccepted(1))
-                            .then(informOwner(context, event));
+                    return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral("You have accepted the invitation! Have fun!").then(member.updateAccepted(1))
+                            .then(informOwner(context, event)));
                 } else if (member.getBean().getId().equals(context.getAuthorId().asLong()) && member.getAccepted() == 1){
-                   return context.createFollowupMessage("You have already accepted the invitation! Have fun!");
+                   return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral("You have already accepted the invitation! Have fun!"));
                 }
             }
-            return context.createFollowupMessage("Sry! But you are not invited to this event...");
+            return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral("Sry! But you are not invited to this event..."));
         });
     }
 
@@ -44,10 +44,10 @@ public class AcceptButtonCmd extends BaseCmdButton {
             ActionRow a = (ActionRow) ActionRow.fromData(context.getEvent().getInteraction().getMessage().orElseThrow().getComponents().get(0).getData());
             Button accept = (Button) Button.fromData(a.getChildren().get(0).getData());
             Button decline = (Button) Button.fromData(a.getChildren().get(1).getData());
-            return context.createFollowupMessage("Nice try! But you can't join an event that does not exist!").then(context.getEvent().getInteraction().getMessage().get().edit().withComponents(
+            return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral("Sry! It looks like the event has been deleted!").then(context.getEvent().getInteraction().getMessage().get().edit().withComponents(
                     ActionRow.of(
                             accept.disabled(), decline.disabled()
-                    )));
+                    ))));
         }
         return null;
     }
@@ -58,6 +58,6 @@ public class AcceptButtonCmd extends BaseCmdButton {
                         context.getClient().getUserById(event.getOwner().getId()))
                 .flatMap(TupleUtils.function((user, owner) ->
                         owner.getPrivateChannel().flatMap(privateChannel -> privateChannel.createMessage(
-                                user.getUsername() + " accepted your invitation to the event: " + event.getEventName() + "!"))));
+                                "**%s** accepted your invitation to the event: **%s**!".formatted(user.getMention(), event.getEventName())))));
     }
 }
