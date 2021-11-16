@@ -49,7 +49,7 @@ public class ScheduleEventCmd extends BaseCmd {
                         return context.createFollowupMessage("Only the event owner is allowed to create a schedule!");
                     }
                     return dbEvent.updateSchedules(ZonedDateTime.of(LocalDateTime.of(newDate, newTime), ZoneId.of("Europe/Berlin")))
-                            .then(Flux.fromIterable(dbEvent.getMembers()).concatMap(dbEventMember ->
+                            .delayElement(Duration.ofSeconds(1)).then(Flux.fromIterable(dbEvent.getMembers()).concatMap(dbEventMember ->
                                     context.getClient().getUserById(dbEventMember.getId()).flatMap(user -> DatabaseManager.getGuilds().getDBMember(context.getGuildId(), user.getId()).flatMap(dbMember -> {
                                         if (user.isBot()) {
                                             return context.getChannel().flatMap(textChannel -> textChannel.getGuild().flatMap(guild -> guild.getMemberById(user.getId()).flatMap(member ->
@@ -68,7 +68,8 @@ public class ScheduleEventCmd extends BaseCmd {
                                 if (users.isEmpty())
                                     return Mono.empty();
                                 List<String> usersString = users.stream().map(User::getMention).collect(Collectors.toList());
-                                return EventUtil.publicInvite(context, dbEvent, usersString);
+                                return DatabaseManager.getEvents().getDBEvent(context.getOptionAsString("event_title").orElseThrow()).flatMap(dbEvent1 ->
+                                        EventUtil.publicInvite(context, dbEvent1, usersString));
                             });
                 })
         );
