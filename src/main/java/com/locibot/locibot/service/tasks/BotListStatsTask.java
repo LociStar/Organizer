@@ -26,7 +26,7 @@ public class BotListStatsTask implements Task {
 
     @Override
     public boolean isEnabled() {
-        return !Config.IS_SNAPSHOT;
+        return false;
     }
 
     @Override
