@@ -18,7 +18,7 @@ public class LoginClient {
     }
 
     public Mono<String> getMessage() {
-        return this.client.get().uri("/hello").accept(MediaType.APPLICATION_JSON)
+        return this.client.get().uri("/login").accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Login.class)
                 .map(Login::getMessage);

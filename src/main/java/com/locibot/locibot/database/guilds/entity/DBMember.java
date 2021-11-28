@@ -3,12 +3,15 @@ package com.locibot.locibot.database.guilds.entity;
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.Telemetry;
+import com.locibot.locibot.data.credential.Credential;
+import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.database.DatabaseEntity;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.SerializableEntity;
 import com.locibot.locibot.database.guilds.GuildsCollection;
 import com.locibot.locibot.database.guilds.bean.DBMemberBean;
 import com.locibot.locibot.database.users.entity.achievement.Achievement;
+import com.locibot.locibot.utils.JWT.TokenGenerator;
 import com.locibot.locibot.utils.NumberUtil;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
@@ -19,6 +22,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -204,5 +208,23 @@ public class DBMember extends SerializableEntity<DBMemberBean> implements Databa
     @Override
     public int hashCode() {
         return Objects.hash(this.guildId, this.getBean().getId());
+    }
+
+    public String generateLoginToken() throws Exception {
+        TokenGenerator generator = new TokenGenerator(this.getGuildId().asLong(), this.getId().asLong());
+        return generator.generateJWTToken(CredentialManager.get(Credential.JWT_SECRET));
+    }
+
+    public Mono<UpdateResult> generateAccessToken() throws Exception {
+        TokenGenerator generator = new TokenGenerator(this.getGuildId().asLong(), this.getId().asLong(), "access");
+        String accessToken = generator.generateJWTToken(CredentialManager.get(Credential.JWT_SECRET));
+        return this.update(Updates.set("members.$.accessToken", accessToken), this.toDocument().append("accessToken", accessToken))
+                .doOnSubscribe(__ -> GuildsCollection.LOGGER.debug("[DBMember {}/{}] Token update: {} accessToken",
+                        this.getId().asString(), this.getGuildId().asString(), accessToken))
+                .doOnTerminate(() -> DatabaseManager.getGuilds().invalidateCache(this.getGuildId()));
+    }
+
+    public String getAccessToken() {
+        return this.getBean().getJwt() == null ? "null" : this.getBean().getJwt();
     }
 }

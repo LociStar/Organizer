@@ -1,4 +1,4 @@
-package com.locibot.webapi.login;
+package com.locibot.webapi.weather;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -6,14 +6,15 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+
 @Configuration(proxyBeanMethods = false)
-public class LoginRouter {
+public class WeatherRounter {
 
     @Bean
-    public RouterFunction<ServerResponse> route(LoginHandler loginHandler) {
+    public RouterFunction<ServerResponse> weatherRoute(WeatherHandler weatherHandler) {
 
         return RouterFunctions.route()
-                .GET("/login", loginHandler::login) //, RequestPredicates.queryParam("token", t -> true)
+                .GET("/weather", weatherHandler::weather) //, RequestPredicates.queryParam("token", t -> true)
                 .build();
     }
 }

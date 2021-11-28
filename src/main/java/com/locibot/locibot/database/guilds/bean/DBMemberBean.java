@@ -19,16 +19,20 @@ public class DBMemberBean implements Bean {
     @Nullable
     @JsonProperty("botRegistered")
     private boolean botRegistered;
+    @Nullable
+    @JsonProperty("accessToken")
+    private String jwt;
 
-    public DBMemberBean(String id, @Nullable Long coins, @Nullable ArrayList<String> weatherRegistered, @Nullable boolean botRegistered) {
+    public DBMemberBean(String id, @Nullable Long coins, @Nullable ArrayList<String> weatherRegistered, @Nullable boolean botRegistered, @Nullable String jwt) {
         this.id = id;
         this.coins = coins;
         this.weatherRegistered = weatherRegistered;
         this.botRegistered = botRegistered;
+        this.jwt = jwt;
     }
 
     public DBMemberBean(String id) {
-        this(id, null, null, false);
+        this(id, null, null, false, null);
     }
 
     public DBMemberBean() {
@@ -46,8 +50,12 @@ public class DBMemberBean implements Bean {
         return this.weatherRegistered == null ? new ArrayList<>() : this.weatherRegistered;
     }
 
-    public boolean getBotRegister(){
+    public boolean getBotRegister() {
         return this.botRegistered;
+    }
+
+    public String getJwt() {
+        return this.jwt;
     }
 
     @Override

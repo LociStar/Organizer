@@ -58,7 +58,7 @@ public class CommandManager {
                 // Image
                 new Rule34Cmd(), // TODO Improvement: Add to Image group when Discord autocompletion is implemented
                 // Standalone
-                new PingCmd(), new HelpCmd(), new AchievementsCmd(), new FeedbackCmd(), new InviteCmd(),
+                new PingCmd(), new HelpCmd(), new AchievementsCmd(), new FeedbackCmd(), new InviteCmd(), new WebLogin(),
                 // Currency
                 new CoinsCmd(), new LeaderboardCmd(), new TransferCoinsCmd(),
                 // Fun

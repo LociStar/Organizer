@@ -1,27 +1,27 @@
 package com.locibot.webapi.login;
 
 public class Login {
-    private String message;
+    private String accessToken;
 
     public Login() {
     }
 
-    public Login(String message) {
-        this.message = message;
+    public Login(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public String getMessage() {
-        return this.message;
+        return this.accessToken;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessage(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     @Override
     public String toString() {
-        return "Greeting{" +
-                "message='" + message + '\'' +
+        return "Login{" +
+                "access='" + accessToken + '\'' +
                 '}';
     }
 }
