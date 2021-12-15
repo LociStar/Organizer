@@ -5,11 +5,14 @@ import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.utils.weather.HourlyWeatherForecastClass;
 import com.locibot.webapi.login.Login;
 import net.aksingh.owmjapis.core.OWM;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
@@ -29,16 +32,13 @@ public class WeatherHandler {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-        try {
-            System.out.println(Arrays.toString(weatherForecastClass.createRainMap()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
 
         try {
-            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-                    .body(BodyInserters.fromValue(new Weather(weatherForecastClass.createRainMap())));
+            System.out.println("City: " + city);
+            DataBuffer buffer = new DefaultDataBufferFactory().wrap(weatherForecastClass.createRainMap());
+            return ServerResponse.ok().contentType(MediaType.IMAGE_PNG)
+                    .body(BodyInserters.fromDataBuffers(Flux.just(buffer)));
         } catch (IOException e) {
             e.printStackTrace();
             return ServerResponse.badRequest().build();
