@@ -23,7 +23,7 @@ public class WeatherHandler {
 
     public Mono<ServerResponse> weather(ServerRequest request) {
         String city = request.queryParam("city").orElse("invalid city");
-        String token = request.queryParam("token").orElse("invalid token"); //TODO: validate token
+        String token = request.queryParam("token").orElse("invalid token");
         TokenVerification tokenVerification = new TokenVerification(token);
         try {
             if (tokenVerification.verify(Objects.requireNonNull(CredentialManager.get(Credential.JWT_SECRET)))){
