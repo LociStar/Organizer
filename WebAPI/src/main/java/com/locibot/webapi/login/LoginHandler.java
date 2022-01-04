@@ -30,16 +30,16 @@ public class LoginHandler {
         JSONObject payload = tokenVerification.getPayload();
         String tokenSub = payload.get("sub").toString();
 
-        System.out.println(payload);
+        //System.out.println(payload);
 
         if (valid && Objects.equals(tokenSub, "login")) {
-            System.out.println("OK");
+            //System.out.println("OK");
             return DatabaseManager.getGuilds().getDBMember(Snowflake.of(payload.get("gid").toString()), Snowflake.of(payload.get("uid").toString())).flatMap(dbMember ->
             {
                 try {
                     return dbMember.generateAccessToken()
                             .then(DatabaseManager.getGuilds().getDBMember(Snowflake.of(payload.get("gid").toString()), Snowflake.of(payload.get("uid").toString())).flatMap(member -> {
-                                System.out.println(member.getAccessToken());
+                                //System.out.println(member.getAccessToken());
                                 return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                                         .body(BodyInserters.fromValue(new Login(member.getAccessToken())));
                             }));
