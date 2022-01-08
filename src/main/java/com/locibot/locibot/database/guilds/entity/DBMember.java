@@ -211,7 +211,10 @@ public class DBMember extends SerializableEntity<DBMemberBean> implements Databa
     }
 
     public String generateLoginToken() throws Exception {
+        System.out.println(this.getGuildId().asLong());
+        System.out.println(this.getId().asLong());
         TokenGenerator generator = new TokenGenerator(this.getGuildId().asLong(), this.getId().asLong());
+        System.out.println(generator.generateJWTToken(CredentialManager.get(Credential.JWT_SECRET)));
         return generator.generateJWTToken(CredentialManager.get(Credential.JWT_SECRET));
     }
 

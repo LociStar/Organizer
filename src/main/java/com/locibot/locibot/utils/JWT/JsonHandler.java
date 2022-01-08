@@ -9,7 +9,7 @@ import java.time.Instant;
 
 public abstract class JsonHandler {
 
-    public static JSONObject generateBodyJson(long userId, Long guildId, String sub) throws IOException {
+    public static JSONObject generateBodyJson(long guildId, long userId, String sub) throws IOException {
         //read json from file
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -38,7 +38,7 @@ public abstract class JsonHandler {
         return root;
     }
 
-    public static JSONObject generateBodyJson(String value){
+    public static JSONObject generateBodyJson(String value) {
         return new JSONObject(value);
     }
 

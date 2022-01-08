@@ -28,6 +28,8 @@ public class LoginHandler {
             e.printStackTrace();
         }
         JSONObject payload = tokenVerification.getPayload();
+        System.out.println("gid:" + payload.get("gid"));
+        System.out.println("uid:" +payload.get("uid"));
         String tokenSub = payload.get("sub").toString();
 
         //System.out.println(payload);

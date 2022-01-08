@@ -24,7 +24,7 @@ public class WebLogin extends BaseCmd {
                                 .then(context.createFollowupMessage(InteractionFollowupCreateSpec.builder()
                                         .ephemeral(true)
                                         .content("Use the link to login on Organizer-Website")
-                                        .addComponent(ActionRow.of(Button.link("http://192.168.2.126:8080/home.html?token=" + member.generateLoginToken(), "Link")))
+                                        .addComponent(ActionRow.of(Button.link("http://organizer-bot-website.herokuapp.com/home.html?token=" + member.generateLoginToken(), "Link")))
                                         //.addComponent(ActionRow.of(Button.link("https://organizer-bot-website.herokuapp.com/", "Link")))
                                         .build()));
                     } catch (Exception e) {
