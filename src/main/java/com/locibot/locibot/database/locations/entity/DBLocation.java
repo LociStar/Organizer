@@ -4,7 +4,6 @@ import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.database.DatabaseEntity;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.SerializableEntity;
-import com.locibot.locibot.database.guilds.GuildsCollection;
 import com.locibot.locibot.database.locations.LocationsCollection;
 import com.locibot.locibot.database.locations.bean.DBLocationBean;
 import com.mongodb.client.model.Filters;
@@ -13,23 +12,26 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import reactor.core.publisher.Mono;
 
+import java.time.Instant;
 import java.util.List;
 
 public class DBLocation extends SerializableEntity<DBLocationBean> implements DatabaseEntity {
 
-    public DBLocation(DBLocationBean dbLocationBean){
+    public DBLocation(DBLocationBean dbLocationBean) {
         super(dbLocationBean);
     }
+
     public DBLocation(String name, double longitude, double latitude) {
         super(new DBLocationBean(name, longitude, latitude));
     }
 
-    public Mono<UpdateResult> setWeather(String data){
+    public Mono<UpdateResult> setWeather(String data) {
         return Mono.from(DatabaseManager.getLocations()
                         .getCollection()
                         .updateOne(
                                 Filters.eq("_id", this.getBean().getName()),
-                                List.of(Updates.set("weatherData", data)),
+                                List.of(Updates.set("weatherData", data),
+                                        Updates.set("creationTime", Instant.now().toEpochMilli())),
                                 new UpdateOptions().upsert(true)))
                 .doOnSubscribe(__ -> {
                     LocationsCollection.LOGGER.debug("[DBLocation {}] Location update: {}", this.getBean().getName(), data + " ");
@@ -40,7 +42,7 @@ public class DBLocation extends SerializableEntity<DBLocationBean> implements Da
                 .doOnTerminate(() -> DatabaseManager.getLocations().invalidateCache(this.getBean().getName()));
     }
 
-    public String getWeatherData(){
+    public String getWeatherData() {
         return this.getBean().getWeatherData();
     }
 
