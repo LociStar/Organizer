@@ -28,7 +28,7 @@ public class DBLocation extends SerializableEntity<DBLocationBean> implements Da
         return Mono.from(DatabaseManager.getLocations()
                         .getCollection()
                         .updateOne(
-                                Filters.eq("name", this.getBean().getName()),
+                                Filters.eq("_id", this.getBean().getName()),
                                 List.of(Updates.set("weatherData", data)),
                                 new UpdateOptions().upsert(true)))
                 .doOnSubscribe(__ -> {

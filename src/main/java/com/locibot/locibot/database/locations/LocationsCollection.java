@@ -28,7 +28,7 @@ public class LocationsCollection extends DatabaseCollection {
 
     public Mono<DBLocation> getLocation(String name) {
         final Publisher<Document> request = this.getCollection()
-                .find(Filters.eq("name", name))
+                .find(Filters.eq("_id", name))
                 .first();
 
         final Mono<DBLocation> getDBLocation = Mono.from(request)

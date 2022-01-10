@@ -5,7 +5,7 @@ import com.locibot.locibot.database.Bean;
 import reactor.util.annotation.Nullable;
 
 public class DBLocationBean implements Bean {
-    @JsonProperty("name")
+    @JsonProperty("_id")
     private String name;
     @JsonProperty("longitude")
     private double longitude;
@@ -24,6 +24,9 @@ public class DBLocationBean implements Bean {
 
     public DBLocationBean(String name, double longitude, double latitude) {
         this(name, longitude, latitude, null);
+    }
+
+    public DBLocationBean() {
     }
 
     public String getName() {
