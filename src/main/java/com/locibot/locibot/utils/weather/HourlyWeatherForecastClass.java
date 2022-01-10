@@ -16,6 +16,7 @@ public class HourlyWeatherForecastClass {
         try {
             hwf1 = owm.hourlyWeatherForecastByCityName(city);
         } catch (APIException e) {
+            e.printStackTrace();
             hwf1 = new HourlyWeatherForecast();
         }
         hwf = hwf1;
@@ -30,5 +31,9 @@ public class HourlyWeatherForecastClass {
     public byte[] createRainMap() throws IOException {
         CreateRainMap createRainMap = new CreateRainMap();
         return createRainMap.create(this.hwf);
+    }
+
+    public HourlyWeatherForecast getHwf() {
+        return hwf;
     }
 }

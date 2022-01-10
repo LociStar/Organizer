@@ -28,5 +28,6 @@ public enum Credential {
     DATABASE_PWD,
     DATABASE_HOST,
     DATABASE_PORT,
-    JWT_SECRET
+    JWT_SECRET,
+    PTV
 }

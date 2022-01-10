@@ -1,4 +1,4 @@
-/*package com.locibot.webapi.login;
+package com.locibot.webapi.login;
 
 import reactor.core.publisher.Mono;
 
@@ -24,4 +24,4 @@ public class LoginClient {
                 .map(Login::getMessage);
     }
 
-}*/
+}
