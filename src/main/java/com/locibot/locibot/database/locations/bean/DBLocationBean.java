@@ -8,21 +8,21 @@ public class DBLocationBean implements Bean {
     @JsonProperty("name")
     private String name;
     @JsonProperty("longitude")
-    private long longitude;
+    private double longitude;
     @JsonProperty("latitude")
-    private long latitude;
+    private double latitude;
     @Nullable
     @JsonProperty("weatherData")
     private String weatherData;
 
-    public DBLocationBean(String name, long longitude, long latitude, @Nullable String weatherData) {
+    public DBLocationBean(String name, double longitude, double latitude, @Nullable String weatherData) {
         this.name = name;
         this.longitude = longitude;
         this.latitude = latitude;
         this.weatherData = weatherData;
     }
 
-    public DBLocationBean(String name, long longitude, long latitude) {
+    public DBLocationBean(String name, double longitude, double latitude) {
         this(name, longitude, latitude, null);
     }
 
@@ -30,11 +30,11 @@ public class DBLocationBean implements Bean {
         return name;
     }
 
-    public long getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public long getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 

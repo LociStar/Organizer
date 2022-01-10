@@ -20,7 +20,7 @@ public class DBLocation extends SerializableEntity<DBLocationBean> implements Da
     public DBLocation(DBLocationBean dbLocationBean){
         super(dbLocationBean);
     }
-    public DBLocation(String name, long longitude, long latitude) {
+    public DBLocation(String name, double longitude, double latitude) {
         super(new DBLocationBean(name, longitude, latitude));
     }
 
