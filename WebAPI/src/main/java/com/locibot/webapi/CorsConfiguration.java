@@ -14,8 +14,8 @@ public class CorsConfiguration implements WebFluxConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                //.allowedOrigins("http://192.168.2.126:8080")
-                .allowedOrigins("*")
+                //.allowedOrigins("*")
+                .allowedOrigins("https://organizer-bot-website.herokuapp.com")
                 .allowedHeaders("*")
                 .exposedHeaders("Access-Control-Allow-Origin");
     }
