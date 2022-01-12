@@ -30,7 +30,7 @@ public class WeatherSubscriptionsTask implements Task{
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
     @Override
