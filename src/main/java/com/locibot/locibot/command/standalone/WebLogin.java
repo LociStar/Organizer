@@ -6,6 +6,7 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
 import discord4j.core.object.component.ActionRow;
 import discord4j.core.object.component.Button;
+import discord4j.core.object.entity.Message;
 import discord4j.core.spec.InteractionFollowupCreateSpec;
 import reactor.core.publisher.Mono;
 
@@ -20,11 +21,11 @@ public class WebLogin extends BaseCmd {
                 DatabaseManager.getGuilds().getDBMember(context.getGuildId(), context.getAuthorId()).flatMap(member ->
                 {
                     try {
-                        return context.createFollowupMessageEphemeral("A Link will be created.")
+                        return context.createFollowupMessageEphemeral("A Link will be created.").then(context.editFollowupMessage("One moment pls").flatMap(Message::delete))
                                 .then(context.createFollowupMessage(InteractionFollowupCreateSpec.builder()
                                         .ephemeral(true)
                                         .content("Use the link to login on Organizer-Website")
-                                        .addComponent(ActionRow.of(Button.link("http://organizer-bot-website.herokuapp.com/home.html?token=" + member.generateLoginToken(), "Link")))
+                                        .addComponent(ActionRow.of(Button.link("https://organizer-bot-website.herokuapp.com/home.html?token=" + member.generateLoginToken(), "Link")))
                                         //.addComponent(ActionRow.of(Button.link("https://organizer-bot-website.herokuapp.com/", "Link")))
                                         .build()));
                     } catch (Exception e) {
