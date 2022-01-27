@@ -17,17 +17,25 @@ public class DBLocationBean implements Bean {
     @Nullable
     @JsonProperty("creationTime")
     private long creationTime;
+    @Nullable
+    @JsonProperty("fiveDayWeatherData")
+    private String fiveDayWeatherData;
+    @Nullable
+    @JsonProperty("fiveDayCreationTime")
+    private long fiveDayCreationTime;
 
-    public DBLocationBean(String name, double longitude, double latitude, @Nullable String weatherData, @Nullable long creationTime) {
+    public DBLocationBean(String name, double longitude, double latitude, @Nullable String weatherData, @Nullable long creationTime, @Nullable String fiveDayWeatherData, @Nullable long fiveDayCreationTime) {
         this.name = name;
         this.longitude = longitude;
         this.latitude = latitude;
         this.weatherData = weatherData;
         this.creationTime = creationTime;
+        this.fiveDayWeatherData = fiveDayWeatherData;
+        this.fiveDayCreationTime = fiveDayCreationTime;
     }
 
     public DBLocationBean(String name, double longitude, double latitude) {
-        this(name, longitude, latitude, null, 0L);
+        this(name, longitude, latitude, null, 0L, null, 0L);
     }
 
     public DBLocationBean() {
@@ -52,5 +60,14 @@ public class DBLocationBean implements Bean {
 
     public long getCreationTime() {
         return creationTime;
+    }
+
+    @Nullable
+    public String getFiveDayWeatherData() {
+        return fiveDayWeatherData;
+    }
+
+    public long getFiveDayCreationTime() {
+        return fiveDayCreationTime;
     }
 }
