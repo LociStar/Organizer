@@ -1,4 +1,4 @@
-package com.locibot.webapi.weatherData.ptv;
+package com.locibot.locibot.utils.weather.ptv;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

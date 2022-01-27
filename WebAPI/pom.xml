@@ -14,7 +14,7 @@
 	<name>WebAPI</name>
 	<description>WebAPI</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>com.locibot.locibot</groupId>
             <artifactId>locibot</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 		<dependency>
@@ -60,7 +60,7 @@
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
-    </dependencies>
+	</dependencies>
 
 	<build>
 		<plugins>
