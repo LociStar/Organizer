@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 
 @Configuration(proxyBeanMethods = false)
-public class weatherDataRouter {
+public class WeatherDataRouter {
 
     @Bean
     public RouterFunction<ServerResponse> weatherDataRoute(WeatherDataHandler weatherDataHandler) {
