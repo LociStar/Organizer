@@ -18,14 +18,16 @@ public class WeatherForecastHandler {
     public Mono<ServerResponse> weatherForecast(ServerRequest request) {
 
         String token = request.queryParam("token").orElse("invalid login token");
-        String city = request.queryParam("city").orElse("Frankfurt");
+        String city = request.queryParam("city").orElse("XXX_No_City");
+        Double longitude = Double.parseDouble(request.queryParam("long").orElse("0"));
+        Double latitude = Double.parseDouble(request.queryParam("lat").orElse("0"));
         WeatherManager weatherManager = new WeatherManager();
 
         TokenVerification tokenVerification = new TokenVerification(token);
 
         try {
             if (tokenVerification.verify(Objects.requireNonNull(CredentialManager.get(Credential.JWT_SECRET)))) {
-                return weatherManager.getSaved5DayWeatherData(city).flatMap(data -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+                return weatherManager.getSaved5DayWeatherData(city, longitude, latitude).flatMap(data -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                         .body(BodyInserters.fromValue(data)));
             }
         } catch (Exception e) {

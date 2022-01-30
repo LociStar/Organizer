@@ -51,16 +51,33 @@ public class WeatherManager {
                 .asJava();
     }
 
-    public Mono<String> getSavedCurrentWeatherData(String city) {
+    public Mono<String> getSavedCurrentWeatherData(String city, Double user_longitude, Double user_latitude) {
+        String api_url = "https://api.myptv.com/geocoding/v1/locations/by-text?searchText=" + city.replaceAll("\\s+","") + "&apiKey=" + CredentialManager.get(Credential.PTV);
+        if (city.equals("XXX_No_City")){
+            api_url = "https://api.myptv.com/geocoding/v1/locations/by-position/"+ user_latitude +"/"+ user_longitude +"?language=de" + "&apiKey=" + CredentialManager.get(Credential.PTV);
+        }
+        String finalApi_url = api_url;
         return DatabaseManager.getLocations().getLocation(city).flatMap(dbLocation -> {
             if (dbLocation.getBean().getLatitude() == 0) {
-                return RequestHelper.fromUrl("https://api.myptv.com/geocoding/v1/locations/by-text?searchText=" + city + "&apiKey=" + CredentialManager.get(Credential.PTV))
-                        .addHeaders("searchText", city)
-                        .addHeaders("apiKey", CredentialManager.get(Credential.PTV))
+                return RequestHelper.fromUrl(finalApi_url)
+                        //.addHeaders("searchText", city)
+                        //.addHeaders("apiKey", CredentialManager.get(Credential.PTV))
                         .to(PTVResponse.class).flatMap(ptvResponse -> {
-                            System.out.println(ptvResponse);
                             Double latitude = ptvResponse.result().get(0).referencePosition().get("latitude");
                             Double longitude = ptvResponse.result().get(0).referencePosition().get("longitude");
+                            if (city.equals("XXX_No_City")) {
+                                String final_city = city;
+                                final_city = ptvResponse.result().get(0).address().city();
+                                String final_city1 = final_city;
+                                return DatabaseManager.getLocations().getLocation(final_city).flatMap(dbLocation2 -> {
+                                    DBLocation dbLocationNew = new DBLocation(final_city1, longitude, latitude);
+                                    if (dbLocation2.getBean().getLatitude() == 0) {
+                                        return dbLocationNew.insert().then(saveDataToDB(dbLocationNew));
+                                    } else {
+                                        return saveDataToDB(dbLocationNew);
+                                    }
+                                });
+                            }
                             DBLocation dbLocationNew = new DBLocation(city, longitude, latitude);
                             return dbLocationNew.insert().then(saveDataToDB(dbLocationNew));
                         });
@@ -87,7 +104,7 @@ public class WeatherManager {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return dbLocation.setWeather("{\"data\":" + data + "}").then(Mono.just(data));
+        return dbLocation.setWeather("{\"data\":" + data + "}").then(Mono.just("{\"data\":" + data + "}"));
     }
 
     @NotNull
@@ -101,25 +118,42 @@ public class WeatherManager {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return dbLocation.set5DayWeather("{\"data\":" + data + "}").then(Mono.just(data));
+        return dbLocation.set5DayWeather("{\"data\":" + data + "}").then(Mono.just("{\"data\":" + data + "}"));
     }
 
-    public Mono<String> getSaved5DayWeatherData(String city){
+    public Mono<String> getSaved5DayWeatherData(String city, Double user_longitude, Double user_latitude){
+        String api_url = "https://api.myptv.com/geocoding/v1/locations/by-text?searchText=" + city.replaceAll("\\s+","") + "&apiKey=" + CredentialManager.get(Credential.PTV);
+        if (city.equals("XXX_No_City")){
+            api_url = "https://api.myptv.com/geocoding/v1/locations/by-position/"+ user_latitude +"/"+ user_longitude +"?language=de" + "&apiKey=" + CredentialManager.get(Credential.PTV);
+        }
+        String finalApi_url = api_url;
         return DatabaseManager.getLocations().getLocation(city).flatMap(dbLocation -> {
             if (dbLocation.getBean().getLatitude() == 0) {
-                return RequestHelper.fromUrl("https://api.myptv.com/geocoding/v1/locations/by-text?searchText=" + city + "&apiKey=" + CredentialManager.get(Credential.PTV))
-                        .addHeaders("searchText", city)
-                        .addHeaders("apiKey", CredentialManager.get(Credential.PTV))
+                return RequestHelper.fromUrl(finalApi_url)
+                        //.addHeaders("searchText", city)
+                        //.addHeaders("apiKey", CredentialManager.get(Credential.PTV))
                         .to(PTVResponse.class).flatMap(ptvResponse -> {
-                            System.out.println(ptvResponse);
                             Double latitude = ptvResponse.result().get(0).referencePosition().get("latitude");
                             Double longitude = ptvResponse.result().get(0).referencePosition().get("longitude");
+                            if (city.equals("XXX_No_City")) {
+                                String final_city = city;
+                                final_city = ptvResponse.result().get(0).address().city();
+                                String final_city1 = final_city;
+                                return DatabaseManager.getLocations().getLocation(final_city).flatMap(dbLocation2 -> {
+                                    DBLocation dbLocationNew = new DBLocation(final_city1, longitude, latitude);
+                                    if (dbLocation2.getBean().getLatitude() == 0) {
+                                        return dbLocationNew.insert().then(save5DayDataToDB(dbLocationNew));
+                                    } else {
+                                        return save5DayDataToDB(dbLocationNew);
+                                    }
+                                });
+                            }
                             DBLocation dbLocationNew = new DBLocation(city, longitude, latitude);
                             return dbLocationNew.insert().then(save5DayDataToDB(dbLocationNew));
                         });
             }
             //location found
-            if (dbLocation.get5DayWeatherData() != null && !Instant.ofEpochMilli(dbLocation.getBean().getCreationTime()).isBefore(Instant.now().minusMillis(Config.FIVE_DAY_WEATHER_DATA))) {
+            if (dbLocation.get5DayWeatherData() != null && !Instant.ofEpochMilli(dbLocation.getBean().getFiveDayCreationTime()).isBefore(Instant.now().minusMillis(Config.FIVE_DAY_WEATHER_DATA))) {
                 //WeatherData in DB found
                 return Mono.just(dbLocation.get5DayWeatherData());
             } else {
