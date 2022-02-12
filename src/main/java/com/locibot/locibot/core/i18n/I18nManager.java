@@ -10,7 +10,7 @@ import java.util.*;
 
 public class I18nManager {
 
-    public static final Locale[] LOCALES = {Locale.ENGLISH, Locale.FRENCH};
+    public static final Locale[] LOCALES = {Locale.ENGLISH, Locale.GERMAN};
 
     private static final Map<Locale, ResourceBundle> GLOBAL_BUNDLES = I18nManager.initialize("i18n", LOCALES);
     private static final Map<Locale, ResourceBundle> SPAM_BUNDLES = I18nManager.initialize("spam", LOCALES);
