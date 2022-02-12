@@ -1,4 +1,4 @@
-package com.locibot.webapi.weatherData;
+package com.locibot.webapi.weatherForecast;
 
 import com.locibot.locibot.data.credential.Credential;
 import com.locibot.locibot.data.credential.CredentialManager;
@@ -14,8 +14,8 @@ import reactor.core.publisher.Mono;
 import java.util.Objects;
 
 @Component
-public class WeatherDataHandler {
-    public Mono<ServerResponse> weatherData(ServerRequest request) {
+public class WeatherForecastHandler {
+    public Mono<ServerResponse> weatherForecast(ServerRequest request) {
 
         String token = request.queryParam("token").orElse("invalid login token");
         String city = request.queryParam("city").orElse("XXX_No_City");
@@ -27,17 +27,13 @@ public class WeatherDataHandler {
 
         try {
             if (tokenVerification.verify(Objects.requireNonNull(CredentialManager.get(Credential.JWT_SECRET)))) {
-                return weatherManager.getSavedCurrentWeatherData(city, longitude, latitude).flatMap(data -> {
-                    return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-                            .body(BodyInserters.fromValue(data));
-                });
+                return weatherManager.getSaved5DayWeatherData(city, longitude, latitude).flatMap(data -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+                        .body(BodyInserters.fromValue(data)));
             }
         } catch (Exception e) {
-            return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(new WeatherError("bad token")));
+            return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(new WeatherForecastError("bad token")));
         }
 
-        return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(new WeatherError("fatal error")));
+        return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(new WeatherForecastError("fatal error")));
     }
-
 }
-

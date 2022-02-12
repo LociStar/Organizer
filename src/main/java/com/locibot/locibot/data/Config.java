@@ -39,6 +39,9 @@ public class Config {
     public static final String DATABASE_NAME = PROPERTIES.getProperty("database.name");
     public static final long OWNER_GUILD_ID = Long.parseLong(PROPERTIES.getProperty("owner.guild.id"));
 
+    public static final long WEATHER_DATA = Long.parseLong(PROPERTIES.getProperty("weather.data.time"));
+    public static final long FIVE_DAY_WEATHER_DATA = Long.parseLong(PROPERTIES.getProperty("weather.fiveDayData.time"));
+
     private static Properties loadProperties() {
         final Properties properties = new Properties();
         try (final InputStream inputStream = Thread.currentThread().getContextClassLoader()

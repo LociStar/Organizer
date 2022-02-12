@@ -58,7 +58,7 @@ public class RequestHelper {
 
         final String contentType = resp.responseHeaders().get(HttpHeaderNames.CONTENT_TYPE);
         final boolean isXml = contentType.contains("text/xml");
-        final boolean isJson = contentType.contains(HttpHeaderValues.APPLICATION_JSON);
+        final boolean isJson = contentType.toLowerCase().contains(HttpHeaderValues.APPLICATION_JSON);
         if (!isXml && !isJson) {
             return byteBufMono.asString()
                     .defaultIfEmpty("Empty body")

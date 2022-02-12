@@ -21,7 +21,7 @@ public class WebLogin extends BaseCmd {
                 DatabaseManager.getGuilds().getDBMember(context.getGuildId(), context.getAuthorId()).flatMap(member ->
                 {
                     try {
-                        return context.createFollowupMessageEphemeral("A Link will be created.").then(context.editFollowupMessage("One moment pls").flatMap(Message::delete))
+                        return context.editFollowupMessage("A Link will be created.").flatMap(Message::delete)
                                 .then(context.createFollowupMessage(InteractionFollowupCreateSpec.builder()
                                         .ephemeral(true)
                                         .content("Use the link to login on Organizer-Website")
