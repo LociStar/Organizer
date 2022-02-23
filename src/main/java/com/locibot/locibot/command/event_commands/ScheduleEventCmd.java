@@ -5,18 +5,9 @@ import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
-import com.locibot.locibot.database.events_db.entity.DBEvent;
 import com.locibot.locibot.database.events_db.entity.DBEventMember;
 import discord4j.core.object.command.ApplicationCommandOption;
-import discord4j.core.object.component.ActionRow;
-import discord4j.core.object.component.Button;
-import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
-import discord4j.core.spec.EmbedCreateFields;
-import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.core.spec.InteractionFollowupCreateSpec;
-import discord4j.core.spec.MessageCreateSpec;
-import discord4j.rest.util.Color;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -46,14 +37,14 @@ public class ScheduleEventCmd extends BaseCmd {
         return context.createFollowupMessage("Event scheduled!").then(
                 DatabaseManager.getEvents().getDBEvent(context.getOptionAsString("event_title").orElseThrow()).flatMap(dbEvent -> {
                     if (!dbEvent.getOwner().getBean().getId().equals(context.getAuthor().getId().asLong())) {
-                        return context.createFollowupMessage("Only the event owner is allowed to create a schedule!");
+                        return context.createFollowupMessage(context.localize("event.schedule.owner"));
                     }
                     return dbEvent.updateSchedules(ZonedDateTime.of(LocalDateTime.of(newDate, newTime), ZoneId.of("Europe/Berlin")))
                             .delayElement(Duration.ofSeconds(1)).then(Flux.fromIterable(dbEvent.getMembers()).concatMap(dbEventMember ->
                                     context.getClient().getUserById(dbEventMember.getId()).flatMap(user -> DatabaseManager.getGuilds().getDBMember(context.getGuildId(), user.getId()).flatMap(dbMember -> {
                                         if (user.isBot()) {
                                             return context.getChannel().flatMap(textChannel -> textChannel.getGuild().flatMap(guild -> guild.getMemberById(user.getId()).flatMap(member ->
-                                                    context.createFollowupMessageEphemeral(member.getNickname().orElse(user.getUsername()) + " is a bot and can not be messaged."))));
+                                                    context.createFollowupMessageEphemeral(context.localize("event.schedule.bot").formatted(member.getNickname().orElse(user.getUsername()))))));
                                         } else if (dbMember.getBotRegister())
                                             return EventUtil.privateInvite(context, dbEvent, user);
                                         else {

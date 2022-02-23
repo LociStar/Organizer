@@ -30,13 +30,12 @@ public class CreateEventCmd extends BaseCmd {
     public Mono<?> execute(Context context) {
 
         if (DatabaseManager.getGuilds().getDBMember(context.getGuildId(), context.getAuthorId()) == null)
-            return context.createFollowupMessage("You can only create an event if you have registered with the bot.\n" +
-                    "If your server does not have a register button, contact a moderator.");
+            return context.createFollowupMessage(context.localize("event.create.restriction"));
 
         String eventName = context.getOptionAsString("title").orElse("error");
         if (DatabaseManager.getEvents().containsEvent(eventName))
-            return context.createFollowupMessage("This group name is already taken. Pls try another one.");
-        DBEvent event = new DBEvent(eventName, context.getOptionAsString("description"). orElse(null), context.getOptionAsString("icon").orElse(null));
+            return context.createFollowupMessage(context.localize("event.create.group"));
+        DBEvent event = new DBEvent(eventName, context.getOptionAsString("description").orElse(null), context.getOptionAsString("icon").orElse(null));
         List<Mono<User>> users = new ArrayList<>();
 
         for (int i = 1; i < 11; i++) {
@@ -48,6 +47,6 @@ public class CreateEventCmd extends BaseCmd {
                 .then(new DBEventMember(context.getEvent().getInteraction().getUser().getId().asLong(), eventName, 1, true).insert())
                 //add Members
                 .thenMany(Flux.concat(users).flatMap(user -> new DBEventMember(user.getId().asLong(), eventName, 0, false).insert()))
-                .then(context.createFollowupMessage("Created"));
+                .then(context.createFollowupMessage(context.localize("event.create.success")));
     }
 }

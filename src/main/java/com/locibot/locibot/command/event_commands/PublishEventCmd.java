@@ -28,11 +28,11 @@ public class PublishEventCmd extends BaseCmd {
         String title = context.getOptionAsString("event_title").orElseThrow();
 
         if (!DatabaseManager.getEvents().containsEvent(title))
-            return context.createFollowupMessage("No event found with the title: " + title);
+            return context.createFollowupMessage(context.localize("event.publish.title.error").formatted(title));
 
         return DatabaseManager.getEvents().getDBEvent(title).flatMap(dbEvent -> {
             if (!dbEvent.isScheduled())
-                return context.createFollowupMessage("The event must first be scheduled to be published!");
+                return context.createFollowupMessage(context.localize("event.publish.schedule"));
             if (dbEvent.getOwner().getId().asLong() == context.getAuthor().getId().asLong())
                 //noinspection ConstantConditions
                 return context.getGuild().flatMap(guild -> guild.getMemberById(dbEvent.getOwner().getId())).flatMap(owner ->
@@ -40,22 +40,22 @@ public class PublishEventCmd extends BaseCmd {
                                 .content("@everyone")
                                 .addEmbed(EmbedCreateSpec.builder()
                                         .color(Color.BLUE)
-                                        .title("Event")
+                                        .title(context.localize("event.publish.title"))
                                         .thumbnail(dbEvent.getIcon() == null ? owner.getAvatarUrl() : dbEvent.getIcon())
-                                        .description("Join the event **%s**".formatted(dbEvent.getEventName()))
-                                        .footer(EmbedCreateFields.Footer.of("Author: %s".formatted(owner.getUsername()), owner.getAvatarUrl()))
-                                        .addField(EmbedCreateFields.Field.of("Description", dbEvent.getEventDescription() + "\n", false))
-                                        .addField(EmbedCreateFields.Field.of("Date",
-                                                "%s Uhr".formatted(ZonedDateTime.ofInstant(
+                                        .description(context.localize("event.publish.join").formatted(dbEvent.getEventName()))
+                                        .footer(EmbedCreateFields.Footer.of(context.localize("event.author").formatted(owner.getUsername()), owner.getAvatarUrl()))
+                                        .addField(EmbedCreateFields.Field.of(context.localize("event.description"), dbEvent.getEventDescription() + "\n", false))
+                                        .addField(EmbedCreateFields.Field.of(context.localize("event.publish.date"),
+                                                context.localize("event.time").formatted(ZonedDateTime.ofInstant(
                                                         Instant.ofEpochSecond(dbEvent.getBean().getScheduledDate()),
                                                         ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("dd.MM.yyyy, hh:mm"))),
                                                 false))
                                         .build())
                                 .addComponent(ActionRow.of(
-                                        Button.success("joinButton_" + title, "Join"),
-                                        Button.danger("leaveButton_" + title, "Leave")))
+                                        Button.success("joinButton_" + title, context.localize("event.publish.button.join")),
+                                        Button.danger("leaveButton_" + title, context.localize("event.publish.button.leave"))))
                                 .build()));
-            return context.createFollowupMessage("You are not the event owner, so you can not publish it.");
+            return context.createFollowupMessage(context.localize("event.publish.restriction"));
         });
     }
 }

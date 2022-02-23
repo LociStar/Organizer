@@ -24,12 +24,12 @@ public class DeleteEventCmd extends BaseCmd {
                 {
                     //check if author is owner
                     if (event.getOwner().getId().equals(context.getAuthorId())) {
-                        return event.delete().then(context.createFollowupMessage("Event **" + eventName + "** has been deleted!"));
+                        return event.delete().then(context.createFollowupMessage(context.localize("event.delete.success").formatted(eventName)));
                     }
-                    return context.createFollowupMessage("You are not the owner of " + eventName + "!");
+                    return context.createFollowupMessage(context.localize("event.delete.restriction").formatted(eventName));
                 });
             }
-            return context.createFollowupMessage(eventName + " does not exist!");
+            return context.createFollowupMessage(context.localize("event.delete.empty").formatted(eventName));
         });
     }
 }
