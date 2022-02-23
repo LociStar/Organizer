@@ -21,9 +21,9 @@ public class JoinEventButtonCmd extends BaseCmdButton {
                 .flatMap(dbMembers -> {
                             if (!dbMembers.containsKey(context.getAuthorId()))
                                 return DatabaseManager.getEvents().getDBEvent(eventName).flatMap(dbEvent ->
-                                        context.createFollowupMessageEphemeral("You have joined the event: " + "eventName")
+                                        context.createFollowupMessageEphemeral(context.localize("event.button.join.joined").formatted("eventName"))
                                                 .then(context.getClient().getUserById(context.getAuthorId()).flatMap(user -> dbEvent.addMember(user, 1))));
-                            return context.createFollowupMessageEphemeral("You have already joined the event!");
+                            return context.createFollowupMessageEphemeral(context.localize("event.button.join.joined.already"));
                         }
                 );
     }

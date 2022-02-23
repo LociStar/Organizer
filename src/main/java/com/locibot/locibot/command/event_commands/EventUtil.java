@@ -31,17 +31,17 @@ public abstract class EventUtil {
                                 .title("Event invitation")
                                 .thumbnail(dbEvent.getIcon() == null ? owner.getAvatarUrl() : dbEvent.getIcon())
                                 .description("Invitation to **" + dbEvent.getEventName() + "**")
-                                .footer(EmbedCreateFields.Footer.of("Only users who do not want to receive direct messages from the bot are listed above.\nAuthor: " + owner.getUsername(), owner.getAvatarUrl()))
-                                .addField(EmbedCreateFields.Field.of("Description", dbEvent.getEventDescription() + "\n", false))
-                                .addField(EmbedCreateFields.Field.of("Date & Time",
-                                        "%s Uhr".formatted(ZonedDateTime.ofInstant(
+                                .footer(EmbedCreateFields.Footer.of(context.localize("event.util.footer").formatted(owner.getUsername()), owner.getAvatarUrl()))
+                                .addField(EmbedCreateFields.Field.of(context.localize("event.description"), dbEvent.getEventDescription() + "\n", false))
+                                .addField(EmbedCreateFields.Field.of(context.localize("event.util.date"),
+                                        context.localize("event.time").formatted(ZonedDateTime.ofInstant(
                                                 Instant.ofEpochSecond(dbEvent.getBean().getScheduledDate()),
                                                 ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("dd.MM.yyyy, hh:mm"))),
                                         false))
-                                .addField(EmbedCreateFields.Field.of("Users", usersString.stream().map(String::toString).collect(Collectors.joining(",")) + "\n", false))
+                                .addField(EmbedCreateFields.Field.of(context.localize("event.util.users"), usersString.stream().map(String::toString).collect(Collectors.joining(",")) + "\n", false))
                                 .build())
                         .content(usersString.stream().map(String::toString).collect(Collectors.joining(",")))
-                        .addComponent(createButtons(dbEvent))
+                        .addComponent(createButtons(dbEvent, context))
                         .build()));
     }
 
@@ -52,24 +52,24 @@ public abstract class EventUtil {
                         privateChannel.createMessage(MessageCreateSpec.builder()
                                 .addEmbed(EmbedCreateSpec.builder()
                                         .color(Color.BLUE)
-                                        .title("Event invitation")
+                                        .title(context.localize("event.util.invitation"))
                                         .thumbnail(dbEvent.getIcon() == null ? owner.getAvatarUrl() : dbEvent.getIcon())
                                         .description("You got invited to **" + dbEvent.getEventName() + "**")
-                                        .addField(EmbedCreateFields.Field.of("Date & Time",
-                                                "%s Uhr".formatted(ZonedDateTime.ofInstant(
+                                        .addField(EmbedCreateFields.Field.of(context.localize("event.util.date"),
+                                                context.localize("event.time").formatted(ZonedDateTime.ofInstant(
                                                         Instant.ofEpochSecond(dbEvent.getBean().getScheduledDate()),
                                                         ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("dd.MM.yyyy, hh:mm"))),
                                                 false))
-                                        .footer(EmbedCreateFields.Footer.of("Author: " + owner.getUsername(), owner.getAvatarUrl()))
-                                        .addField(EmbedCreateFields.Field.of("Description", dbEvent.getEventDescription() + "\n", false))
+                                        .footer(EmbedCreateFields.Footer.of(context.localize("event.author").formatted(owner.getUsername()), owner.getAvatarUrl()))
+                                        .addField(EmbedCreateFields.Field.of(context.localize("event.description"), dbEvent.getEventDescription() + "\n", false))
                                         .build())
-                                .addComponent(createButtons(dbEvent)).build())));
+                                .addComponent(createButtons(dbEvent, context)).build())));
     }
 
     @NotNull
-    private static ActionRow createButtons(DBEvent dbEvent) {
+    private static ActionRow createButtons(DBEvent dbEvent, Context context) {
         return ActionRow.of(
-                Button.success("acceptInviteButton_" + dbEvent.getEventName(), "Accept"),
-                Button.danger("declineInviteButton_" + dbEvent.getEventName(), "Decline"));
+                Button.success("acceptInviteButton_" + dbEvent.getEventName(), context.localize("event.util.button.accept")),
+                Button.danger("declineInviteButton_" + dbEvent.getEventName(), context.localize("event.util.button.decline")));
     }
 }

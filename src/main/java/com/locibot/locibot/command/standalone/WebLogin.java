@@ -21,16 +21,16 @@ public class WebLogin extends BaseCmd {
                 DatabaseManager.getGuilds().getDBMember(context.getGuildId(), context.getAuthorId()).flatMap(member ->
                 {
                     try {
-                        return context.editFollowupMessage("A Link will be created.").flatMap(Message::delete)
+                        return context.editFollowupMessage(context.localize("web.link")).flatMap(Message::delete)
                                 .then(context.createFollowupMessage(InteractionFollowupCreateSpec.builder()
                                         .ephemeral(true)
-                                        .content("Use the link to login on Organizer-Website")
-                                        .addComponent(ActionRow.of(Button.link("https://organizer-bot-website.herokuapp.com/home.html?token=" + member.generateLoginToken(), "Link")))
+                                        .content(context.localize("web.use"))
+                                        .addComponent(ActionRow.of(Button.link(context.localize("web.url").formatted(member.generateLoginToken()), "Link")))
                                         //.addComponent(ActionRow.of(Button.link("https://organizer-bot-website.herokuapp.com/", "Link")))
                                         .build()));
                     } catch (Exception e) {
                         e.printStackTrace();
-                        return context.createFollowupMessageEphemeral("Error while generating a login token. Pleas contact the bot owner");
+                        return context.createFollowupMessageEphemeral(context.localize("web.error"));
                     }
                 }));
     }

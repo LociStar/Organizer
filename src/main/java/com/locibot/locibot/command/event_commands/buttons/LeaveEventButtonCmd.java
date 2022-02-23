@@ -18,13 +18,13 @@ public class LeaveEventButtonCmd extends BaseCmdButton {
         String eventName = context.getEvent().getInteraction().getCommandInteraction().orElseThrow().getCustomId().orElse("error_error").split("_")[1];
         return DatabaseManager.getEvents().getDBEvent(eventName).flatMap(dbEvent ->
                 DatabaseManager.getEvents().getDBEvent(eventName).flatMapIterable(DBEvent::getMembers).collectMap(DBEventMember::getId).flatMap(members -> {
-                    if (context.getAuthor().getId().asLong() == dbEvent.getOwner().getId().asLong()){
-                        return context.createFollowupMessageEphemeral("You are the event owner. You can not leave it!");
+                    if (context.getAuthor().getId().asLong() == dbEvent.getOwner().getId().asLong()) {
+                        return context.createFollowupMessageEphemeral(context.localize("event.button.leave.error"));
                     }
                     if (members.containsKey(context.getAuthorId()))
                         return dbEvent.removeMember(members.get(context.getAuthorId()))
-                                .then(context.createFollowupMessageEphemeral("You left the event."));
-                    return context.createFollowupMessageEphemeral("You are not a member of this event, so you can not leave it ;)");
+                                .then(context.createFollowupMessageEphemeral(context.localize("event.button.leave.left")));
+                    return context.createFollowupMessageEphemeral(context.localize("event.button.leave.left.error"));
 
                 })
         );
