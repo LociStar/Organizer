@@ -38,7 +38,7 @@ public class PetPet extends BaseCmd {
         int fps = this.getClampedFPS(15);
         float scale = 1;
 
-        return context.createFollowupMessage("Here is your pet: ")
+        return context.createFollowupMessage(context.localize("petpet.success"))
                 .then(context.getAuthor().getAvatar().flatMap(image -> {
                     try {
                         if (context.getOptionAsString("url").isPresent()) {
@@ -59,7 +59,7 @@ public class PetPet extends BaseCmd {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    return context.createFollowupMessage("Ups.. something broke^^");
+                    return context.createFollowupMessage(context.localize("petpet.error"));
                 }).onErrorReturn(context.createFollowupMessage(Emoji.RED_FLAG, context.localize("exception.server.access")
                         .formatted(context.getFullCommandName()))));
     }
