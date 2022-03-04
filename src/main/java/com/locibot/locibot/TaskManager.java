@@ -13,7 +13,7 @@ import com.locibot.locibot.object.ExceptionHandler;
 import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.LogUtil;
 import com.locibot.locibot.utils.SystemUtil;
-import com.locibot.locibot.utils.weather.HourlyWeatherForecastClass;
+import com.locibot.locibot.utils.weather.WeatherMapManager;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.gateway.GatewayClient;
 import discord4j.gateway.GatewayClientGroup;
@@ -33,7 +33,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-
+@Deprecated
 public class TaskManager {
 
     private static final Scheduler DEFAULT_SCHEDULER = Schedulers.boundedElastic();
@@ -191,7 +191,7 @@ public class TaskManager {
                                         gateway.getUserById(dbMember.getId()).flatMap(user ->
                                                 user.getPrivateChannel().flatMap(privateChannel ->
                                                         privateChannel.createMessage("Daily weather forecast of " + city + ":")
-                                                                .then(Mono.just(new HourlyWeatherForecastClass(owm, city)).flatMap(hwfc ->
+                                                                .then(Mono.just(new WeatherMapManager(city)).flatMap(hwfc ->
                                                                         privateChannel.createMessage(messageCreateSpec -> {
                                                                             try {
                                                                                 byte[] bytes = hwfc.createHeatMap();
@@ -215,7 +215,7 @@ public class TaskManager {
                                     })));
                     LOGGER.info("weather subscriptions send");
                 }).subscribe(null, ExceptionHandler::handleUnknownError);
-        this.tasks.add(task);
+        //this.tasks.add(task);
     }
 
     public void stop() {
