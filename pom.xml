@@ -259,9 +259,9 @@
             <version>20160810</version>
         </dependency>
         <dependency>
-            <groupId>com.github.prominence</groupId>
-            <artifactId>openweathermap-api</artifactId>
-            <version>2.2.0</version>
+            <groupId>com.github.LociStar</groupId>
+            <artifactId>openweathermap-java-api</artifactId>
+            <version>b8211c91e5</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
