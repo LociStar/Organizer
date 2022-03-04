@@ -23,8 +23,14 @@ public class DBLocationBean implements Bean {
     @Nullable
     @JsonProperty("fiveDayCreationTime")
     private long fiveDayCreationTime;
+    @Nullable
+    @JsonProperty("currentWeatherData")
+    private String currentWeatherData;
+    @Nullable
+    @JsonProperty("currentWeatherCreationTime")
+    private long currentWeatherCreationTime;
 
-    public DBLocationBean(String name, double longitude, double latitude, @Nullable String weatherData, @Nullable long creationTime, @Nullable String fiveDayWeatherData, @Nullable long fiveDayCreationTime) {
+    public DBLocationBean(String name, double longitude, double latitude, @Nullable String weatherData, @Nullable long creationTime, @Nullable String fiveDayWeatherData, @Nullable long fiveDayCreationTime, @Nullable String currentWeatherData, @Nullable long currentWeatherCreationTime) {
         this.name = name;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -35,7 +41,7 @@ public class DBLocationBean implements Bean {
     }
 
     public DBLocationBean(String name, double longitude, double latitude) {
-        this(name, longitude, latitude, null, 0L, null, 0L);
+        this(name, longitude, latitude, null, 0L, null, 0L, null, 0L);
     }
 
     public DBLocationBean() {
@@ -69,5 +75,14 @@ public class DBLocationBean implements Bean {
 
     public long getFiveDayCreationTime() {
         return fiveDayCreationTime;
+    }
+
+    @Nullable
+    public String getCurrentWeatherData() {
+        return currentWeatherData;
+    }
+
+    public long getCurrentWeatherCreationTime() {
+        return currentWeatherCreationTime;
     }
 }

@@ -59,11 +59,33 @@ public class DBLocation extends SerializableEntity<DBLocationBean> implements Da
                 .doOnTerminate(() -> DatabaseManager.getLocations().invalidateCache(this.getBean().getName()));
     }
 
+    public Mono<UpdateResult> setCurrentWeather(String data) {
+        return Mono.from(DatabaseManager.getLocations()
+                        .getCollection()
+                        .updateOne(
+                                Filters.eq("_id", this.getBean().getName()),
+                                List.of(Updates.set("currentWeatherData", data),
+                                        Updates.set("currentWeatherCreationTime", Instant.now().toEpochMilli())),
+                                new UpdateOptions().upsert(true)))
+                .doOnSubscribe(__ -> {
+                    LocationsCollection.LOGGER.debug("[DBLocation {}] Location update: {}", this.getBean().getName(), data + " ");
+                    Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getLocations().getName()).inc();
+                })
+                .doOnNext(result -> LocationsCollection.LOGGER.trace("[DBLocation {}] Location update result: {}",
+                        this.getBean().getName(), result))
+                .doOnTerminate(() -> DatabaseManager.getLocations().invalidateCache(this.getBean().getName()));
+    }
+
     public String getWeatherData() {
         return this.getBean().getWeatherData();
     }
+
     public String get5DayWeatherData() {
         return this.getBean().getFiveDayWeatherData();
+    }
+
+    public String getCurrentWeatherData() {
+        return this.getBean().getCurrentWeatherData();
     }
 
     @Override
