@@ -2,6 +2,7 @@ package com.locibot.webapi.weather;
 
 import java.util.Arrays;
 
+@Deprecated
 public class Weather {
     private byte[] weatherData;
 
