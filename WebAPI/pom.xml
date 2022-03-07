@@ -48,7 +48,7 @@
         <dependency>
             <groupId>com.locibot.locibot</groupId>
             <artifactId>locibot</artifactId>
-            <version>3.0.3-SNAPSHOT</version>
+            <version>3.0.3</version>
             <scope>compile</scope>
         </dependency>
 		<dependency>
