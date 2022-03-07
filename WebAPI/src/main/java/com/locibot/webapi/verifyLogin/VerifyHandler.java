@@ -3,6 +3,7 @@ package com.locibot.webapi.verifyLogin;
 import com.locibot.locibot.data.credential.Credential;
 import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.utils.JWT.TokenVerification;
+import com.locibot.webapi.utils.Verification;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,9 @@ public class VerifyHandler {
 
     @NotNull
     public Mono<ServerResponse> verify(ServerRequest request) {
-        String token = request.queryParam("token").orElse("invalid token");
+        if (!Verification.checkCookie(request))
+            return ServerResponse.badRequest().body(BodyInserters.fromValue("Bad SessionCookie"));
+        String token = request.cookies().get("login").get(0).getValue();
         TokenVerification tokenVerification = new TokenVerification(token);
         Boolean valid = false;
         try {

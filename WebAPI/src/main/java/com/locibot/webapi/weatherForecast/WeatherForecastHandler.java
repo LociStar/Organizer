@@ -4,6 +4,7 @@ import com.locibot.locibot.data.credential.Credential;
 import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.utils.JWT.TokenVerification;
 import com.locibot.locibot.utils.weather.WeatherManager;
+import com.locibot.webapi.utils.Verification;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -16,8 +17,9 @@ import java.util.Objects;
 @Component
 public class WeatherForecastHandler {
     public Mono<ServerResponse> weatherForecast(ServerRequest request) {
-
-        String token = request.queryParam("token").orElse("invalid login token");
+        if (!Verification.checkCookie(request))
+            return ServerResponse.badRequest().body(BodyInserters.fromValue("Bad LoginCookie"));
+        String token = request.cookies().get("login").get(0).getValue();
         String city = request.queryParam("city").orElse("XXX_No_City");
         Double longitude = Double.parseDouble(request.queryParam("long").orElse("0"));
         Double latitude = Double.parseDouble(request.queryParam("lat").orElse("0"));

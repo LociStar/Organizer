@@ -4,6 +4,7 @@ import com.locibot.locibot.data.credential.Credential;
 import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.utils.JWT.TokenVerification;
+import com.locibot.webapi.utils.Verification;
 import discord4j.common.util.Snowflake;
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
@@ -19,7 +20,9 @@ import java.util.Objects;
 public class LoginHandler {
 
     public Mono<ServerResponse> login(ServerRequest request) {
-        String token = request.queryParam("token").orElse("invalid login token");
+        if (!Verification.checkCookie(request))
+            return ServerResponse.badRequest().body(BodyInserters.fromValue("Bad SessionCookie"));
+        String token = request.cookies().get("login").get(0).getValue();
         TokenVerification tokenVerification = new TokenVerification(token);
         boolean valid = false;
         try {
@@ -28,11 +31,7 @@ public class LoginHandler {
             e.printStackTrace();
         }
         JSONObject payload = tokenVerification.getPayload();
-        System.out.println("gid:" + payload.get("gid"));
-        System.out.println("uid:" +payload.get("uid"));
         String tokenSub = payload.get("sub").toString();
-
-        //System.out.println(payload);
 
         if (valid && Objects.equals(tokenSub, "login")) {
             //System.out.println("OK");
