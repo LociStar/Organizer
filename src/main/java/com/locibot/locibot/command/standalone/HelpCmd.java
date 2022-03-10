@@ -3,6 +3,7 @@ package com.locibot.locibot.command.standalone;
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.core.i18n.I18nContext;
+import com.locibot.locibot.data.Config;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.guilds.entity.Settings;
 import com.locibot.locibot.utils.LociBotUtil;
@@ -16,10 +17,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class HelpCmd extends BaseCmd {
 
@@ -29,21 +27,21 @@ public class HelpCmd extends BaseCmd {
     }
 
     private static EmbedCreateSpec formatEmbed(I18nContext context, Map<CommandCategory, Collection<String>> map, String avatarUrl) {
-        EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
-        embed.author(EmbedCreateFields.Author.of(context.localize("help.title"), "https://github.com/LociStar/", avatarUrl));
-        embed.description(context.localize("help.description")
-                //.formatted(Config.SUPPORT_SERVER_URL, Config.PATREON_URL));
-                .formatted("https://discord.gg/Mb8AD99v", "https://github.com/LociStar/"));
-        embed.footer(EmbedCreateFields.Footer.of(context.localize("help.footer"), "https://i.imgur.com/eaWQxvS.png"));
-
+        List<EmbedCreateFields.Field> fields = new ArrayList<>();
         for (final CommandCategory category : CommandCategory.values()) {
             final Collection<String> cmds = map.get(category);
             if (cmds != null && !cmds.isEmpty()) {
-                embed.addField(EmbedCreateFields.Field.of(context.localize("help.field.title").formatted(category.getName()),
+                fields.add(EmbedCreateFields.Field.of(context.localize("help.field.title").formatted(category.getName()),
                         String.join(" ", cmds), false));
             }
         }
-        return LociBotUtil.getDefaultEmbed(embed.build());
+        return LociBotUtil.getDefaultEmbed(
+                EmbedCreateSpec.builder()
+                        .author(context.localize("help.title"), "https://github.com/LociStar/Organizer/wiki/Commands", avatarUrl)
+                        .description(context.localize("help.description")
+                                .formatted(Config.SUPPORT_SERVER_URL)) //Config.PATREON_URL
+                        .footer(context.localize("help.footer"), "https://i.imgur.com/eaWQxvS.png")
+                        .addAllFields(fields).build());
     }
 
     private static Mono<Map<CommandCategory, Collection<String>>> getMultiMap(Context context, List<CommandPermission> authorPermissions) {
@@ -65,8 +63,8 @@ public class HelpCmd extends BaseCmd {
                 // ... and removes commands that are not allowed by the guild
                 .filterWhen(cmd -> BooleanUtils.or(getIsDm,
                         getSettings.map(settings ->
-                                settings.isCommandAllowed(cmd)
-                                        && settings.isCommandAllowedInChannel(cmd, context.getChannelId()))
+                                        settings.isCommandAllowed(cmd)
+                                                && settings.isCommandAllowedInChannel(cmd, context.getChannelId()))
                                 .defaultIfEmpty(true)))
                 .flatMapIterable(cmd -> {
                     if (cmd instanceof BaseCmdGroup group) {
@@ -84,12 +82,12 @@ public class HelpCmd extends BaseCmd {
         final Optional<String> cmdNameOpt = context.getOptionAsString("command");
         if (cmdNameOpt.isPresent()) {
             final String cmdName = cmdNameOpt.orElseThrow();
-            final BaseCmd cmd = CommandManager.getCommand(cmdName);
-            if (cmd == null) {
+            final BaseCmd baseCmd = CommandManager.getCommand(cmdName);
+            if (baseCmd == null) {
                 return Mono.error(new CommandException(context.localize("help.cmd.not.found")
                         .formatted(cmdName)));
             }
-            return context.createFollowupMessage(cmd.getHelp(context));
+            return context.createFollowupMessage(baseCmd.getHelp(context));
         }
 
         return context.getPermissions()

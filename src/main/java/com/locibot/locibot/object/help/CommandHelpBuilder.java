@@ -17,8 +17,8 @@ public class CommandHelpBuilder extends HelpBuilder {
         this.description(cmd.getDescription());
     }
 
-    public static CommandHelpBuilder create(Context context, BaseCmd cmd) {
-        return new CommandHelpBuilder(context, cmd);
+    public static CommandHelpBuilder create(Context context, BaseCmd baseCmd) {
+        return new CommandHelpBuilder(context, baseCmd);
     }
 
     @Override
