@@ -26,8 +26,8 @@ public class InviteCmd extends BaseCmd {
                                         .formatted(Config.INVITE_URL), true),
                                 EmbedCreateFields.Field.of(context.localize("invite.support"), context.localize("invite.link")
                                         .formatted(Config.SUPPORT_SERVER_URL), true),
-                                EmbedCreateFields.Field.of(context.localize("invite.donation"), context.localize("invite.link")
-                                        .formatted(Config.PATREON_URL), true),
+                                /*EmbedCreateFields.Field.of(context.localize("invite.donation"), context.localize("invite.link")
+                                        .formatted(Config.PATREON_URL), true),*/
                                 EmbedCreateFields.Field.of(context.localize("invite.vote"), context.localize("invite.link")
                                         .formatted(Config.TOP_GG_URL), true))).build()));
     }
