@@ -9,6 +9,7 @@
     <hr>
     <h2>Usage</h2>
     <a></a>
+    <p><b>Check out the <a href="https://github.com/LociStar/Organizer/wiki/commands">wiki</a> if you want to see a list of all commands!</b></p>
     <p><b>Contact me on Discord if you have questions in adding this bot to your own server!</b></p>
     <p><b>You can use the <a href="https://discord.com/api/oauth2/authorize?client_id=597091642440155158&permissions=8&scope=bot%20applications.commands">
         link</a>, to add Organizer to your server.</b></p>
