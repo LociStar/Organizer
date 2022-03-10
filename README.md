@@ -2,7 +2,7 @@
 <html>
 <body>
     <a href="https://discord.com/api/oauth2/authorize?client_id=597091642440155158&permissions=8&scope=bot%20applications.commands">
-        <img align="right" src="https://image.flaticon.com/icons/png/512/544/544539.png" height="220" width="220">
+        <img align="right" src="https://user-images.githubusercontent.com/56027938/157656800-0797db5b-6f11-46eb-bed7-868d4ee55e44.png" height="220" width="220">
     </a>
     <h1>Organizer</h1>
     <p><b>A configurable multipurpose bot bringing you organizing commands, multiplayer games, moderation commands and more!</b></p>
