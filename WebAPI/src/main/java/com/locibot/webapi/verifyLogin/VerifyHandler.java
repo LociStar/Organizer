@@ -19,9 +19,9 @@ public class VerifyHandler {
 
     @NotNull
     public Mono<ServerResponse> verify(ServerRequest request) {
-        if (!Verification.checkCookie(request))
-            return ServerResponse.badRequest().body(BodyInserters.fromValue("Bad SessionCookie"));
-        String token = request.cookies().get("login").get(0).getValue();
+        if (Verification.isAuthenticationInvalid(request))
+            return ServerResponse.badRequest().body(BodyInserters.fromValue(new Verify(false)));
+        String token = request.headers().header("Authentication").get(0).split(" ")[1];
         TokenVerification tokenVerification = new TokenVerification(token);
         Boolean valid = false;
         try {

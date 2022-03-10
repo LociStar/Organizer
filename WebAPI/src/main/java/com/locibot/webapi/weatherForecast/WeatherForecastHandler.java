@@ -17,9 +17,9 @@ import java.util.Objects;
 @Component
 public class WeatherForecastHandler {
     public Mono<ServerResponse> weatherForecast(ServerRequest request) {
-        if (!Verification.checkCookie(request))
-            return ServerResponse.badRequest().body(BodyInserters.fromValue("Bad LoginCookie"));
-        String token = request.cookies().get("login").get(0).getValue();
+        if (Verification.isAuthenticationInvalid(request))
+            return ServerResponse.badRequest().body(BodyInserters.fromValue(new WeatherForecastError("bad token")));
+        String token = request.headers().header("Authentication").get(0).split(" ")[1];
         String city = request.queryParam("city").orElse("XXX_No_City");
         Double longitude = Double.parseDouble(request.queryParam("long").orElse("0"));
         Double latitude = Double.parseDouble(request.queryParam("lat").orElse("0"));

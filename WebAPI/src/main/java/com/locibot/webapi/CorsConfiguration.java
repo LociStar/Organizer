@@ -14,11 +14,11 @@ public class CorsConfiguration implements WebFluxConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                //.allowedOrigins("http://localhost:8080")
-                .allowCredentials(true)
-                .allowedOrigins("https://organizer-bot-website.herokuapp.com")
+                //.allowCredentials(true)
+                //.allowedOrigins("https://organizer-bot-website.herokuapp.com")
+                .allowedOrigins("https://organizer-bot-website.herokuapp.com","http://localhost:8080")
                 .allowedHeaders("*")
-                .exposedHeaders("Access-Control-Allow-Origin");
+                .exposedHeaders("Access-Control-Allow-Origin"); //, "Access-Control-Allow-Credentials", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods"
     }
 }
 /*

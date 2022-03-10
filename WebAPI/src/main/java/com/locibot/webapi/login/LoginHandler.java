@@ -8,21 +8,21 @@ import com.locibot.webapi.utils.Verification;
 import discord4j.common.util.Snowflake;
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.Objects;
 
 @Component
 public class LoginHandler {
 
     public Mono<ServerResponse> login(ServerRequest request) {
-        if (!Verification.checkCookie(request))
-            return ServerResponse.badRequest().body(BodyInserters.fromValue("Bad SessionCookie"));
-        String token = request.cookies().get("login").get(0).getValue();
+        String token = request.queryParam("token").orElse("Bad Token");
         TokenVerification tokenVerification = new TokenVerification(token);
         boolean valid = false;
         try {
@@ -39,11 +39,10 @@ public class LoginHandler {
             {
                 try {
                     return dbMember.generateAccessToken()
-                            .then(DatabaseManager.getGuilds().getDBMember(Snowflake.of(payload.get("gid").toString()), Snowflake.of(payload.get("uid").toString())).flatMap(member -> {
-                                //System.out.println(member.getAccessToken());
-                                return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-                                        .body(BodyInserters.fromValue(new Login(member.getAccessToken())));
-                            }));
+                            .then(DatabaseManager.getGuilds().getDBMember(Snowflake.of(payload.get("gid").toString()), Snowflake.of(payload.get("uid").toString())).flatMap(member ->
+                                    ServerResponse.ok()
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .body(BodyInserters.fromValue(new Login(member.getAccessToken())))));
                 } catch (Exception e) {
                     e.printStackTrace();
                     return ServerResponse.badRequest().body(BodyInserters.fromValue(new Login("Bad Token")));
