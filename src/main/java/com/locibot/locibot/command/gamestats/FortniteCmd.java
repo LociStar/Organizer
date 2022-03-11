@@ -37,6 +37,7 @@ public class FortniteCmd extends BaseCmd {
                 .withTtl(Config.CACHE_TTL)
                 .build();
         this.apiKey = CredentialManager.get(Credential.FORTNITE_API_KEY);
+        this.setEnabled(false);
     }
 
     private static boolean isNotFound(Throwable err) {

@@ -55,6 +55,7 @@ public class CounterStrikeCmd extends BaseCmd {
         this.steamIdCache = MultiValueCache.Builder.<String, String>builder().withTtl(Config.CACHE_TTL).build();
         this.playerSummaryCache = MultiValueCache.Builder.<String, PlayerSummary>builder().withTtl(Config.CACHE_TTL).build();
         this.userStatsCache = MultiValueCache.Builder.<String, String>builder().withTtl(Config.CACHE_TTL).build();
+        this.setEnabled(false);
     }
 
     private static String getIdentificator(String arg) {

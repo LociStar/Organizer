@@ -43,6 +43,7 @@ public class OverwatchCmd extends BaseCmd {
         this.cachedValues = MultiValueCache.Builder.<String, OverwatchProfile>builder()
                 .withTtl(Config.CACHE_TTL)
                 .build();
+        this.setEnabled(false);
     }
 
     private static EmbedCreateSpec formatEmbed(Context context, OverwatchProfile overwatchProfile, Platform platform) {

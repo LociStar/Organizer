@@ -61,6 +61,7 @@ public class DiabloCmd extends BaseCmd {
                 .build();
         this.profileCache = MultiValueCache.Builder.<String, ProfileResponse>builder().withTtl(Config.CACHE_TTL).build();
         this.heroCache = MultiValueCache.Builder.<String, HeroResponse>builder().withTtl(Config.CACHE_TTL).build();
+        this.setEnabled(false);
     }
 
     private static String buildProfileApiUrl(String accessToken, Region region, String battletag) {
