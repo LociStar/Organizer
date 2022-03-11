@@ -138,6 +138,8 @@ public class CommandManager {
     }
 
     public static Mono<Void> registerGuildCommands(ApplicationService applicationService, long applicationId, long guildId) {
+        if (guildId == Config.OWNER_GUILD_ID)
+            return Mono.empty();
         final Mono<Long> registerGuildCommands = Flux.fromIterable(COMMANDS_MAP.values())
                 .filter(cmd -> cmd.getCategory() != CommandCategory.OWNER || cmd.getPermission() == CommandPermission.USER_GUILD || cmd.getPermission() == CommandPermission.ADMIN)
                 .map(BaseCmd::asRequest)
