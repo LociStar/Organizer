@@ -14,6 +14,7 @@ public class Hello extends BaseCmd {
 
     @Override
     public Mono<?> execute(Context context) {
+        context.getClient();
         return context.getEvent().getInteractionResponse().createFollowupMessage("Hello");
     }
 }

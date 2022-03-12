@@ -19,7 +19,7 @@ public class AllowedRolesSetting extends BaseCmd {
 
     public AllowedRolesSetting() {
         super(CommandCategory.SETTING, CommandPermission.ADMIN,
-                "allowed_roles", "Manage role(s) that can interact with Shadbot");
+                "allowed_roles", "Manage role(s) that can interact with Organizer");
 
         this.addOption(option -> option.name("action")
                 .description("Whether to add or remove a role from the allowed ones")
@@ -48,7 +48,7 @@ public class AllowedRolesSetting extends BaseCmd {
                 .type(ApplicationCommandOption.Type.ROLE.getValue()));
 
 /* TODO               .fields("Info", "**server owner** and **administrators** "
-                        + "will always be able to interact with Shadbot.", false)
+                        + "will always be able to interact with Organizer.", false)
  */
     }
 
