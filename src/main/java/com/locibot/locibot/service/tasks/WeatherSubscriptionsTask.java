@@ -6,6 +6,7 @@ import com.locibot.locibot.data.credential.CredentialManager;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.object.ExceptionHandler;
 import com.locibot.locibot.utils.LogUtil;
+import com.locibot.locibot.utils.weather.WeatherManager;
 import com.locibot.locibot.utils.weather.WeatherMapManager;
 import discord4j.core.GatewayDiscordClient;
 import net.aksingh.owmjapis.core.OWM;
@@ -58,7 +59,7 @@ public class WeatherSubscriptionsTask implements Task {
                                         gateway.getUserById(dbMember.getId()).flatMap(user ->
                                                         user.getPrivateChannel().flatMap(privateChannel ->
                                                                 privateChannel.createMessage("Daily weather forecast of " + city + ":")
-                                                                        .then(Mono.just(new WeatherMapManager(city)).flatMap(manager ->
+                                                                        .then(new WeatherManager().getSaved5DayWeatherData(city).map(WeatherMapManager::new).flatMap(manager ->
                                                                                 privateChannel.createMessage(messageCreateSpec -> {
                                                                                     try {
                                                                                         byte[] bytes = manager.createHeatMap();
