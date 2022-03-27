@@ -103,7 +103,6 @@ public class CommandManager {
                 .map(BaseCmd::asRequest)
                 .collectList()
                 .flatMapMany(requests -> {
-                    requests.forEach(applicationCommandRequest -> System.out.println(applicationCommandRequest.name()));
                     return applicationService
                             .bulkOverwriteGuildApplicationCommand(applicationId, Config.OWNER_GUILD_ID, requests);
                 })
@@ -148,7 +147,7 @@ public class CommandManager {
                         applicationService.bulkOverwriteGuildApplicationCommand(applicationId, guildId, requests))
                 .count()
                 .doOnNext(cmdCount -> LociBot.DEFAULT_LOGGER.info("{} guild commands registered (ID: {})",
-                        cmdCount, Config.OWNER_GUILD_ID))
+                        cmdCount, guildId))
                 .onErrorResume(err -> Mono.fromRunnable(() -> ExceptionHandler.handleUnknownError(err)));
 
         return registerGuildCommands.and(Mono.empty());
