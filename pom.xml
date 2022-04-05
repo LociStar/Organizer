@@ -165,7 +165,7 @@
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_httpserver</artifactId>
-            <version>0.11.0</version>
+            <version>0.15.0</version>
         </dependency>
         <!-- Commands -->
         <!-- Evaluate mathematical expression (used by MathCmd) -->
@@ -201,7 +201,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20210307</version>
+            <version>20220320</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -221,7 +221,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.8.0-M1</version>
+            <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.image-charts/image-charts -->
@@ -256,7 +256,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20160810</version>
+            <version>20220320</version>
         </dependency>
         <dependency>
             <groupId>com.github.LociStar</groupId>
