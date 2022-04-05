@@ -191,7 +191,7 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-logback</artifactId>
-            <version>5.0.1</version>
+            <version>5.7.1</version>
         </dependency>
         <!-- Others -->
         <dependency>
@@ -206,7 +206,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.14.2</version>
+            <version>1.14.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.vladimir-bukhtoyarov</groupId>
@@ -216,7 +216,7 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-reactivestreams</artifactId>
-            <version>4.3.1</version>
+            <version>4.5.1</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
