@@ -228,7 +228,7 @@
         <dependency>
             <groupId>com.image-charts</groupId>
             <artifactId>image-charts</artifactId>
-            <version>5.6.12</version>
+            <version>6.0.40</version>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchart</groupId>
