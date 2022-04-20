@@ -28,13 +28,13 @@ public class AcceptButtonCmd extends BaseCmdButton {
             for (DBEventMember member : event.getMembers()) {
                 if (member.getId().asLong() == context.getAuthorId().asLong() && member.getAccepted() != 1) {
                     System.out.println(member.getAccepted());
-                    return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral(context.localize("event.button.accept")).then(member.updateAccepted(1))
+                    return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.accept.accept")).then(member.updateAccepted(1))
                             .then(informOwner(context, event)));
                 } else if (member.getBean().getId().equals(context.getAuthorId().asLong()) && member.getAccepted() == 1) {
-                    return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral(context.localize("event.button.accept.accepted")));
+                    return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.accept.accepted")));
                 }
             }
-            return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral(context.localize("event.button.accept.accept.erro")));
+            return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.accept.accept.error")));
         });
     }
 
@@ -44,7 +44,7 @@ public class AcceptButtonCmd extends BaseCmdButton {
             ActionRow a = (ActionRow) ActionRow.fromData(context.getEvent().getInteraction().getMessage().orElseThrow().getComponents().get(0).getData());
             Button accept = (Button) Button.fromData(a.getChildren().get(0).getData());
             Button decline = (Button) Button.fromData(a.getChildren().get(1).getData());
-            return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral(context.localize("event.button.accept.deleted")).then(context.getEvent().getInteraction().getMessage().get().edit().withComponents(
+            return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.accept.deleted")).then(context.getEvent().getInteraction().getMessage().get().edit().withComponents(
                     ActionRow.of(
                             accept.disabled(), decline.disabled()
                     ))));

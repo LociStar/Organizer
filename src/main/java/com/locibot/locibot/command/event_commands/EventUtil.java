@@ -1,6 +1,7 @@
 package com.locibot.locibot.command.event_commands;
 
 import com.locibot.locibot.core.command.Context;
+import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.events_db.entity.DBEvent;
 import discord4j.core.object.component.ActionRow;
 import discord4j.core.object.component.Button;
@@ -46,24 +47,25 @@ public abstract class EventUtil {
     }
 
     @NotNull
-    static Mono<Message> privateInvite(Context context, DBEvent dbEvent, User user) {
-        return user.getPrivateChannel().flatMap(privateChannel ->
-                context.getClient().getUserById(dbEvent.getOwner().getId()).flatMap(owner ->
-                        privateChannel.createMessage(MessageCreateSpec.builder()
-                                .addEmbed(EmbedCreateSpec.builder()
-                                        .color(Color.BLUE)
-                                        .title(context.localize("event.util.invitation"))
-                                        .thumbnail(dbEvent.getIcon() == null ? owner.getAvatarUrl() : dbEvent.getIcon())
-                                        .description("You got invited to **" + dbEvent.getEventName() + "**")
-                                        .addField(EmbedCreateFields.Field.of(context.localize("event.util.date"),
-                                                context.localize("event.time").formatted(ZonedDateTime.ofInstant(
-                                                        Instant.ofEpochSecond(dbEvent.getBean().getScheduledDate()),
-                                                        ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("dd.MM.yyyy, hh:mm"))),
-                                                false))
-                                        .footer(EmbedCreateFields.Footer.of(context.localize("event.author").formatted(owner.getUsername()), owner.getAvatarUrl()))
-                                        .addField(EmbedCreateFields.Field.of(context.localize("event.description"), dbEvent.getEventDescription() + "\n", false))
-                                        .build())
-                                .addComponent(createButtons(dbEvent, context)).build())));
+    static Mono<Message> privateInvite(Context context, String dbEvent_title, User user) {
+        return DatabaseManager.getEvents().getDBEvent(dbEvent_title).flatMap(dbEvent ->
+                user.getPrivateChannel().flatMap(privateChannel ->
+                        context.getClient().getUserById(dbEvent.getOwner().getId()).flatMap(owner ->
+                                privateChannel.createMessage(MessageCreateSpec.builder()
+                                        .addEmbed(EmbedCreateSpec.builder()
+                                                .color(Color.BLUE)
+                                                .title(context.localize("event.util.invitation"))
+                                                .thumbnail(dbEvent.getIcon() == null ? owner.getAvatarUrl() : dbEvent.getIcon())
+                                                .description("You got invited to **" + dbEvent.getEventName() + "**")
+                                                .addField(EmbedCreateFields.Field.of(context.localize("event.util.date"),
+                                                        context.localize("event.time").formatted(ZonedDateTime.ofInstant(
+                                                                Instant.ofEpochSecond(dbEvent.getBean().getScheduledDate()),
+                                                                ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("dd.MM.yyyy, hh:mm"))),
+                                                        false))
+                                                .footer(EmbedCreateFields.Footer.of(context.localize("event.author").formatted(owner.getUsername()), owner.getAvatarUrl()))
+                                                .addField(EmbedCreateFields.Field.of(context.localize("event.description"), dbEvent.getEventDescription() + "\n", false))
+                                                .build())
+                                        .addComponent(createButtons(dbEvent, context)).build()))));
     }
 
     @NotNull

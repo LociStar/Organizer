@@ -44,7 +44,7 @@ public class AddUserEventCmd extends BaseCmd {
                                         return context.getChannel().flatMap(textChannel -> textChannel.getGuild().flatMap(guild -> guild.getMemberById(user.getId()).flatMap(member ->
                                                 context.createFollowupMessageEphemeral(member.getNickname().orElse(user.getUsername()) + context.localize("event.add.warning")))));
                                     } else if (dbMember.getBotRegister() && dbEvent.isScheduled())
-                                        return EventUtil.privateInvite(context, dbEvent, user);
+                                        return EventUtil.privateInvite(context, eventTitle, user);
                                     else if (dbEvent.isScheduled()) {
                                         return EventUtil.publicInvite(context, dbEvent, new ArrayList<>(Collections.singleton(user.getUsername())));
                                     }

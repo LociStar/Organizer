@@ -40,13 +40,13 @@ public class ScheduleEventCmd extends BaseCmd {
                         return context.createFollowupMessage(context.localize("event.schedule.owner"));
                     }
                     return dbEvent.updateSchedules(ZonedDateTime.of(LocalDateTime.of(newDate, newTime), ZoneId.of("Europe/Berlin")))
-                            .delayElement(Duration.ofSeconds(1)).then(Flux.fromIterable(dbEvent.getMembers()).concatMap(dbEventMember ->
+                            .then(Flux.fromIterable(dbEvent.getMembers()).concatMap(dbEventMember ->
                                     context.getClient().getUserById(dbEventMember.getId()).flatMap(user -> DatabaseManager.getGuilds().getDBMember(context.getGuildId(), user.getId()).flatMap(dbMember -> {
                                         if (user.isBot()) {
                                             return context.getChannel().flatMap(textChannel -> textChannel.getGuild().flatMap(guild -> guild.getMemberById(user.getId()).flatMap(member ->
                                                     context.createFollowupMessageEphemeral(context.localize("event.schedule.bot").formatted(member.getNickname().orElse(user.getUsername()))))));
                                         } else if (dbMember.getBotRegister())
-                                            return EventUtil.privateInvite(context, dbEvent, user);
+                                            return EventUtil.privateInvite(context, context.getOptionAsString("event_title").orElseThrow(), user);
                                         else {
                                             eventMembers.add(dbEventMember);
                                             return Mono.empty();

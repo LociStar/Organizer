@@ -31,10 +31,10 @@ public class DeclineButtonCmd extends BaseCmdButton {
                                     .then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.declined")))
                                     .then(informOwner(context, group, member));
                         } else if (member.getId().asLong() == context.getAuthorId().asLong() && member.getAccepted() == 2) {
-                            return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.declined.already")));
+                            return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessage(context.localize("event.button.decline.declined.already")));
                         }
                     }
-                    return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.error")));
+                    return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.error")));
                 }
         );
     }
@@ -45,7 +45,7 @@ public class DeclineButtonCmd extends BaseCmdButton {
             ActionRow a = (ActionRow) ActionRow.fromData(context.getEvent().getInteraction().getMessage().get().getComponents().get(0).getData());
             Button accept = (Button) Button.fromData(a.getChildren().get(0).getData());
             Button decline = (Button) Button.fromData(a.getChildren().get(1).getData());
-            return context.getEvent().deferReply().then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.deleted")))
+            return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.deleted")))
                     .then(context.getEvent().getInteraction().getMessage().get().edit().withComponents(
                             ActionRow.of(
                                     accept.disabled(), decline.disabled()
