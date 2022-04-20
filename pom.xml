@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.locibot.locibot</groupId>
     <artifactId>locibot</artifactId>
-    <version>3.0.5-SNAPSHOT</version>
+    <version>3.0.5</version>
     <name>LociBot</name>
     <url>https://github.com/LociStar/Organizer</url>
     <description>
