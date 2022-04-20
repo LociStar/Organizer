@@ -3,6 +3,7 @@ package com.locibot.locibot.core.command;
 import com.locibot.locibot.LociBot;
 import com.locibot.locibot.core.i18n.I18nContext;
 import com.locibot.locibot.core.i18n.I18nManager;
+import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.database.guilds.entity.DBGuild;
 import com.locibot.locibot.object.Emoji;
@@ -23,7 +24,6 @@ import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 import discord4j.core.spec.InteractionFollowupCreateSpec;
-import discord4j.core.spec.MessageCreateSpec;
 import discord4j.discordjson.json.ImmutableWebhookMessageEditRequest;
 import discord4j.discordjson.json.WebhookExecuteRequest;
 import discord4j.rest.util.MultipartRequest;
@@ -202,6 +202,11 @@ public class Context implements InteractionContext, I18nContext {
 
     @Override
     public Locale getLocale() {
+        //In case of private channel, look for a local. If not found use default local.
+        if (this.getDbGuild() == null && this.event.getInteraction().getUser().getUserData().locale().isAbsent())
+            if (this.event.getInteraction().getUser().getUserData().locale().isAbsent())
+                return Config.DEFAULT_LOCALE;
+            else return Locale.forLanguageTag(this.event.getInteraction().getUser().getUserData().locale().toString());
         return this.getDbGuild().getLocale();
     }
 
@@ -228,8 +233,8 @@ public class Context implements InteractionContext, I18nContext {
     @Override
     public Mono<Void> replyEphemeral(Emoji emoji, String message) {
         return this.event.reply(InteractionApplicationCommandCallbackSpec.builder()
-                .ephemeral(true)
-                .content("%s %s".formatted(emoji, message)).build())
+                        .ephemeral(true)
+                        .content("%s %s".formatted(emoji, message)).build())
                 .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
     }
 
@@ -267,21 +272,21 @@ public class Context implements InteractionContext, I18nContext {
     @Override
     public Mono<Message> createFollowupMessage(EmbedCreateSpec embed) {
         return this.event.getInteractionResponse().createFollowupMessage(MultipartRequest.ofRequest(
-                WebhookExecuteRequest.builder()
-                        .addEmbed(embed.asRequest())
-                        .build()))
+                        WebhookExecuteRequest.builder()
+                                .addEmbed(embed.asRequest())
+                                .build()))
                 .map(data -> new Message(this.getClient(), data))
                 .doOnNext(message -> this.replyId.set(message.getId().asLong()))
                 .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
     }
 
     @Override
-    public Mono<Message> createFollowupMessage(InteractionFollowupCreateSpec spec){
+    public Mono<Message> createFollowupMessage(InteractionFollowupCreateSpec spec) {
         return this.event.createFollowup(spec)
                 .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
     }
 
-    public Mono<Message>  createFollowupButton(EmbedCreateSpec embed, Button... buttons) {
+    public Mono<Message> createFollowupButton(EmbedCreateSpec embed, Button... buttons) {
         return this.event.createFollowup().withEmbeds(embed).withComponents(ActionRow.of(buttons));
     }
 
