@@ -35,9 +35,7 @@ public abstract class EventUtil {
                                 .footer(EmbedCreateFields.Footer.of(context.localize("event.util.footer").formatted(owner.getUsername()), owner.getAvatarUrl()))
                                 .addField(EmbedCreateFields.Field.of(context.localize("event.description"), dbEvent.getEventDescription() + "\n", false))
                                 .addField(EmbedCreateFields.Field.of(context.localize("event.util.date"),
-                                        context.localize("event.time").formatted(ZonedDateTime.ofInstant(
-                                                Instant.ofEpochSecond(dbEvent.getBean().getScheduledDate()),
-                                                ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("dd.MM.yyyy, hh:mm"))),
+                                        "<t:" + dbEvent.getBean().getScheduledDate() + ">",
                                         false))
                                 .addField(EmbedCreateFields.Field.of(context.localize("event.util.users"), usersString.stream().map(String::toString).collect(Collectors.joining(",")) + "\n", false))
                                 .build())
@@ -58,9 +56,7 @@ public abstract class EventUtil {
                                                 .thumbnail(dbEvent.getIcon() == null ? owner.getAvatarUrl() : dbEvent.getIcon())
                                                 .description("You got invited to **" + dbEvent.getEventName() + "**")
                                                 .addField(EmbedCreateFields.Field.of(context.localize("event.util.date"),
-                                                        context.localize("event.time").formatted(ZonedDateTime.ofInstant(
-                                                                Instant.ofEpochSecond(dbEvent.getBean().getScheduledDate()),
-                                                                ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("dd.MM.yyyy, hh:mm"))),
+                                                        "<t:" + dbEvent.getBean().getScheduledDate() + ">",
                                                         false))
                                                 .footer(EmbedCreateFields.Footer.of(context.localize("event.author").formatted(owner.getUsername()), owner.getAvatarUrl()))
                                                 .addField(EmbedCreateFields.Field.of(context.localize("event.description"), dbEvent.getEventDescription() + "\n", false))
