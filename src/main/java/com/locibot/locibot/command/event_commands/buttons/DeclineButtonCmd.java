@@ -33,7 +33,7 @@ public class DeclineButtonCmd extends BaseCmdButton {
                                     .then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.declined")))
                                     .then(informOwner(context, group, member));
                         } else if (member.getId().asLong() == context.getAuthorId().asLong() && member.getAccepted() == 2) {
-                            return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessage(context.localize("event.button.decline.declined.already")));
+                            return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.declined.already")));
                         }
                     }
                     return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.error")));
