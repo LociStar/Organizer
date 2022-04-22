@@ -2,11 +2,13 @@ package com.locibot.locibot.command.owner;
 
 import com.locibot.locibot.command.owner.shutdown.ShutdownCmd;
 import com.locibot.locibot.core.command.BaseCmdGroup;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.CommandPermission;
 
 import java.util.List;
 
+@CmdAnnotation
 public class OwnerGroup extends BaseCmdGroup {
 
     public OwnerGroup() {

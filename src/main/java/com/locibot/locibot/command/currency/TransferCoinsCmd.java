@@ -2,6 +2,7 @@ package com.locibot.locibot.command.currency;
 
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.data.Config;
@@ -12,6 +13,7 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.object.command.ApplicationCommandOption;
 import reactor.core.publisher.Mono;
 
+@CmdAnnotation
 public class TransferCoinsCmd extends BaseCmd {
 
     public TransferCoinsCmd() {

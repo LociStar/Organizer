@@ -3,6 +3,7 @@ package com.locibot.locibot.command.util;
 import com.fathzer.soft.javaluator.DoubleEvaluator;
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
@@ -12,6 +13,7 @@ import reactor.core.publisher.Mono;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
+@CmdAnnotation
 public class MathCmd extends BaseCmd {
 
     private final DoubleEvaluator evaluator;

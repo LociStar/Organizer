@@ -10,10 +10,12 @@ import com.locibot.locibot.command.game.russianroulette.RussianRouletteCmd;
 import com.locibot.locibot.command.game.slotmachine.SlotMachineCmd;
 import com.locibot.locibot.command.game.trivia.TriviaCmd;
 import com.locibot.locibot.core.command.BaseCmdGroup;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 
 import java.util.List;
 
+@CmdAnnotation
 public class GameGroup extends BaseCmdGroup {
 
     public GameGroup() {

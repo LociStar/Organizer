@@ -2,6 +2,7 @@ package com.locibot.locibot.command.fun;
 
 import com.locibot.locibot.api.json.joke.JokeResponse;
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
@@ -13,6 +14,7 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import reactor.core.publisher.Mono;
 
+@CmdAnnotation
 public class JokeCmd extends BaseCmd {
 
     private static final String HOME_URL = "https://icanhazdadjoke.com/";

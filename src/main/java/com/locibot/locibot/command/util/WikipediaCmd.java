@@ -4,12 +4,13 @@ import com.locibot.locibot.api.json.wikipedia.WikipediaPage;
 import com.locibot.locibot.api.json.wikipedia.WikipediaQuery;
 import com.locibot.locibot.api.json.wikipedia.WikipediaResponse;
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
-import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.LociBotUtil;
+import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.StringUtil;
 import discord4j.core.object.Embed;
 import discord4j.core.object.command.ApplicationCommandOption;
@@ -20,6 +21,7 @@ import reactor.core.publisher.Mono;
 import java.util.Locale;
 import java.util.Map;
 
+@CmdAnnotation
 public class WikipediaCmd extends BaseCmd {
 
     public WikipediaCmd() {

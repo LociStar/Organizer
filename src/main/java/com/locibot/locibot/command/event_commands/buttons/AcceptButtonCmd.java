@@ -1,6 +1,7 @@
 package com.locibot.locibot.command.event_commands.buttons;
 
 import com.locibot.locibot.core.command.BaseCmdButton;
+import com.locibot.locibot.core.command.ButtonAnnotation;
 import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 
+@ButtonAnnotation
 public class AcceptButtonCmd extends BaseCmdButton {
     public AcceptButtonCmd() {
         super(CommandPermission.USER_GLOBAL, "acceptInviteButton");

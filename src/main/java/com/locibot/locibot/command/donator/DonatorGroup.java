@@ -1,10 +1,12 @@
 package com.locibot.locibot.command.donator;
 
 import com.locibot.locibot.core.command.BaseCmdGroup;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 
 import java.util.List;
 
+@CmdAnnotation
 public class DonatorGroup extends BaseCmdGroup {
 
     public DonatorGroup() {

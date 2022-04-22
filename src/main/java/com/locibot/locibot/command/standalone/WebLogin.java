@@ -1,6 +1,7 @@
 package com.locibot.locibot.command.standalone;
 
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
@@ -10,6 +11,7 @@ import discord4j.core.object.entity.Message;
 import discord4j.core.spec.InteractionFollowupCreateSpec;
 import reactor.core.publisher.Mono;
 
+@CmdAnnotation
 public class WebLogin extends BaseCmd {
     public WebLogin() {
         super(CommandCategory.INFO, "web", "Generate a login token");

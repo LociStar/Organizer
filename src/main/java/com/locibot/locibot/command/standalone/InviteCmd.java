@@ -1,6 +1,7 @@
 package com.locibot.locibot.command.standalone;
 
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.data.Config;
@@ -11,6 +12,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+@CmdAnnotation
 public class InviteCmd extends BaseCmd {
 
     public InviteCmd() {

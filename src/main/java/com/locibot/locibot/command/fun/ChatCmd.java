@@ -4,6 +4,7 @@ import com.locibot.locibot.api.json.pandorabots.ChatBotResponse;
 import com.locibot.locibot.api.json.pandorabots.ChatBotResult;
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
+@CmdAnnotation
 public class ChatCmd extends BaseCmd {
 
     private static final Logger LOGGER = LogUtil.getLogger(ChatCmd.class, LogUtil.Category.COMMAND);

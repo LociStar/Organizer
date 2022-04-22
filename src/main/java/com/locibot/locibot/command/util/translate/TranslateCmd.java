@@ -2,6 +2,7 @@ package com.locibot.locibot.command.util.translate;
 
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.core.i18n.I18nManager;
@@ -16,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import reactor.core.publisher.Mono;
 
+@CmdAnnotation
 public class TranslateCmd extends BaseCmd {
 
     private static final String DOC_URL = "https://cloud.google.com/translate/docs/languages";

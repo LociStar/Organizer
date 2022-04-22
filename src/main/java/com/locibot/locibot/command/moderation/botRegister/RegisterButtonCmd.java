@@ -1,12 +1,14 @@
 package com.locibot.locibot.command.moderation.botRegister;
 
 import com.locibot.locibot.core.command.BaseCmdButton;
+import com.locibot.locibot.core.command.ButtonAnnotation;
 import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.object.ExceptionHandler;
 import reactor.core.publisher.Mono;
 
+@ButtonAnnotation
 public class RegisterButtonCmd extends BaseCmdButton {
     public RegisterButtonCmd() {
         super(CommandPermission.USER_GUILD, "registerButton");

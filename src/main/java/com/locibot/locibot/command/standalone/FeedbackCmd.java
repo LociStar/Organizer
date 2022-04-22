@@ -2,6 +2,7 @@ package com.locibot.locibot.command.standalone;
 
 import com.locibot.locibot.LociBot;
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.core.ratelimiter.RateLimiter;
@@ -13,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 
+@CmdAnnotation
 public class FeedbackCmd extends BaseCmd {
 
     public FeedbackCmd() {

@@ -3,6 +3,7 @@ package com.locibot.locibot.command.fun;
 import com.locibot.locibot.api.html.thisday.ThisDay;
 import com.locibot.locibot.core.cache.SingleValueCache;
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
@@ -19,6 +20,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
+@CmdAnnotation
 public class ThisDayCmd extends BaseCmd {
 
     private static final String HOME_URL = "https://www.onthisday.com/";
@@ -43,7 +45,7 @@ public class ThisDayCmd extends BaseCmd {
     private static EmbedCreateSpec formatEmbed(Context context, ThisDay thisDay) {
         return LociBotUtil.getDefaultEmbed(
                 EmbedCreateSpec.builder().author(EmbedCreateFields.Author.of(context.localize("thisday.title").formatted(thisDay.getDate()),
-                        HOME_URL, context.getAuthorAvatar()))
+                                HOME_URL, context.getAuthorAvatar()))
                         .thumbnail("https://i.imgur.com/FdfyJDD.png")
                         .description(StringUtil.abbreviate(thisDay.getEvents(), Embed.MAX_DESCRIPTION_LENGTH)).build());
     }

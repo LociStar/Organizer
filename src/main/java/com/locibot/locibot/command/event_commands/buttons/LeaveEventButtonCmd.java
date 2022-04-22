@@ -1,6 +1,7 @@
 package com.locibot.locibot.command.event_commands.buttons;
 
 import com.locibot.locibot.core.command.BaseCmdButton;
+import com.locibot.locibot.core.command.ButtonAnnotation;
 import com.locibot.locibot.core.command.CommandPermission;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
@@ -8,6 +9,7 @@ import com.locibot.locibot.database.events_db.entity.DBEvent;
 import com.locibot.locibot.database.events_db.entity.DBEventMember;
 import reactor.core.publisher.Mono;
 
+@ButtonAnnotation
 public class LeaveEventButtonCmd extends BaseCmdButton {
     public LeaveEventButtonCmd() {
         super(CommandPermission.USER_GUILD, "leaveButton");

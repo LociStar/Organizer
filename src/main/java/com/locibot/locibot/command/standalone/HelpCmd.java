@@ -19,6 +19,7 @@ import reactor.util.function.Tuples;
 
 import java.util.*;
 
+@CmdAnnotation
 public class HelpCmd extends BaseCmd {
 
     public HelpCmd() {

@@ -3,6 +3,7 @@ package com.locibot.locibot.command.util;
 import com.locibot.locibot.api.wrapper.WeatherWrapper;
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.data.credential.Credential;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+@CmdAnnotation
 public class WeatherCmd extends BaseCmd {
 
     private final DateTimeFormatter dateFormatter;

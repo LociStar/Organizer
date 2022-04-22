@@ -1,6 +1,7 @@
 package com.locibot.locibot.command.standalone;
 
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.core.i18n.I18nContext;
@@ -17,6 +18,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.EnumSet;
 
+@CmdAnnotation
 public class AchievementsCmd extends BaseCmd {
 
     public AchievementsCmd() {

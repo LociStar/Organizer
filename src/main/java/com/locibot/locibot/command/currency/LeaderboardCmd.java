@@ -1,6 +1,7 @@
 package com.locibot.locibot.command.currency;
 
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.guilds.entity.DBMember;
@@ -15,6 +16,7 @@ import reactor.util.function.Tuple2;
 
 import java.util.Comparator;
 
+@CmdAnnotation
 public class LeaderboardCmd extends BaseCmd {
 
     private static final int USER_COUNT = 10;

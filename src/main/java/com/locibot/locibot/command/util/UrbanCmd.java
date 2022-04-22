@@ -4,12 +4,13 @@ import com.locibot.locibot.api.ServerAccessException;
 import com.locibot.locibot.api.json.urbandictionary.UrbanDefinition;
 import com.locibot.locibot.api.json.urbandictionary.UrbanDictionaryResponse;
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.RequestHelper;
-import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.LociBotUtil;
+import com.locibot.locibot.utils.NetUtil;
 import com.locibot.locibot.utils.StringUtil;
 import discord4j.core.object.Embed;
 import discord4j.core.object.Embed.Field;
@@ -25,6 +26,7 @@ import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
 
+@CmdAnnotation
 public class UrbanCmd extends BaseCmd {
 
     private static final String HOME_URL = "http://api.urbandictionary.com/v0/define";

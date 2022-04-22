@@ -2,6 +2,7 @@ package com.locibot.locibot.command.util.poll;
 
 import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.utils.DiscordUtil;
@@ -23,6 +24,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@CmdAnnotation
 public class PollCmd extends BaseCmd {
 
     private static final List<String> NUMBER_UNICODE = List.of(

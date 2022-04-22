@@ -1,6 +1,7 @@
 package com.locibot.locibot.command.currency;
 
 import com.locibot.locibot.core.command.BaseCmd;
+import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
@@ -9,6 +10,7 @@ import com.locibot.locibot.object.Emoji;
 import discord4j.core.object.command.ApplicationCommand;
 import reactor.core.publisher.Mono;
 
+@CmdAnnotation
 public class CoinsCmd extends BaseCmd {
 
     public CoinsCmd() {
