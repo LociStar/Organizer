@@ -1,80 +1,39 @@
 package com.locibot.locibot.core.command;
 
 import com.locibot.locibot.LociBot;
-import com.locibot.locibot.command.event_commands.buttons.AcceptButtonCmd;
-import com.locibot.locibot.command.event_commands.buttons.DeclineButtonCmd;
-import com.locibot.locibot.command.event_commands.buttons.JoinEventButtonCmd;
-import com.locibot.locibot.command.event_commands.buttons.LeaveEventButtonCmd;
-import com.locibot.locibot.command.moderation.botRegister.RegisterButtonCmd;
-import com.locibot.locibot.command.currency.CoinsCmd;
-import com.locibot.locibot.command.currency.LeaderboardCmd;
-import com.locibot.locibot.command.currency.TransferCoinsCmd;
-import com.locibot.locibot.command.donator.DonatorGroup;
-import com.locibot.locibot.command.event_commands.EventGroup;
-import com.locibot.locibot.command.fun.ChatCmd;
-import com.locibot.locibot.command.fun.Hello;
-import com.locibot.locibot.command.fun.JokeCmd;
-import com.locibot.locibot.command.fun.ThisDayCmd;
-import com.locibot.locibot.command.game.GameGroup;
-import com.locibot.locibot.command.gamestats.GameStatsGroup;
-import com.locibot.locibot.command.group.Accept;
-import com.locibot.locibot.command.group.Decline;
-import com.locibot.locibot.command.group.GroupGroup;
-import com.locibot.locibot.command.image.ImageGroup;
-import com.locibot.locibot.command.image.Rule34Cmd;
-import com.locibot.locibot.command.info.InfoGroup;
-import com.locibot.locibot.command.moderation.ModerationGroup;
-import com.locibot.locibot.command.owner.OwnerGroup;
-import com.locibot.locibot.command.register.RegisterGroup;
-import com.locibot.locibot.command.setting.SettingGroup;
-import com.locibot.locibot.command.standalone.*;
-import com.locibot.locibot.command.util.MathCmd;
-import com.locibot.locibot.command.util.UrbanCmd;
-import com.locibot.locibot.command.util.WeatherCmd;
-import com.locibot.locibot.command.util.WikipediaCmd;
-import com.locibot.locibot.command.util.poll.PollCmd;
-import com.locibot.locibot.command.util.translate.TranslateCmd;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.object.ExceptionHandler;
 import discord4j.rest.service.ApplicationService;
+import org.reflections.Reflections;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public class CommandManager {
 
     private static final Map<String, BaseCmd> COMMANDS_MAP;
     private static final Map<String, BaseCmdButton> BUTTONS_MAP;
 
+
     static {
-        COMMANDS_MAP = CommandManager.initialize(
-                new InfoGroup(), new ImageGroup(), new ModerationGroup(), new OwnerGroup(),
-                new GameStatsGroup(), new SettingGroup(),
-                new DonatorGroup(), new GameGroup(), new GroupGroup(),
-                new RegisterGroup(), new EventGroup(),
-                // Image
-                new Rule34Cmd(), // TODO Improvement: Add to Image group when Discord autocompletion is implemented
-                // Standalone
-                new PingCmd(), new HelpCmd(), new AchievementsCmd(), new FeedbackCmd(), new InviteCmd(), new WebLogin(),
-                // Currency
-                new CoinsCmd(), new LeaderboardCmd(), new TransferCoinsCmd(),
-                // Fun
-                new ChatCmd(), new JokeCmd(), new ThisDayCmd(),
-                // Util
-                new MathCmd(), new UrbanCmd(), new WeatherCmd(), new WikipediaCmd(),
-                new TranslateCmd(), new PollCmd(),
-                //Global
-                new Hello(), new Accept(), new Decline());
-        BUTTONS_MAP = CommandManager.initializeButtons(
-                new RegisterButtonCmd(), new AcceptButtonCmd(), new DeclineButtonCmd(), new JoinEventButtonCmd(), new LeaveEventButtonCmd()
-        );
+        COMMANDS_MAP = CommandManager.initialize();
+        //new Rule34Cmd(), TODO Improvement: Add to Image group when Discord autocompletion is implemented
+        BUTTONS_MAP = CommandManager.initializeButtons();
     }
 
-    private static Map<String, BaseCmd> initialize(BaseCmd... cmds) {
-        final Map<String, BaseCmd> map = new LinkedHashMap<>(cmds.length);
+    private static Map<String, BaseCmd> initialize() {
+        Set<Class<?>> list = new Reflections("com.locibot.locibot.command").getTypesAnnotatedWith(CmdAnnotation.class);
+        List<BaseCmd> cmds = new ArrayList<>();
+        list.forEach(aClass -> {
+            try {
+                cmds.add((BaseCmd) aClass.getDeclaredConstructor().newInstance());
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                LociBot.DEFAULT_LOGGER.error(e.getMessage());
+            }
+        });
+        final Map<String, BaseCmd> map = new LinkedHashMap<>(cmds.size());
         for (final BaseCmd cmd : cmds) {
             if (map.putIfAbsent(cmd.getName(), cmd) != null) {
                 LociBot.DEFAULT_LOGGER.error("Command name collision between {} and {}",
@@ -85,8 +44,17 @@ public class CommandManager {
         return Collections.unmodifiableMap(map);
     }
 
-    private static Map<String, BaseCmdButton> initializeButtons(BaseCmdButton... cmds) {
-        final Map<String, BaseCmdButton> map = new LinkedHashMap<>(cmds.length);
+    private static Map<String, BaseCmdButton> initializeButtons() {
+        Set<Class<?>> list = new Reflections("com.locibot.locibot.command").getTypesAnnotatedWith(ButtonAnnotation.class);
+        List<BaseCmdButton> cmds = new ArrayList<>();
+        list.forEach(aClass -> {
+            try {
+                cmds.add((BaseCmdButton) aClass.getDeclaredConstructor().newInstance());
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                LociBot.DEFAULT_LOGGER.error(e.getMessage());
+            }
+        });
+        final Map<String, BaseCmdButton> map = new LinkedHashMap<>(cmds.size());
         for (final BaseCmdButton cmd : cmds) {
             if (map.putIfAbsent(cmd.getName(), cmd) != null) {
                 LociBot.DEFAULT_LOGGER.error("Button command name collision between {} and {}",
