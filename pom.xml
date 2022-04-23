@@ -186,7 +186,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.5</version>
+            <version>1.2.11</version>
         </dependency>
         <dependency>
             <groupId>io.sentry</groupId>
@@ -201,7 +201,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20210307</version>
+            <version>20220320</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -256,7 +256,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20160810</version>
+            <version>20220320</version>
         </dependency>
         <dependency>
             <groupId>com.github.LociStar</groupId>
