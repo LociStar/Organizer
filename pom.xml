@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.locibot.locibot</groupId>
     <artifactId>locibot</artifactId>
-    <version>3.0.7</version>
+    <version>3.0.8-SNAPSHOT</version>
     <name>LociBot</name>
     <url>https://github.com/LociStar/Organizer</url>
     <description>
@@ -138,7 +138,7 @@
         <dependency>
             <groupId>com.discord4j</groupId>
             <artifactId>discord4j-core</artifactId>
-            <version>3.2.0</version>
+            <version>3.2.2</version>
         </dependency>
         <dependency>
             <groupId>com.discord4j</groupId>
