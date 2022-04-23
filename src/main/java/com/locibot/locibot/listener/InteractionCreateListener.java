@@ -7,27 +7,26 @@ import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.utils.ReactorUtil;
-import discord4j.core.event.domain.interaction.InteractionCreateEvent;
+import discord4j.core.event.domain.interaction.DeferrableInteractionEvent;
 import discord4j.core.object.command.ApplicationCommandInteraction;
-import discord4j.core.object.command.Interaction;
 import discord4j.core.object.component.MessageComponent;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 import discord4j.rest.util.Permission;
 import reactor.core.publisher.Mono;
 
-public class InteractionCreateListener implements EventListener<InteractionCreateEvent> {
+public class InteractionCreateListener implements EventListener<DeferrableInteractionEvent> {
 
     @Override
-    public Class<InteractionCreateEvent> getEventType() {
-        return InteractionCreateEvent.class;
+    public Class<DeferrableInteractionEvent> getEventType() {
+        return DeferrableInteractionEvent.class;
     }
 
     @Override
-    public Mono<?> execute(InteractionCreateEvent event) {
+    public Mono<?> execute(DeferrableInteractionEvent event) {
         Telemetry.INTERACTING_USERS.add(event.getInteraction().getUser().getId().asLong());
 
-        if (event.getInteraction().getCommandInteraction().flatMap(ApplicationCommandInteraction::getComponentType).orElse(MessageComponent.Type.UNKNOWN).equals(MessageComponent.Type.BUTTON)){
+        if (event.getInteraction().getCommandInteraction().flatMap(ApplicationCommandInteraction::getComponentType).orElse(MessageComponent.Type.UNKNOWN).equals(MessageComponent.Type.BUTTON)) {
             String commandName = event.getInteraction().getCommandInteraction().map(applicationCommandInteraction -> applicationCommandInteraction.getCustomId().orElse("").split("_")[0]).orElseThrow();
             final BaseCmdButton command = CommandManager.getButtonCommand(commandName);
             if (command == null)

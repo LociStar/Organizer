@@ -1,10 +1,10 @@
 package com.locibot.locibot.core.command;
 
-import discord4j.core.event.domain.interaction.InteractionCreateEvent;
+import discord4j.core.event.domain.interaction.DeferrableInteractionEvent;
 import discord4j.core.object.entity.Member;
 
 public class PrivateContext extends Context {
-    public PrivateContext(InteractionCreateEvent event) {
+    public PrivateContext(DeferrableInteractionEvent event) {
         super(event, null);
     }
 

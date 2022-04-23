@@ -11,7 +11,7 @@ import com.locibot.locibot.utils.DiscordUtil;
 import com.locibot.locibot.utils.EnumUtil;
 import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
-import discord4j.core.event.domain.interaction.InteractionCreateEvent;
+import discord4j.core.event.domain.interaction.DeferrableInteractionEvent;
 import discord4j.core.object.command.ApplicationCommandInteraction;
 import discord4j.core.object.command.ApplicationCommandInteractionOption;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
@@ -40,17 +40,17 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Context implements InteractionContext, I18nContext {
 
-    private final InteractionCreateEvent event;
+    private final DeferrableInteractionEvent event;
     private final DBGuild dbGuild;
     private final AtomicLong replyId;
 
-    public Context(InteractionCreateEvent event, DBGuild dbGuild) {
+    public Context(DeferrableInteractionEvent event, DBGuild dbGuild) {
         this.event = event;
         this.dbGuild = dbGuild;
         this.replyId = new AtomicLong();
     }
 
-    public InteractionCreateEvent getEvent() {
+    public DeferrableInteractionEvent getEvent() {
         return this.event;
     }
 
