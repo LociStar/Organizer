@@ -11,14 +11,18 @@ public class DBUserBean implements Bean {
     @Nullable
     @JsonProperty("achievements")
     private Integer achievements;
+    @Nullable
+    @JsonProperty("events")
+    private Long[] events;
 
-    public DBUserBean(String id, @Nullable Integer achievements) {
+    public DBUserBean(String id, @Nullable Integer achievements, @Nullable Long[] events) {
         this.id = id;
         this.achievements = achievements;
+        this.events = events;
     }
 
     public DBUserBean(String id) {
-        this(id, null);
+        this(id, null, null);
     }
 
     public DBUserBean() {
