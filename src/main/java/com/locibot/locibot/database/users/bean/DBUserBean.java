@@ -2,6 +2,7 @@ package com.locibot.locibot.database.users.bean;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.locibot.locibot.database.Bean;
+import org.bson.types.ObjectId;
 import reactor.util.annotation.Nullable;
 
 import java.util.ArrayList;
@@ -15,9 +16,9 @@ public class DBUserBean implements Bean {
     private Integer achievements;
     @Nullable
     @JsonProperty("events")
-    private ArrayList<Long> events;
+    private ArrayList<ObjectId> events;
 
-    public DBUserBean(String id, @Nullable Integer achievements, @Nullable ArrayList<Long> events) {
+    public DBUserBean(String id, @Nullable Integer achievements, @Nullable ArrayList<ObjectId> events) {
         this.id = id;
         this.achievements = achievements;
         this.events = events;
@@ -38,7 +39,7 @@ public class DBUserBean implements Bean {
         return this.achievements == null ? 0 : this.achievements;
     }
 
-    public ArrayList<Long> getEvents() {
+    public ArrayList<ObjectId> getEvents() {
         return this.events == null ? new ArrayList<>() : this.events;
     }
 
