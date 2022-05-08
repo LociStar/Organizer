@@ -12,8 +12,10 @@ import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import discord4j.common.util.Snowflake;
+import org.bson.types.ObjectId;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Objects;
 
@@ -63,6 +65,55 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
                 })
                 .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] Achievements update result: {}",
+                        this.getId().asString(), result))
+                .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
+    }
+
+    public Mono<UpdateResult> addEvent(ObjectId event) {
+        // If the achievement is already in this state, no need to request an update
+        if (this.getBean().getEvents().contains(event)) {
+            GuildsCollection.LOGGER.debug("[DBUser {}] Add Event useless, aborting: {}", this.getId().asString(), event);
+            return Mono.empty();
+        }
+
+        ArrayList<ObjectId> events = new ArrayList<>(this.getBean().getEvents());
+        events.add(event);
+
+        return Mono.from(DatabaseManager.getUsers()
+                        .getCollection()
+                        .updateOne(
+                                Filters.eq("_id", this.getId().asString()),
+                                Updates.set("events", events),
+                                new UpdateOptions().upsert(true)))
+                .doOnSubscribe(__ -> {
+                    GuildsCollection.LOGGER.debug("[DBUser {}] Event added: {}", this.getId().asString(), event);
+                    Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
+                })
+                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] Event add result: {}",
+                        this.getId().asString(), result))
+                .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
+    }
+
+    public Mono<UpdateResult> removeEvent(long event) {
+        // If the achievement is already in this state, no need to request an update
+        if (!this.getBean().getEvents().contains(event)) {
+            GuildsCollection.LOGGER.debug("[DBUser {}] Remove Event useless, aborting: {}", this.getId().asString(), event);
+            return Mono.empty();
+        }
+
+        this.getBean().getEvents().remove(event);
+
+        return Mono.from(DatabaseManager.getUsers()
+                        .getCollection()
+                        .updateOne(
+                                Filters.eq("_id", this.getId().asString()),
+                                Updates.set("events", this.getBean().getEvents()),
+                                new UpdateOptions().upsert(true)))
+                .doOnSubscribe(__ -> {
+                    GuildsCollection.LOGGER.debug("[DBUser {}] Event removed: {}", this.getId().asString(), event);
+                    Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
+                })
+                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] Event remove result: {}",
                         this.getId().asString(), result))
                 .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
     }
