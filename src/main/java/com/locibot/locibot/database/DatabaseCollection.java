@@ -8,6 +8,7 @@ import org.bson.json.JsonWriterSettings;
 public abstract class DatabaseCollection {
 
     protected static final JsonWriterSettings JSON_WRITER_SETTINGS = JsonWriterSettings.builder()
+            .objectIdConverter((objectId, strictJsonWriter) -> strictJsonWriter.writeString(objectId.toHexString()))
             .int64Converter((value, writer) -> writer.writeNumber(value.toString()))
             .build();
 
