@@ -63,7 +63,7 @@ public abstract class EventUtil {
     @NotNull
     private static ActionRow createButtons(DBEvent dbEvent, Context context) {
         return ActionRow.of(
-                Button.success("acceptInviteButton_" + dbEvent.getEventName(), context.localize("event.util.button.accept")),
-                Button.danger("declineInviteButton_" + dbEvent.getEventName(), context.localize("event.util.button.decline")));
+                Button.success("acceptInviteButton_" + dbEvent.getId(), context.localize("event.util.button.accept")),
+                Button.danger("declineInviteButton_" + dbEvent.getId(), context.localize("event.util.button.decline")));
     }
 }

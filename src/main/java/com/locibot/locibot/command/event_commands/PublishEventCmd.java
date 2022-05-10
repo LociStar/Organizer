@@ -29,8 +29,8 @@ public class PublishEventCmd extends BaseCmd {
     public Mono<?> execute(Context context) {
         String title = context.getOptionAsString("event_title").orElseThrow();
 
-        if (!DatabaseManager.getEvents().containsEvent(title))
-            return context.createFollowupMessage(context.localize("event.publish.title.error").formatted(title));
+//        if (!DatabaseManager.getEvents().containsEvent(title))
+//            return context.createFollowupMessage(context.localize("event.publish.title.error").formatted(title));
 
         return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), title).flatMap(dbEvent -> {
             if (!dbEvent.isScheduled())

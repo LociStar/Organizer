@@ -27,9 +27,9 @@ public class AddUserEventCmd extends BaseCmd {
     @Override
     public Mono<?> execute(Context context) {
         String eventTitle = context.getOptionAsString("title").orElseThrow();
-        if (!DatabaseManager.getEvents().containsEvent(eventTitle)) {
-            return context.createFollowupMessage(context.localize("event.add.restriction"));
-        }
+//        if (!DatabaseManager.getEvents().containsEvent(eventTitle)) {
+//            return context.createFollowupMessage(context.localize("event.add.restriction"));
+//        }
         List<Mono<User>> users = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             if (context.getOptionAsUser("member_" + i) != null)

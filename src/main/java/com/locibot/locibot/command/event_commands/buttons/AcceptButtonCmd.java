@@ -10,6 +10,7 @@ import com.locibot.locibot.database.events_db.entity.DBEventMember;
 import discord4j.core.object.component.ActionRow;
 import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.Message;
+import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Mono;
@@ -23,10 +24,11 @@ public class AcceptButtonCmd extends BaseCmdButton {
 
     @Override
     public Mono<?> execute(Context context) {
-        String eventTitle = context.getEvent().getInteraction().getCommandInteraction().orElseThrow().getCustomId().orElse("error_error").split("_")[1];
-        Mono<Message> context1 = disableIfNoEvent(context, eventTitle);
+        String eventIdString = context.getEvent().getInteraction().getCommandInteraction().orElseThrow().getCustomId().orElse("error_error").split("_")[1];
+        ObjectId objectId = new ObjectId(eventIdString);
+        Mono<Message> context1 = disableIfNoEvent(context, objectId);
         if (context1 != null) return context1;
-        return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), eventTitle).flatMap(event -> {
+        return DatabaseManager.getEvents().getDBEvent(objectId).flatMap(event -> {
             for (DBEventMember member : event.getMembers()) {
                 if (member.getUId().asLong() == context.getAuthorId().asLong() && member.getAccepted() != 1) {
                     return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.accept.accept")).then(member.updateAccepted(1))
@@ -40,8 +42,8 @@ public class AcceptButtonCmd extends BaseCmdButton {
     }
 
     @Nullable
-    private Mono<Message> disableIfNoEvent(Context context, String eventTitle) {
-        if (!DatabaseManager.getEvents().containsEvent(eventTitle)) {
+    private Mono<Message> disableIfNoEvent(Context context, ObjectId objectId) {
+        if (!DatabaseManager.getEvents().containsEvent(objectId)) {
             ActionRow a = (ActionRow) ActionRow.fromData(context.getEvent().getInteraction().getMessage().orElseThrow().getComponents().get(0).getData());
             Button accept = (Button) Button.fromData(a.getChildren().get(0).getData());
             Button decline = (Button) Button.fromData(a.getChildren().get(1).getData());

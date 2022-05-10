@@ -10,6 +10,7 @@ import com.locibot.locibot.database.events_db.entity.DBEventMember;
 import discord4j.core.object.component.ActionRow;
 import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.Message;
+import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Mono;
@@ -23,26 +24,27 @@ public class DeclineButtonCmd extends BaseCmdButton {
 
     @Override
     public Mono<?> execute(Context context) {
-        String eventName = context.getEvent().getInteraction().getCommandInteraction().orElseThrow().getCustomId().orElse("error_error").split("_")[1];
-        Mono<Message> context1 = disableIfNoEvent(context, eventName);
+        String eventIdString = context.getEvent().getInteraction().getCommandInteraction().orElseThrow().getCustomId().orElse("error_error").split("_")[1];
+        ObjectId objectId = new ObjectId(eventIdString);
+        Mono<Message> context1 = disableIfNoEvent(context, objectId);
         if (context1 != null) return context1;
-        return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), eventName).flatMap(group -> {
-            for (DBEventMember member : group.getMembers()) {
-                if (member.getUId().asLong() == context.getAuthorId().asLong() && member.getAccepted() != 2) {
-                    return member.updateAccepted(2)
-                            .then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.declined")))
-                            .then(informOwner(context, group, member));
-                } else if (member.getUId().asLong() == context.getAuthorId().asLong() && member.getAccepted() == 2) {
-                    return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.declined.already")));
-                }
-            }
-            return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.error")));
+        return DatabaseManager.getEvents().getDBEvent(objectId).flatMap(group -> {
+                    for (DBEventMember member : group.getMembers()) {
+                        if (member.getUId().asLong() == context.getAuthorId().asLong() && member.getAccepted() != 2) {
+                            return member.updateAccepted(2)
+                                    .then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.declined")))
+                                    .then(informOwner(context, group, member));
+                        } else if (member.getUId().asLong() == context.getAuthorId().asLong() && member.getAccepted() == 2) {
+                            return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.declined.already")));
+                        }
+                    }
+                    return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.error")));
                 }
         );
     }
 
     @Nullable
-    private Mono<Message> disableIfNoEvent(Context context, String eventTitle) {
+    private Mono<Message> disableIfNoEvent(Context context, ObjectId eventTitle) {
         if (!DatabaseManager.getEvents().containsEvent(eventTitle)) {
             ActionRow a = (ActionRow) ActionRow.fromData(context.getEvent().getInteraction().getMessage().get().getComponents().get(0).getData());
             Button accept = (Button) Button.fromData(a.getChildren().get(0).getData());

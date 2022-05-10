@@ -34,12 +34,12 @@ public class EventsCollection extends DatabaseCollection { //TODO: replace conso
         this.eventCache = MultiValueCache.Builder.<ObjectId, DBEvent>builder().withInfiniteTtl().build();
     }
 
-    public boolean containsEvent(String eventName) {
+    public boolean containsEvent(ObjectId eventName) {
         List<Document> documents = Flux.from(this.getCollection().find()).collectList().block();
         if (documents != null) {
             for (Document document : documents) {
                 try {
-                    if (NetUtil.MAPPER.readValue(document.toJson(JSON_WRITER_SETTINGS), DBEventBean.class).getEventName().equals(eventName))
+                    if (NetUtil.MAPPER.readValue(document.toJson(JSON_WRITER_SETTINGS), DBEventBean.class).getId().equals(eventName))
                         return true;
                 } catch (JsonProcessingException e) {
                     LOGGER.error(e.getMessage());
