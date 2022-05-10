@@ -14,7 +14,9 @@ import discord4j.core.spec.InteractionFollowupCreateSpec;
 import discord4j.rest.util.Color;
 import reactor.core.publisher.Mono;
 
-import java.time.*;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class PublishEventCmd extends BaseCmd {
@@ -30,12 +32,12 @@ public class PublishEventCmd extends BaseCmd {
         if (!DatabaseManager.getEvents().containsEvent(title))
             return context.createFollowupMessage(context.localize("event.publish.title.error").formatted(title));
 
-        return DatabaseManager.getEvents().getDBEvent(title).flatMap(dbEvent -> {
+        return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), title).flatMap(dbEvent -> {
             if (!dbEvent.isScheduled())
                 return context.createFollowupMessage(context.localize("event.publish.schedule"));
-            if (dbEvent.getOwner().getId().asLong() == context.getAuthor().getId().asLong())
-                //noinspection ConstantConditions
-                return context.getGuild().flatMap(guild -> guild.getMemberById(dbEvent.getOwner().getId())).flatMap(owner ->
+            if (dbEvent.getOwner().getUId().asLong() == context.getAuthor().getId().asLong())
+                // noinspection ConstantConditions
+                return context.getGuild().flatMap(guild -> guild.getMemberById(dbEvent.getOwner().getUId())).flatMap(owner ->
                         context.createFollowupMessage(InteractionFollowupCreateSpec.builder()
                                 .content("@everyone")
                                 .addEmbed(EmbedCreateSpec.builder()
@@ -52,8 +54,8 @@ public class PublishEventCmd extends BaseCmd {
                                                 false))
                                         .build())
                                 .addComponent(ActionRow.of(
-                                        Button.success("joinButton_" + title, context.localize("event.publish.button.join")),
-                                        Button.danger("leaveButton_" + title, context.localize("event.publish.button.leave"))))
+                                        Button.success("joinButton_" + dbEvent.getId().toString(), context.localize("event.publish.button.join")),
+                                        Button.danger("leaveButton_" + dbEvent.getId().toString(), context.localize("event.publish.button.leave"))))
                                 .build()));
             return context.createFollowupMessage(context.localize("event.publish.restriction"));
         });

@@ -26,17 +26,17 @@ public class DeclineButtonCmd extends BaseCmdButton {
         String eventName = context.getEvent().getInteraction().getCommandInteraction().orElseThrow().getCustomId().orElse("error_error").split("_")[1];
         Mono<Message> context1 = disableIfNoEvent(context, eventName);
         if (context1 != null) return context1;
-        return DatabaseManager.getEvents().getDBEvent(eventName).flatMap(group -> {
-                    for (DBEventMember member : group.getMembers()) {
-                        if (member.getId().asLong() == context.getAuthorId().asLong() && member.getAccepted() != 2) {
-                            return member.updateAccepted(2)
-                                    .then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.declined")))
-                                    .then(informOwner(context, group, member));
-                        } else if (member.getId().asLong() == context.getAuthorId().asLong() && member.getAccepted() == 2) {
-                            return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.declined.already")));
-                        }
-                    }
-                    return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.error")));
+        return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), eventName).flatMap(group -> {
+            for (DBEventMember member : group.getMembers()) {
+                if (member.getUId().asLong() == context.getAuthorId().asLong() && member.getAccepted() != 2) {
+                    return member.updateAccepted(2)
+                            .then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.declined")))
+                            .then(informOwner(context, group, member));
+                } else if (member.getUId().asLong() == context.getAuthorId().asLong() && member.getAccepted() == 2) {
+                    return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.declined.already")));
+                }
+            }
+            return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.decline.error")));
                 }
         );
     }
@@ -58,8 +58,8 @@ public class DeclineButtonCmd extends BaseCmdButton {
 
     @NotNull
     private Mono<Message> informOwner(Context context, DBEvent event, DBEventMember dbEventMember) {
-        return Mono.zip(context.getClient().getUserById(dbEventMember.getId()),
-                        context.getClient().getUserById(event.getOwner().getId()))
+        return Mono.zip(context.getClient().getUserById(dbEventMember.getUId()),
+                        context.getClient().getUserById(event.getOwner().getUId()))
                 .flatMap(TupleUtils.function((declinedUser, owner) ->
                         owner.getPrivateChannel().flatMap(privateChannel -> privateChannel.createMessage(
                                 context.localize("event.button.decline.declined.to").formatted(declinedUser.getMention(), event.getEventName())))));

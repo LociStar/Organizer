@@ -33,8 +33,8 @@ public class CreateEventCmd extends BaseCmd {
             return context.createFollowupMessage(context.localize("event.create.restriction"));
 
         String eventName = context.getOptionAsString("title").orElse("error");
-        if (DatabaseManager.getEvents().containsEvent(eventName))
-            return context.createFollowupMessage(context.localize("event.create.group"));
+//        if (DatabaseManager.getEvents().containsEvent(eventName))
+//            return context.createFollowupMessage(context.localize("event.create.group"));
         DBEvent event = new DBEvent(eventName, context.getOptionAsString("description").orElse(null), context.getOptionAsString("icon").orElse(null));
         List<Mono<User>> users = new ArrayList<>();
 
@@ -42,11 +42,14 @@ public class CreateEventCmd extends BaseCmd {
             users.add(context.getOptionAsUser("member_" + i));
         }
 
-        return event.insert()
-                //add Owner
-                .then(new DBEventMember(context.getEvent().getInteraction().getUser().getId().asLong(), eventName, 1, true).insert())
-                //add Members
-                .thenMany(Flux.concat(users).flatMap(user -> new DBEventMember(user.getId().asLong(), eventName, 0, false).insert()))
-                .then(context.createFollowupMessage(context.localize("event.create.success")));
+        return event.insertOne().flatMap(insertOneResult -> DatabaseManager.getUsers().getDBUser(context.getAuthorId())
+                .flatMap(dbUser -> dbUser.addEvent(insertOneResult.getInsertedId().asObjectId().getValue()))
+                // get EventId
+                .then(DatabaseManager.getEvents().getDBEvent(insertOneResult.getInsertedId().asObjectId().getValue()).flatMap(dbEvent ->
+                        // add Owner
+                        new DBEventMember(context.getEvent().getInteraction().getUser().getId().asLong(), dbEvent.getId(), 1, true).insert()
+                                // add Members
+                                .thenMany(Flux.concat(users).flatMap(user -> new DBEventMember(user.getId().asLong(), dbEvent.getId(), 0, false).insert()))
+                                .then(context.createFollowupMessage(context.localize("event.create.success"))))));
     }
 }

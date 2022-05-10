@@ -26,10 +26,9 @@ public class AcceptButtonCmd extends BaseCmdButton {
         String eventTitle = context.getEvent().getInteraction().getCommandInteraction().orElseThrow().getCustomId().orElse("error_error").split("_")[1];
         Mono<Message> context1 = disableIfNoEvent(context, eventTitle);
         if (context1 != null) return context1;
-        return DatabaseManager.getEvents().getDBEvent(eventTitle).flatMap(event -> {
+        return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), eventTitle).flatMap(event -> {
             for (DBEventMember member : event.getMembers()) {
-                if (member.getId().asLong() == context.getAuthorId().asLong() && member.getAccepted() != 1) {
-                    System.out.println(member.getAccepted());
+                if (member.getUId().asLong() == context.getAuthorId().asLong() && member.getAccepted() != 1) {
                     return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.accept.accept")).then(member.updateAccepted(1))
                             .then(informOwner(context, event)));
                 } else if (member.getBean().getId().equals(context.getAuthorId().asLong()) && member.getAccepted() == 1) {
@@ -57,7 +56,7 @@ public class AcceptButtonCmd extends BaseCmdButton {
     @NotNull
     private Mono<Message> informOwner(Context context, DBEvent event) {
         return Mono.zip(context.getClient().getUserById(context.getAuthorId()),
-                        context.getClient().getUserById(event.getOwner().getId()))
+                        context.getClient().getUserById(event.getOwner().getUId()))
                 .flatMap(TupleUtils.function((user, owner) ->
                         owner.getPrivateChannel().flatMap(privateChannel -> privateChannel.createMessage(
                                 context.localize("event.button.accept.accepted.to").formatted(user.getMention(), event.getEventName())))));

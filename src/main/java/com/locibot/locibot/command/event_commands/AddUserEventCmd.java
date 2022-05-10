@@ -38,7 +38,7 @@ public class AddUserEventCmd extends BaseCmd {
 
         return context.createFollowupMessage(context.localize("event.add.success"))
                 .then(Flux.fromIterable(users).flatMap(userMono -> userMono.map(user -> user)).collectList().flatMap(usersNoMono ->
-                        Flux.fromIterable(usersNoMono).flatMap(user -> DatabaseManager.getEvents().getDBEvent(eventTitle).flatMap(dbEvent ->
+                        Flux.fromIterable(usersNoMono).flatMap(user -> DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), eventTitle).flatMap(dbEvent ->
                                 DatabaseManager.getGuilds().getDBMember(context.getGuildId(), user.getId()).flatMap(dbMember -> {
                                     if (user.isBot()) {
                                         return context.getChannel().flatMap(textChannel -> textChannel.getGuild().flatMap(guild -> guild.getMemberById(user.getId()).flatMap(member ->

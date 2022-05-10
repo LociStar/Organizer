@@ -15,17 +15,13 @@ import discord4j.rest.util.Color;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class EventUtil {
     @NotNull
     static Mono<Message> publicInvite(Context context, DBEvent dbEvent, List<String> usersString) {
-        return context.getClient().getUserById(dbEvent.getOwner().getId()).flatMap(owner ->
+        return context.getClient().getUserById(dbEvent.getOwner().getUId()).flatMap(owner ->
                 context.createFollowupMessage(InteractionFollowupCreateSpec.builder()
                         .addEmbed(EmbedCreateSpec.builder()
                                 .color(Color.BLUE)
@@ -46,9 +42,9 @@ public abstract class EventUtil {
 
     @NotNull
     static Mono<Message> privateInvite(Context context, String dbEvent_title, User user) {
-        return DatabaseManager.getEvents().getDBEvent(dbEvent_title).flatMap(dbEvent ->
+        return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), dbEvent_title).flatMap(dbEvent ->
                 user.getPrivateChannel().flatMap(privateChannel ->
-                        context.getClient().getUserById(dbEvent.getOwner().getId()).flatMap(owner ->
+                        context.getClient().getUserById(dbEvent.getOwner().getUId()).flatMap(owner ->
                                 privateChannel.createMessage(MessageCreateSpec.builder()
                                         .addEmbed(EmbedCreateSpec.builder()
                                                 .color(Color.BLUE)
