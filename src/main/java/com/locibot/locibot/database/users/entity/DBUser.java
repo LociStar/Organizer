@@ -94,7 +94,7 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
                 .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
     }
 
-    public Mono<UpdateResult> removeEvent(long event) {
+    public Mono<UpdateResult> removeEvent(ObjectId event) {
         // If the achievement is already in this state, no need to request an update
         if (!this.getBean().getEvents().contains(event)) {
             GuildsCollection.LOGGER.debug("[DBUser {}] Remove Event useless, aborting: {}", this.getId().asString(), event);
