@@ -2,6 +2,7 @@ package com.locibot.locibot.database.events_db.bean;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.locibot.locibot.database.Bean;
+import org.bson.types.ObjectId;
 import reactor.util.annotation.Nullable;
 
 import java.time.ZoneId;
@@ -10,6 +11,8 @@ import java.util.List;
 
 public class DBEventBean implements Bean {
     @JsonProperty("_id")
+    private ObjectId id;
+    @JsonProperty("eventName")
     private String eventName;
     @Nullable
     @JsonProperty("description")
@@ -25,6 +28,16 @@ public class DBEventBean implements Bean {
     @Nullable
     @JsonProperty("icon")
     private String icon;
+
+//    public DBEventBean(ObjectId id, String eventName, @Nullable String description, @Nullable List<DBEventMemberBean> members, @Nullable Long scheduledDate, String icon) {
+//        this.id = id;
+//        this.eventName = eventName;
+//        this.description = description;
+//        this.creationDate = ZonedDateTime.now(ZoneId.of("Europe/Berlin")).toEpochSecond(); //TODO: Make ZoneOffset dependent on event location
+//        this.members = members;
+//        this.scheduledDate = scheduledDate;
+//        this.icon = icon;
+//    }
 
     public DBEventBean(String eventName, @Nullable String description, @Nullable List<DBEventMemberBean> members, @Nullable Long scheduledDate, String icon) {
         this.eventName = eventName;
@@ -95,6 +108,10 @@ public class DBEventBean implements Bean {
 
     public void setScheduledDate(@Nullable Long scheduledDate) {
         this.scheduledDate = scheduledDate;
+    }
+
+    public ObjectId getId() {
+        return id;
     }
 
     @Override
