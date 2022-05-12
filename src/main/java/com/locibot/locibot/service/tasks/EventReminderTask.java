@@ -35,7 +35,7 @@ public class EventReminderTask implements Task {
         LOGGER.info("Scheduling event reminder");
         return Flux.interval(Duration.ofMinutes(1), Duration.ofMinutes(1), scheduler)
                 .flatMap(__ -> {
-                    LOGGER.info("Starting group reminder");
+                    LOGGER.debug("Starting group reminder");
                     DatabaseManager.getEvents().getAllEvents().forEach(dbEvent -> {
                         Long epochSeconds = dbEvent.getBean().getScheduledDate();
                         //check if group is scheduled
@@ -47,7 +47,7 @@ public class EventReminderTask implements Task {
                                     //send invite to all members of group, if (time_now + 35min) > scheduled_time > (time_now + 25min)
                                     && zonedDateTime.toLocalTime().isAfter(LocalTime.now().plus(1740, ChronoUnit.SECONDS))
                                     && zonedDateTime.toLocalTime().isBefore(LocalTime.now().plus(1830, ChronoUnit.SECONDS))) {
-                                LOGGER.info("30min reminder for group " + dbEvent.getEventName());
+                                LOGGER.debug("30min reminder for group " + dbEvent.getEventName());
                                 dbEvent.getMembers().forEach(member -> {
                                     if (member.getBean().getAccepted() == 1)
                                         gateway.getUserById(member.getUId()).flatMap(user ->
@@ -62,11 +62,11 @@ public class EventReminderTask implements Task {
                                                                         .footer(EmbedCreateFields.Footer.of("Author: " + owner.getUsername(), owner.getAvatarUrl()))
                                                                         .build())
                                                         ))).subscribe();
-                                        });
-                                    }
-                                }
-                            });
-                            LOGGER.info("Closing group reminder");
+                                });
+                            }
+                        }
+                    });
+                    LOGGER.debug("Closing group reminder");
                             return Mono.empty();
                         }
                 ).subscribe(null, ExceptionHandler::handleUnknownError);
