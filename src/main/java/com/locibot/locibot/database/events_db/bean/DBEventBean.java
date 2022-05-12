@@ -65,7 +65,7 @@ public class DBEventBean implements Bean {
     }
 
     public String getIcon() {
-        return icon;
+        return icon == null ? "" : icon;
     }
 
     public void setGroupName(String groupName) {
