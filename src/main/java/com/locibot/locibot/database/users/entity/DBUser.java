@@ -15,6 +15,7 @@ import discord4j.common.util.Snowflake;
 import org.bson.types.ObjectId;
 import reactor.core.publisher.Mono;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Objects;
@@ -55,11 +56,11 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
         }
 
         return Mono.from(DatabaseManager.getUsers()
-                .getCollection()
-                .updateOne(
-                        Filters.eq("_id", this.getId().asString()),
-                        Updates.set("achievements", achievements),
-                        new UpdateOptions().upsert(true)))
+                        .getCollection()
+                        .updateOne(
+                                Filters.eq("_id", this.getId().asString()),
+                                Updates.set("achievements", achievements),
+                                new UpdateOptions().upsert(true)))
                 .doOnSubscribe(__ -> {
                     GuildsCollection.LOGGER.debug("[DBUser {}] Achievements update: {}", this.getId().asString(), achievements);
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
@@ -114,6 +115,22 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
                 })
                 .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] Event remove result: {}",
+                        this.getId().asString(), result))
+                .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
+    }
+
+    public Mono<UpdateResult> setZoneId(ZoneId zoneId) {
+        return Mono.from(DatabaseManager.getUsers()
+                        .getCollection()
+                        .updateOne(
+                                Filters.eq("_id", this.getId().asString()),
+                                Updates.set("zoneId", zoneId.toString()),
+                                new UpdateOptions().upsert(true)))
+                .doOnSubscribe(__ -> {
+                    GuildsCollection.LOGGER.debug("[DBUser {}] ZoneId set: {}", this.getId().asString(), zoneId);
+                    Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
+                })
+                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] ZoneId set result: {}",
                         this.getId().asString(), result))
                 .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
     }

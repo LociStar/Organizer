@@ -5,6 +5,7 @@ import com.locibot.locibot.database.Bean;
 import org.bson.types.ObjectId;
 import reactor.util.annotation.Nullable;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 
 public class DBUserBean implements Bean {
@@ -17,15 +18,19 @@ public class DBUserBean implements Bean {
     @Nullable
     @JsonProperty("events")
     private ArrayList<ObjectId> events;
+    @Nullable
+    @JsonProperty("zoneId")
+    private ZoneId zoneId;
 
-    public DBUserBean(String id, @Nullable Integer achievements, @Nullable ArrayList<ObjectId> events) {
+    public DBUserBean(String id, @Nullable Integer achievements, @Nullable ArrayList<ObjectId> events, @Nullable ZoneId zoneId) {
         this.id = id;
         this.achievements = achievements;
         this.events = events;
+        this.zoneId = zoneId;
     }
 
     public DBUserBean(String id) {
-        this(id, null, null);
+        this(id, null, null, null);
     }
 
     public DBUserBean() {
@@ -41,6 +46,11 @@ public class DBUserBean implements Bean {
 
     public ArrayList<ObjectId> getEvents() {
         return this.events == null ? new ArrayList<>() : this.events;
+    }
+
+    @Nullable
+    public ZoneId getZoneId() {
+        return zoneId == null ? ZoneId.of("Europe/Berlin") : zoneId;
     }
 
     @Override
