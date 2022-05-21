@@ -63,6 +63,8 @@ public class EventsCollection extends DatabaseCollection { //TODO: replace conso
                 dbUser.getBean().getEvents());
 
         final Mono<ObjectId> eventId = eventsRequest.flatMap(ids -> {
+            if (ids.isEmpty())
+                return Mono.empty();
             Mono<Mono<ObjectId>> event = ids.stream().map(id ->
                     this.getDBEvent(id).map(dbEvent ->
                             dbEvent.getEventName().equals(eventName)).mapNotNull(aBoolean -> {
