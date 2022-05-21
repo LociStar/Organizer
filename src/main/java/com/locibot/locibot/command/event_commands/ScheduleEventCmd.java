@@ -29,39 +29,56 @@ public class ScheduleEventCmd extends BaseCmd {
 
     @Override
     public Mono<?> execute(Context context) {
-        LocalDate newDate = LocalDate.parse(context.getOptionAsString("date").orElseThrow(), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        LocalTime newTime = LocalTime.parse(context.getOptionAsString("time").orElseThrow());
+        LocalDate newDate;
+        LocalTime newTime;
+        try {
+            newDate = LocalDate.parse(context.getOptionAsString("date").orElseThrow(), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            newTime = LocalTime.parse(context.getOptionAsString("time").orElseThrow());
+        } catch (Exception ignored) {
+            return context.createFollowupMessage(context.localize("event.schedule.format.error"));
+        }
         List<DBEventMember> eventMembers = new ArrayList<>();
-        return context.createFollowupMessage("Event scheduled!").then(
-                DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), context.getOptionAsString("event_title").orElseThrow()).flatMap(dbEvent -> {
-                    if (!dbEvent.getOwner().getBean().getId().equals(context.getAuthor().getId().asLong())) {
-                        return context.createFollowupMessage(context.localize("event.schedule.owner"));
-                    }
-                    return dbEvent.updateSchedules(ZonedDateTime.of(LocalDateTime.of(newDate, newTime), ZoneId.of("Europe/Berlin"))) //TODO: Set ZoneId dependent on event location
-                            .then(Flux.fromIterable(dbEvent.getMembers()).concatMap(dbEventMember ->
-                                    context.getClient().getUserById(dbEventMember.getUId()).flatMap(user -> DatabaseManager.getGuilds().getDBMember(context.getGuildId(), user.getId()).flatMap(dbMember -> {
-                                        if (user.isBot()) {
-                                            return context.getChannel().flatMap(textChannel -> textChannel.getGuild().flatMap(guild -> guild.getMemberById(user.getId()).flatMap(member ->
-                                                    context.createFollowupMessageEphemeral(context.localize("event.schedule.bot").formatted(member.getNickname().orElse(user.getUsername()))))));
-                                        } else if (dbMember.getBotRegister())
-                                            return EventUtil.privateInvite(context, context.getOptionAsString("event_title").orElseThrow(), user);
-                                        else {
-                                            eventMembers.add(dbEventMember);
+        return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), context.getOptionAsString("event_title").orElseThrow()).flatMap(dbEvent ->
+                DatabaseManager.getUsers().getDBUser(context.getAuthorId()).flatMap(dbUser -> {
+
+                            if (dbEvent.getId() == null) {
+                                return context.createFollowupMessage(context.localize("event.not.found").formatted(context.getOptionAsString("event_title").orElse("ERROR")));
+                            }
+
+                            if (!dbUser.hasZoneId())
+                                return context.createFollowupMessage(context.localize("event.schedule.zone.error"));
+
+                            if (!dbEvent.getOwner().getBean().getId().equals(context.getAuthor().getId().asLong())) {
+                                return context.createFollowupMessage(context.localize("event.schedule.owner"));
+                            }
+                            ZoneId zoneId = dbUser.getBean().getZoneId();
+                            assert zoneId != null;
+                            return dbEvent.updateSchedules(ZonedDateTime.of(LocalDateTime.of(newDate, newTime), zoneId))
+                                    .then(context.createFollowupMessage("Event scheduled!"))
+                                    .then(Flux.fromIterable(dbEvent.getMembers()).concatMap(dbEventMember ->
+                                            context.getClient().getUserById(dbEventMember.getUId()).flatMap(user -> DatabaseManager.getGuilds().getDBMember(context.getGuildId(), user.getId()).flatMap(dbMember -> {
+                                                if (user.isBot()) {
+                                                    return context.getChannel().flatMap(textChannel -> textChannel.getGuild().flatMap(guild -> guild.getMemberById(user.getId()).flatMap(member ->
+                                                            context.createFollowupMessageEphemeral(context.localize("event.schedule.bot").formatted(member.getNickname().orElse(user.getUsername()))))));
+                                                } else if (dbMember.getBotRegister())
+                                                    return EventUtil.privateInvite(context, context.getOptionAsString("event_title").orElseThrow(), user);
+                                                else {
+                                                    eventMembers.add(dbEventMember);
+                                                    return Mono.empty();
+                                                }
+                                            }))
+                                    ).collectList())
+                                    //Channel (public) invitation
+                                    .then(convertToUsers(context, eventMembers))
+                                    .flatMap(users -> {
+                                        if (users.isEmpty())
                                             return Mono.empty();
-                                        }
-                                    }))
-                            ).collectList())
-                            //Channel (public) invitation
-                            .then(convertToUsers(context, eventMembers))
-                            .flatMap(users -> {
-                                if (users.isEmpty())
-                                    return Mono.empty();
-                                List<String> usersString = users.stream().map(User::getMention).collect(Collectors.toList());
-                                return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), context.getOptionAsString("event_title").orElseThrow()).flatMap(dbEvent1 ->
-                                        EventUtil.publicInvite(context, dbEvent1, usersString));
-                            });
-                })
-        );
+                                        List<String> usersString = users.stream().map(User::getMention).collect(Collectors.toList());
+                                        return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), context.getOptionAsString("event_title").orElseThrow()).flatMap(dbEvent1 ->
+                                                EventUtil.publicInvite(context, dbEvent1, usersString));
+                                    });
+                        }
+                ));
     }
 
     @NotNull
