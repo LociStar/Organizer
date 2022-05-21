@@ -50,7 +50,7 @@ public class DBUserBean implements Bean {
 
     @Nullable
     public ZoneId getZoneId() {
-        return zoneId == null ? ZoneId.of("Europe/Berlin") : zoneId;
+        return zoneId;// == null ? ZoneId.of("Europe/Berlin") : zoneId;
     }
 
     @Override

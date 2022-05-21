@@ -135,6 +135,10 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
                 .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
     }
 
+    public boolean hasZoneId() {
+        return this.getBean().getZoneId() != null;
+    }
+
     @Override
     public Mono<Void> insert() {
         throw new IllegalStateException();
