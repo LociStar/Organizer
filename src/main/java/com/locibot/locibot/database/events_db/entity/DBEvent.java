@@ -13,6 +13,7 @@ import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
+import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.User;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
@@ -165,5 +166,13 @@ public class DBEvent extends SerializableEntity<DBEventBean> implements Database
                 })
                 .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBEvent {}] DBEventMember remove result: {}", this.getId(), result))
                 .doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getId()));
+    }
+
+    public boolean containsUser(Snowflake userId) {
+        for (DBEventMember dbEventMember : this.getMembers()) {
+            if (dbEventMember.getUId().equals(userId))
+                return true;
+        }
+        return false;
     }
 }
