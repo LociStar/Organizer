@@ -27,29 +27,36 @@ public class AddUserEventCmd extends BaseCmd {
     @Override
     public Mono<?> execute(Context context) {
         String eventTitle = context.getOptionAsString("title").orElseThrow();
-//        if (!DatabaseManager.getEvents().containsEvent(eventTitle)) {
-//            return context.createFollowupMessage(context.localize("event.add.restriction"));
-//        }
+
         List<Mono<User>> users = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             if (context.getOptionAsUser("member_" + i) != null)
                 users.add(context.getOptionAsUser("member_" + i));
         }
 
-        return context.createFollowupMessage(context.localize("event.add.success"))
-                .then(Flux.fromIterable(users).flatMap(userMono -> userMono.map(user -> user)).collectList().flatMap(usersNoMono ->
-                        Flux.fromIterable(usersNoMono).flatMap(user -> DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), eventTitle).flatMap(dbEvent ->
-                                DatabaseManager.getGuilds().getDBMember(context.getGuildId(), user.getId()).flatMap(dbMember -> {
-                                    if (user.isBot()) {
-                                        return context.getChannel().flatMap(textChannel -> textChannel.getGuild().flatMap(guild -> guild.getMemberById(user.getId()).flatMap(member ->
-                                                context.createFollowupMessageEphemeral(member.getNickname().orElse(user.getUsername()) + context.localize("event.add.warning")))));
-                                    } else if (dbMember.getBotRegister() && dbEvent.isScheduled())
-                                        return EventUtil.privateInvite(context, eventTitle, user);
-                                    else if (dbEvent.isScheduled()) {
-                                        return EventUtil.publicInvite(context, dbEvent, new ArrayList<>(Collections.singleton(user.getUsername())));
-                                    }
-                                    return Mono.empty();
-                                }).then(dbEvent.addMember(user, 0))
-                        )).collectList()));
+        return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), eventTitle).flatMap(dbEvent -> {
+            if (dbEvent.getId() == null) {
+                return context.createFollowupMessage(context.localize("event.not.found").formatted(eventTitle));
+            }
+
+            return Flux.fromIterable(users).flatMap(userMono -> userMono.map(user -> user)).collectList().flatMap(usersNoMono ->
+                    Flux.fromIterable(usersNoMono).flatMap(user ->
+                            DatabaseManager.getGuilds().getDBMember(context.getGuildId(), user.getId()).flatMap(dbMember -> {
+                                if (dbEvent.containsUser(user.getId())) {
+                                    return context.createFollowupMessage(context.localize("event.add.warning.user").formatted(user.getId().asLong()));
+                                }
+                                Mono<?> result = Mono.empty();
+                                if (user.isBot()) {
+                                    return context.getChannel().flatMap(textChannel -> textChannel.getGuild().flatMap(guild -> guild.getMemberById(user.getId()).flatMap(member ->
+                                            context.createFollowupMessageEphemeral(member.getNickname().orElse(user.getUsername()) + " " + context.localize("event.add.warning")))));
+                                } else if (dbMember.getBotRegister() && dbEvent.isScheduled())
+                                    result = EventUtil.privateInvite(context, eventTitle, user);
+                                else if (dbEvent.isScheduled()) {
+                                    result = EventUtil.publicInvite(context, dbEvent, new ArrayList<>(Collections.singleton(user.getUsername())));
+                                }
+                                return result.then(dbEvent.addMember(user, 0)).then(context.createFollowupMessage(context.localize("event.add.success").formatted(user.getId().asLong())));
+                            })
+                    ).collectList());
+        });
     }
 }
