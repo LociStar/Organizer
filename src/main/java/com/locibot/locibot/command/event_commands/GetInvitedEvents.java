@@ -28,13 +28,14 @@ public class GetInvitedEvents extends BaseCmd {
                 .thumbnail("https://img.icons8.com/cotton/344/info--v3.png");
 
         DatabaseManager.getEvents().getAllEventInvitations(context.getAuthorId()).flatMap(dbEvent -> {
-            name.append(dbEvent.getEventName()).append(System.getProperty("line.separator"));
-            int s = dbEvent.getMembers().stream().filter(dbEventMember -> dbEventMember.getUId() == context.getAuthorId()).findFirst().map(DBEventMember::getAccepted).orElse(0);
-            status.append(s == 0 ? "pending" : s == 1 ? "accepted" : "rejected").append(System.getProperty("line.separator"));
             String time = "---";
-            if (dbEvent.getBean().getScheduledDate() != null)
+            if (dbEvent.getBean().getScheduledDate() != null) {
                 time = "<t:" + dbEvent.getBean().getScheduledDate() + ">";
-            scheduled.append(time).append(System.getProperty("line.separator"));
+                scheduled.append(time).append(System.getProperty("line.separator"));
+                name.append(dbEvent.getEventName()).append(System.getProperty("line.separator"));
+                int s = dbEvent.getMembers().stream().filter(dbEventMember -> dbEventMember.getUId() == context.getAuthorId()).findFirst().map(DBEventMember::getAccepted).orElse(0);
+                status.append(s == 0 ? "pending" : s == 1 ? "accepted" : "rejected").append(System.getProperty("line.separator"));
+            }
             return Mono.empty();
         }).collectList().block(); //TODO: Make method non-blocking
 
