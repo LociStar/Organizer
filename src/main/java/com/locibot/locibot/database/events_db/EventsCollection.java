@@ -35,7 +35,11 @@ public class EventsCollection extends DatabaseCollection { //TODO: replace conso
 
     @Deprecated
     public boolean containsEvent(ObjectId objectId) {
-        List<Document> documents = Flux.from(this.getCollection().find()).collectList().block();
+        List<Document> documents = Flux.from(this.getCollection().find()).collectList()
+                .doOnSubscribe(__ -> {
+                    LOGGER.debug("[DBEvent {}] Request", objectId.toString());
+                    Telemetry.DB_REQUEST_COUNTER.labels(this.getName()).inc();
+                }).block();
         if (documents != null) {
             for (Document document : documents) {
                 try {
@@ -54,7 +58,11 @@ public class EventsCollection extends DatabaseCollection { //TODO: replace conso
         return Mono.from(document)
                 .map(document1 -> document1.toJson(JSON_WRITER_SETTINGS))
                 .flatMap(json -> Mono.fromCallable(() -> NetUtil.MAPPER.readValue(json, DBEventBean.class)))
-                .map(DBEvent::new);
+                .map(DBEvent::new)
+                .doOnSubscribe(__ -> {
+                    LOGGER.debug("[DBEvent {}] Request", id.toString());
+                    Telemetry.DB_REQUEST_COUNTER.labels(this.getName()).inc();
+                });
     }
 
     public Mono<DBEvent> getDBEvent(Snowflake uId, String eventName) {
@@ -119,13 +127,15 @@ public class EventsCollection extends DatabaseCollection { //TODO: replace conso
         final Mono<List<ObjectId>> eventsRequest = DatabaseManager.getUsers().getDBUser(uId).map(dbUser ->
                 dbUser.getBean().getEvents());
 
-        final Flux<DBEvent> events = eventsRequest.flatMapMany(Flux::fromIterable)
+        return eventsRequest.flatMapMany(Flux::fromIterable)
                 .flatMap(objectId -> DatabaseManager.getEvents().getDBEvent(objectId));
+    }
 
-        return events
-                .doOnSubscribe(__ -> {
-                    LOGGER.debug("[DBEvent {}] Request", events.toString());
-                    Telemetry.DB_REQUEST_COUNTER.labels(this.getName()).inc();
-                });
+    public Flux<DBEvent> getAllEventInvitations(Snowflake uId) {
+        final Mono<List<ObjectId>> eventsRequest = DatabaseManager.getUsers().getDBUser(uId).map(dbUser ->
+                dbUser.getBean().getEventInvitations());
+
+        return eventsRequest.flatMapMany(Flux::fromIterable)
+                .flatMap(objectId -> DatabaseManager.getEvents().getDBEvent(objectId));
     }
 }
