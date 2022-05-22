@@ -22,7 +22,7 @@ public class GetInvitedEvents extends BaseCmd {
         StringBuilder status = new StringBuilder();
         StringBuilder scheduled = new StringBuilder();
         EmbedCreateSpec.Builder embedCreateSpec = EmbedCreateSpec.builder()
-                .title("Your Events")
+                .title("Your Event Invitations")
                 .footer(EmbedCreateFields.Footer.of("If you need more information about a group, use \"/info groups <groupName>\"", "https://img.icons8.com/cotton/344/info--v3.png"))
                 .color(Color.GREEN)
                 .thumbnail("https://img.icons8.com/cotton/344/info--v3.png");
