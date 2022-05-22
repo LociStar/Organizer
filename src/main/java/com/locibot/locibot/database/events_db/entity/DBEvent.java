@@ -17,6 +17,7 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.User;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.ZonedDateTime;
@@ -80,6 +81,10 @@ public class DBEvent extends SerializableEntity<DBEventBean> implements Database
     @Override
     public Mono<Void> delete() {
 
+        List<Mono<UpdateResult>> deleteInvitation = this.getMembers().stream()
+                .map(dbEventMember -> DatabaseManager.getUsers().getDBUser(dbEventMember.getUId())
+                        .flatMap(dbUser -> dbUser.removeEventInvitation(this.getId())))
+                .collect(Collectors.toList());
         Mono<UpdateResult> deleteResult = DatabaseManager.getUsers().getDBUser(this.getOwner().getUId()).flatMap(dbUser -> dbUser.removeEvent(this.getId()));
 
         return deleteResult.map(updateResult -> updateResult).then(Mono.from(DatabaseManager.getEvents()
@@ -91,7 +96,7 @@ public class DBEvent extends SerializableEntity<DBEventBean> implements Database
                         })
                         .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBEvent {}] Deletion result: {}", this.getId(), result))
                         .doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.getId())))
-                .then();
+                .then(Flux.concat(deleteInvitation).then());
     }
 
     public List<DBEventMember> getMembers() {

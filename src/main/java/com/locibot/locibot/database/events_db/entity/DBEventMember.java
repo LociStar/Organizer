@@ -44,6 +44,10 @@ public class DBEventMember extends SerializableEntity<DBEventMemberBean> impleme
 
     @Override
     public Mono<Void> insert() {
+
+        Mono<Void> insertEventInvitation = DatabaseManager.getUsers().getDBUser(this.getUId()).flatMap(dbUser ->
+                dbUser.addEventInvitation(this.eventId)).then();
+
         return Mono.from(DatabaseManager.getEvents()
                         .getCollection()
                         .updateOne(Filters.eq("_id", this.eventId),
@@ -56,7 +60,7 @@ public class DBEventMember extends SerializableEntity<DBEventMemberBean> impleme
                 .doOnNext(result -> GroupsCollection.LOGGER.trace("[DBEventMember {}/{}] Insertion result: {}",
                         this.getUId().asString(), this.eventId, result))
                 .doOnTerminate(() -> DatabaseManager.getEvents().invalidateCache(this.eventId))
-                .then();
+                .then(insertEventInvitation);
     }
 
     public Mono<UpdateResult> updateAccepted(int state) {
