@@ -38,8 +38,10 @@ public class ScheduleEventCmd extends BaseCmd {
             return context.createFollowupMessage(context.localize("event.schedule.format.error"));
         }
         List<DBEventMember> eventMembers = new ArrayList<>();
-        return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), context.getOptionAsString("event_title").orElseThrow()).flatMap(dbEvent ->
-                DatabaseManager.getUsers().getDBUser(context.getAuthorId()).flatMap(dbUser -> {
+        return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), context.getOptionAsString("event_title").orElseThrow())
+                .switchIfEmpty(context.createFollowupMessage(context.localize("event.not.found").formatted(context.getOptionAsString("event_title").orElse("ERROR"))).then(Mono.empty()))
+                .flatMap(dbEvent ->
+                        DatabaseManager.getUsers().getDBUser(context.getAuthorId()).flatMap(dbUser -> {
 
                             if (dbEvent.getId() == null) {
                                 return context.createFollowupMessage(context.localize("event.not.found").formatted(context.getOptionAsString("event_title").orElse("ERROR")));
