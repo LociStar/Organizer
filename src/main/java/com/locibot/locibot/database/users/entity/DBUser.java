@@ -71,7 +71,7 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
     }
 
     public Mono<UpdateResult> addEvent(ObjectId event) {
-        // If the achievement is already in this state, no need to request an update
+        // If the event is already in this state, no need to request an update
         if (this.getBean().getEvents().contains(event)) {
             GuildsCollection.LOGGER.debug("[DBUser {}] Add Event useless, aborting: {}", this.getId().asString(), event);
             return Mono.empty();
@@ -96,7 +96,7 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
     }
 
     public Mono<UpdateResult> removeEvent(ObjectId event) {
-        // If the achievement is already in this state, no need to request an update
+        // If the event is already in this state, no need to request an update
         if (!this.getBean().getEvents().contains(event)) {
             GuildsCollection.LOGGER.debug("[DBUser {}] Remove Event useless, aborting: {}", this.getId().asString(), event);
             return Mono.empty();
@@ -115,6 +115,55 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
                 })
                 .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] Event remove result: {}",
+                        this.getId().asString(), result))
+                .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
+    }
+
+    public Mono<UpdateResult> addEventInvitation(ObjectId event) {
+        // If the event is already in this state, no need to request an update
+        if (this.getBean().getEventInvitations().contains(event)) {
+            GuildsCollection.LOGGER.debug("[DBUser {}] Add EventInvitation useless, aborting: {}", this.getId().asString(), event);
+            return Mono.empty();
+        }
+
+        ArrayList<ObjectId> eventInvitations = new ArrayList<>(this.getBean().getEventInvitations());
+        eventInvitations.add(event);
+
+        return Mono.from(DatabaseManager.getUsers()
+                        .getCollection()
+                        .updateOne(
+                                Filters.eq("_id", this.getId().asString()),
+                                Updates.set("event_invitations", eventInvitations),
+                                new UpdateOptions().upsert(true)))
+                .doOnSubscribe(__ -> {
+                    GuildsCollection.LOGGER.debug("[DBUser {}] EventInvitation added: {}", this.getId().asString(), event);
+                    Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
+                })
+                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] EventInvitation add result: {}",
+                        this.getId().asString(), result))
+                .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
+    }
+
+    public Mono<UpdateResult> removeEventInvitation(ObjectId event) {
+        // If the event is already in this state, no need to request an update
+        if (!this.getBean().getEventInvitations().contains(event)) {
+            GuildsCollection.LOGGER.debug("[DBUser {}] Remove EventInvitation useless, aborting: {}", this.getId().asString(), event);
+            return Mono.empty();
+        }
+
+        this.getBean().getEventInvitations().remove(event);
+
+        return Mono.from(DatabaseManager.getUsers()
+                        .getCollection()
+                        .updateOne(
+                                Filters.eq("_id", this.getId().asString()),
+                                Updates.set("event_invitations", this.getBean().getEvents()),
+                                new UpdateOptions().upsert(true)))
+                .doOnSubscribe(__ -> {
+                    GuildsCollection.LOGGER.debug("[DBUser {}] EventInvitation removed: {}", this.getId().asString(), event);
+                    Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
+                })
+                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] EventInvitation remove result: {}",
                         this.getId().asString(), result))
                 .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
     }

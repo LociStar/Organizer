@@ -19,18 +19,22 @@ public class DBUserBean implements Bean {
     @JsonProperty("events")
     private ArrayList<ObjectId> events;
     @Nullable
+    @JsonProperty("event_invitations")
+    private ArrayList<ObjectId> eventInvitations;
+    @Nullable
     @JsonProperty("zoneId")
     private ZoneId zoneId;
 
-    public DBUserBean(String id, @Nullable Integer achievements, @Nullable ArrayList<ObjectId> events, @Nullable ZoneId zoneId) {
+    public DBUserBean(String id, @Nullable Integer achievements, @Nullable ArrayList<ObjectId> events, @Nullable ArrayList<ObjectId> eventInvitations, @Nullable ZoneId zoneId) {
         this.id = id;
         this.achievements = achievements;
         this.events = events;
+        this.eventInvitations = eventInvitations;
         this.zoneId = zoneId;
     }
 
     public DBUserBean(String id) {
-        this(id, null, null, null);
+        this(id, null, null, null, null);
     }
 
     public DBUserBean() {
@@ -46,6 +50,10 @@ public class DBUserBean implements Bean {
 
     public ArrayList<ObjectId> getEvents() {
         return this.events == null ? new ArrayList<>() : this.events;
+    }
+
+    public ArrayList<ObjectId> getEventInvitations() {
+        return this.eventInvitations == null ? new ArrayList<>() : this.eventInvitations;
     }
 
     @Nullable
