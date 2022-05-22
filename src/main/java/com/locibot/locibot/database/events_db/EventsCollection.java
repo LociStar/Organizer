@@ -22,7 +22,6 @@ import reactor.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 public class EventsCollection extends DatabaseCollection { //TODO: replace console prints with logs
 
@@ -60,49 +59,22 @@ public class EventsCollection extends DatabaseCollection { //TODO: replace conso
 
     public Mono<DBEvent> getDBEvent(Snowflake uId, String eventName) {
 
-        final Mono<List<ObjectId>> eventsRequest = DatabaseManager.getUsers().getDBUser(uId).map(dbUser ->
-                dbUser.getBean().getEvents());
-
-        final Mono<ObjectId> eventId = eventsRequest.flatMap(ids -> {
-            if (ids.isEmpty())
-                return Mono.empty();
-            Mono<Mono<ObjectId>> event = ids.stream().map(id ->
-                    this.getDBEvent(id).map(dbEvent ->
-                            dbEvent.getEventName().equals(eventName)).mapNotNull(aBoolean -> {
-                        if (aBoolean) {
-                            return this.getDBEvent(id).map(DBEvent::getId);
-                        } else
-                            return null;
-                    })).collect(Collectors.toList()).get(0);
-
-            return event.flatMap(longMono -> longMono);
-        });
-
         AtomicReference<ObjectId> id = new AtomicReference<>(new ObjectId());
 
-        final Mono<Publisher<Document>> request = eventId.map(objectId -> {
-            id.set(objectId);
-            return this.getCollection()
-                    .find(Filters.eq("_id", objectId))
-                    .first();
-        });
-
-        final Mono<DBEvent> getDBEvent = request
-                .flatMap(documentPublisher -> Mono.from(documentPublisher)
-                        .map(document -> document.toJson(JSON_WRITER_SETTINGS))
-                        .flatMap(json -> Mono.fromCallable(() -> NetUtil.MAPPER.readValue(json, DBEventBean.class)))
-                        .map(DBEvent::new)
-                        .doOnSuccess(consumer -> {
-                            if (consumer == null) {
-                                LOGGER.debug("[DBEvent {}] Not found", eventName);
-                            }
-                        }))
-                .defaultIfEmpty(new DBEvent(eventName))
-                .doOnSubscribe(__ -> {
-                    LOGGER.debug("[DBEvent {}] Request", eventName);
-                    Telemetry.DB_REQUEST_COUNTER.labels(this.getName()).inc();
+        Mono<List<ObjectId>> idList = DatabaseManager.getUsers().getDBUser(uId).map(dbUser -> dbUser.getBean().getEvents());
+        Flux<DBEvent> events = idList.flatMapMany(Flux::fromIterable).flatMap(this::getDBEvent);
+        Mono<DBEvent> dbEventMono = events.filter(dbEvent -> {
+                    return dbEvent.getEventName().equals(eventName);
+                }).switchIfEmpty(Flux.empty())
+                .collectList().defaultIfEmpty(List.of(new DBEvent("empty")))
+                .mapNotNull(dbEvents -> {
+                    if (dbEvents.size() == 0)
+                        return null;
+                    id.set(dbEvents.get(0).getId());
+                    return dbEvents.get(0);
                 });
-        return this.eventCache.getOrCache(id.get(), getDBEvent);
+
+        return this.eventCache.getOrCache(id.get(), dbEventMono);
     }
 
     public void invalidateCache(ObjectId objectId) {
@@ -141,5 +113,19 @@ public class EventsCollection extends DatabaseCollection { //TODO: replace conso
                 }
             });
         return dbGroups;
+    }
+
+    public Flux<DBEvent> getAllEvents(Snowflake uId) {
+        final Mono<List<ObjectId>> eventsRequest = DatabaseManager.getUsers().getDBUser(uId).map(dbUser ->
+                dbUser.getBean().getEvents());
+
+        final Flux<DBEvent> events = eventsRequest.flatMapMany(Flux::fromIterable)
+                .flatMap(objectId -> DatabaseManager.getEvents().getDBEvent(objectId));
+
+        return events
+                .doOnSubscribe(__ -> {
+                    LOGGER.debug("[DBEvent {}] Request", events.toString());
+                    Telemetry.DB_REQUEST_COUNTER.labels(this.getName()).inc();
+                });
     }
 }
