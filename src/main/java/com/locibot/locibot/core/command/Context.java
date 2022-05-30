@@ -240,16 +240,17 @@ public class Context implements InteractionContext, I18nContext {
 
     @Override
     public Mono<Message> createFollowupMessage(String str) {
-        return this.event.getInteractionResponse()
-                .createFollowupMessage(str)
-                .map(data -> new Message(this.getClient(), data))
-                .doOnNext(message -> this.replyId.set(message.getId().asLong()))
-                .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
+        return this.event.deferReply().onErrorResume(throwable -> Mono.empty())
+                .then(this.event.getInteractionResponse()
+                        .createFollowupMessage(str)
+                        .map(data -> new Message(this.getClient(), data))
+                        .doOnNext(message -> this.replyId.set(message.getId().asLong()))
+                        .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc()));
     }
 
     public Mono<Message> createFollowupMessageEphemeral(String str) {
-        return this.event.createFollowup(str).withEphemeral(true)
-                .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
+        return this.event.deferReply().withEphemeral(true).onErrorResume(throwable -> Mono.empty()).then(this.event.createFollowup(str).withEphemeral(true)
+                .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc()));
     }
 
     @Override
@@ -271,19 +272,19 @@ public class Context implements InteractionContext, I18nContext {
 
     @Override
     public Mono<Message> createFollowupMessage(EmbedCreateSpec embed) {
-        return this.event.getInteractionResponse().createFollowupMessage(MultipartRequest.ofRequest(
+        return this.event.deferReply().onErrorResume(throwable -> Mono.empty()).then(this.event.getInteractionResponse().createFollowupMessage(MultipartRequest.ofRequest(
                         WebhookExecuteRequest.builder()
                                 .addEmbed(embed.asRequest())
                                 .build()))
                 .map(data -> new Message(this.getClient(), data))
                 .doOnNext(message -> this.replyId.set(message.getId().asLong()))
-                .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
+                .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc()));
     }
 
     @Override
     public Mono<Message> createFollowupMessage(InteractionFollowupCreateSpec spec) {
-        return this.event.createFollowup(spec)
-                .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
+        return this.event.deferReply().onErrorResume(throwable -> Mono.empty()).then(this.event.createFollowup(spec)
+                .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc()));
     }
 
     public Mono<Message> createFollowupButton(EmbedCreateSpec embed, Button... buttons) {
