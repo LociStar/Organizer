@@ -10,6 +10,6 @@ import java.util.List;
 public class RegisterGroup extends BaseCmdGroup {
     public RegisterGroup() {
         super(CommandCategory.REGISTER, "Register commands",
-                List.of(new RegisterWeather()));
+                List.of(new RegisterWeather(), new RegisterDm()));
     }
 }
