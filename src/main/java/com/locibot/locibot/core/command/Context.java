@@ -288,7 +288,8 @@ public class Context implements InteractionContext, I18nContext {
     }
 
     public Mono<Message> createFollowupButton(EmbedCreateSpec embed, Button... buttons) {
-        return this.event.createFollowup().withEmbeds(embed).withComponents(ActionRow.of(buttons));
+        return this.event.deferReply().onErrorResume(throwable -> Mono.empty()).then(this.event.createFollowup().withEmbeds(embed).withComponents(ActionRow.of(buttons)))
+                .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc());
     }
 
     @Override
