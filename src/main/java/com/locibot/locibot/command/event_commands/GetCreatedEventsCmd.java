@@ -10,8 +10,8 @@ import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
 import reactor.core.publisher.Mono;
 
-public class GetCreatedEvents extends BaseCmd {
-    protected GetCreatedEvents() {
+public class GetCreatedEventsCmd extends BaseCmd {
+    protected GetCreatedEventsCmd() {
         super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "get_events", "Get all of your created events");
     }
 

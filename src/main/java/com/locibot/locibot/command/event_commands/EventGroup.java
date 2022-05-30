@@ -12,7 +12,7 @@ public class EventGroup extends BaseCmdGroup {
     public EventGroup() {
         super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "Event Commands",
                 List.of(new CreateEventCmd(), new DeleteEventCmd(), new ScheduleEventCmd(), new AddUserEventCmd(),
-                        new PublishEventCmd(), new TimeZoneEventCmd(), new GetCreatedEvents(), new GetInvitedEventsCmd(),
+                        new PublishEventCmd(), new TimeZoneEventCmd(), new GetCreatedEventsCmd(), new GetInvitedEventsCmd(),
                         new EventInfoCmd())
         );
     }
