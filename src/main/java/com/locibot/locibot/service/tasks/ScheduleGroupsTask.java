@@ -27,7 +27,7 @@ public class ScheduleGroupsTask implements Task {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 
     @Override
