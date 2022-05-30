@@ -4,13 +4,11 @@ import com.locibot.locibot.command.group.amongUs.AmongUs;
 import com.locibot.locibot.command.group.clash.Clash;
 import com.locibot.locibot.command.group.valorant.Valorant;
 import com.locibot.locibot.core.command.BaseCmdGroup;
-import com.locibot.locibot.core.command.CmdAnnotation;
 import com.locibot.locibot.core.command.CommandCategory;
 import com.locibot.locibot.core.command.CommandPermission;
 
 import java.util.List;
 
-@CmdAnnotation
 public class GroupGroup extends BaseCmdGroup {
     public GroupGroup() {
         super(CommandCategory.GROUP, CommandPermission.USER_GUILD, "Group Commands",
