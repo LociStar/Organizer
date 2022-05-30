@@ -10,9 +10,9 @@ import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
 import reactor.core.publisher.Mono;
 
-public class BotRegisterSetup extends BaseCmd {
-    public BotRegisterSetup() {
-        super(CommandCategory.MODERATION, CommandPermission.ADMIN, "bot_server_setup", "register to weather");
+public class DmRegisterCmd extends BaseCmd {
+    public DmRegisterCmd() {
+        super(CommandCategory.MODERATION, CommandPermission.ADMIN, "dm_register_button", "Create a button to register to DMs from the bot");
     }
 
     @Override
@@ -20,13 +20,13 @@ public class BotRegisterSetup extends BaseCmd {
         return context.getClient().getSelf().flatMap(user ->
                 context.createFollowupButton(
                         EmbedCreateSpec.builder()
+                                .title("DM subscription")
                                 .description("""
-                                        @everyone
-                                        Click **register** if you allow the bot to send you private messages.
+                                        Click **register** if you allow the bot to send you direct messages.
                                         This is necessary for all __event__ commands.""")
                                 .thumbnail(user.getAvatarUrl())
                                 .color(Color.RED)
-                                .footer(EmbedCreateFields.Footer.of("Click it again, if you want to un-register to bot messages.", ""))
+                                .footer(EmbedCreateFields.Footer.of("Click it again, if you want to un-register DMs from the bot.", ""))
                                 .build()
                         , Button.danger("registerButton", "register")));
     }

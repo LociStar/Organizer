@@ -9,8 +9,8 @@ import com.locibot.locibot.object.ExceptionHandler;
 import reactor.core.publisher.Mono;
 
 @ButtonAnnotation
-public class RegisterButtonCmd extends BaseCmdButton {
-    public RegisterButtonCmd() {
+public class DmRegisterButtonCmd extends BaseCmdButton {
+    public DmRegisterButtonCmd() {
         super(CommandPermission.USER_GUILD, "registerButton");
     }
 
