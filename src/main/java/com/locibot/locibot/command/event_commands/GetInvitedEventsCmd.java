@@ -11,8 +11,8 @@ import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
 import reactor.core.publisher.Mono;
 
-public class GetInvitedEvents extends BaseCmd {
-    protected GetInvitedEvents() {
+public class GetInvitedEventsCmd extends BaseCmd {
+    protected GetInvitedEventsCmd() {
         super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "get_invitations", "Receive all the events to which you are invited");
     }
 
