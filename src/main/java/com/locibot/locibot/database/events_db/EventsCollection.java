@@ -70,6 +70,18 @@ public class EventsCollection extends DatabaseCollection { //TODO: replace conso
         AtomicReference<ObjectId> id = new AtomicReference<>(new ObjectId());
 
         Mono<List<ObjectId>> idList = DatabaseManager.getUsers().getDBUser(uId).map(dbUser -> dbUser.getBean().getEvents());
+        return getDbEventMono(eventName, id, idList);
+    }
+
+    public Mono<DBEvent> getInvitedDBEvent(Snowflake uId, String eventName) {
+
+        AtomicReference<ObjectId> id = new AtomicReference<>(new ObjectId());
+
+        Mono<List<ObjectId>> idList = DatabaseManager.getUsers().getDBUser(uId).map(dbUser -> dbUser.getBean().getEventInvitations());
+        return getDbEventMono(eventName, id, idList);
+    }
+
+    private Mono<DBEvent> getDbEventMono(String eventName, AtomicReference<ObjectId> id, Mono<List<ObjectId>> idList) {
         Flux<DBEvent> events = idList.flatMapMany(Flux::fromIterable).flatMap(this::getDBEvent);
         Mono<DBEvent> dbEventMono = events.filter(dbEvent -> {
                     return dbEvent.getEventName().equals(eventName);
