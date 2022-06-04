@@ -40,7 +40,7 @@ public class GetInvitedEventsCmd extends BaseCmd {
         }).collectList().block(); //TODO: Make method non-blocking
 
         //return getData(name, count, scheduled, context).then(setup(name, count, scheduled, embedCreateSpec)).then(context.createFollowupMessage(embedCreateSpec.build()));
-        return setup(name, status, scheduled, embedCreateSpec).then(context.createFollowupMessage(embedCreateSpec.build()));
+        return setup(name, status, scheduled, embedCreateSpec).then(context.createFollowupMessage(embedCreateSpec.build(), true));
     }
 
     public Mono<?> setup(StringBuilder name, StringBuilder count, StringBuilder scheduled, EmbedCreateSpec.Builder embedCreateSpec) {

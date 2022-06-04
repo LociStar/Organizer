@@ -28,7 +28,7 @@ public class PublishEventCmd extends BaseCmd {
 
         return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), title).flatMap(dbEvent -> {
             if (!dbEvent.isScheduled())
-                return context.createFollowupMessage(context.localize("event.publish.schedule"));
+                return context.createFollowupMessageEphemeral(context.localize("event.publish.schedule"));
             if (dbEvent.getOwner().getUId().asLong() == context.getAuthor().getId().asLong())
                 // noinspection ConstantConditions
                 return context.getGuild().flatMap(guild -> guild.getMemberById(dbEvent.getOwner().getUId())).flatMap(owner ->
@@ -51,7 +51,7 @@ public class PublishEventCmd extends BaseCmd {
                                         Button.success("joinButton_" + dbEvent.getId().toString(), context.localize("event.publish.button.join")),
                                         Button.danger("leaveButton_" + dbEvent.getId().toString(), context.localize("event.publish.button.leave"))))
                                 .build()));
-            return context.createFollowupMessage(context.localize("event.publish.restriction"));
+            return context.createFollowupMessageEphemeral(context.localize("event.publish.restriction"));
         });
     }
 }

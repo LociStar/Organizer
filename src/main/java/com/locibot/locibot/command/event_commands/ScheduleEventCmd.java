@@ -32,24 +32,24 @@ public class ScheduleEventCmd extends BaseCmd {
             newDate = LocalDate.parse(context.getOptionAsString("date").orElseThrow(), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
             newTime = LocalTime.parse(context.getOptionAsString("time").orElseThrow());
         } catch (Exception ignored) {
-            return context.createFollowupMessage(context.localize("event.schedule.format.error"));
+            return context.createFollowupMessageEphemeral(context.localize("event.schedule.format.error"));
         }
         List<DBEventMember> eventMembers = new ArrayList<>();
         return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), context.getOptionAsString("event_title").orElseThrow())
-                .switchIfEmpty(context.createFollowupMessage(context.localize("event.not.found").formatted(context.getOptionAsString("event_title").orElse("ERROR"))).then(Mono.empty()))
+                .switchIfEmpty(context.createFollowupMessageEphemeral(context.localize("event.not.found").formatted(context.getOptionAsString("event_title").orElse("ERROR"))).then(Mono.empty()))
                 .flatMap(dbEvent -> DatabaseManager.getUsers().getDBUser(context.getAuthorId()).flatMap(dbUser -> {
                             if (dbEvent.getId() == null) {
-                                return context.createFollowupMessage(context.localize("event.not.found").formatted(context.getOptionAsString("event_title").orElse("ERROR")));
+                                return context.createFollowupMessageEphemeral(context.localize("event.not.found").formatted(context.getOptionAsString("event_title").orElse("ERROR")));
                             }
 
                             if (!dbEvent.getOwner().getBean().getId().equals(context.getAuthor().getId().asLong())) {
-                                return context.createFollowupMessage(context.localize("event.schedule.owner"));
+                                return context.createFollowupMessageEphemeral(context.localize("event.schedule.owner"));
                             }
 
                             ZoneId zoneId = dbUser.getBean().getZoneId();
                             assert zoneId != null;
                             return dbEvent.updateSchedules(ZonedDateTime.of(LocalDateTime.of(newDate, newTime), zoneId))
-                                    .then(context.createFollowupMessage("Event scheduled!"))
+                                    .then(context.createFollowupMessageEphemeral("Event scheduled!"))
                                     .then(Flux.fromIterable(dbEvent.getMembers()).concatMap(dbEventMember ->
                                             context.getClient().getUserById(dbEventMember.getUId()).flatMap(user -> DatabaseManager.getGuilds().getDBMember(context.getGuildId(), user.getId()).flatMap(dbMember -> {
                                                 if (user.isBot()) {

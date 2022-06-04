@@ -36,14 +36,14 @@ public class AddUserEventCmd extends BaseCmd {
 
         return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), eventTitle).flatMap(dbEvent -> {
             if (dbEvent.getId() == null) {
-                return context.createFollowupMessage(context.localize("event.not.found").formatted(eventTitle));
+                return context.createFollowupMessageEphemeral(context.localize("event.not.found").formatted(eventTitle));
             }
 
             return Flux.fromIterable(users).flatMap(userMono -> userMono.map(user -> user)).collectList().flatMap(usersNoMono ->
                     Flux.fromIterable(usersNoMono).flatMap(user ->
                             DatabaseManager.getGuilds().getDBMember(context.getGuildId(), user.getId()).flatMap(dbMember -> {
                                 if (dbEvent.containsUser(user.getId())) {
-                                    return context.createFollowupMessage(context.localize("event.add.warning.user").formatted(user.getId().asLong()));
+                                    return context.createFollowupMessageEphemeral(context.localize("event.add.warning.user").formatted(user.getId().asLong()));
                                 }
                                 Mono<?> result = Mono.empty();
                                 if (user.isBot()) {
@@ -54,7 +54,7 @@ public class AddUserEventCmd extends BaseCmd {
                                 else if (dbEvent.isScheduled()) {
                                     result = EventUtil.publicInvite(context, dbEvent, new ArrayList<>(Collections.singleton(user.getUsername())));
                                 }
-                                return result.then(dbEvent.addMember(user, 0)).then(context.createFollowupMessage(context.localize("event.add.success").formatted(user.getId().asLong())));
+                                return result.then(dbEvent.addMember(user, 0)).then(context.createFollowupMessageEphemeral(context.localize("event.add.success").formatted(user.getId().asLong())));
                             })
                     ).collectList());
         });
