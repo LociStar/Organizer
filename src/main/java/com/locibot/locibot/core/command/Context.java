@@ -281,6 +281,16 @@ public class Context implements InteractionContext, I18nContext {
                 .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc()));
     }
 
+    public Mono<Message> createFollowupMessage(EmbedCreateSpec embed, boolean ephemeral) {
+        return this.event.deferReply().withEphemeral(ephemeral).onErrorResume(throwable -> Mono.empty()).then(this.event.getInteractionResponse().createFollowupMessageEphemeral(MultipartRequest.ofRequest(
+                        WebhookExecuteRequest.builder()
+                                .addEmbed(embed.asRequest())
+                                .build()))
+                .map(data -> new Message(this.getClient(), data))
+                .doOnNext(message -> this.replyId.set(message.getId().asLong()))
+                .doOnSuccess(__ -> Telemetry.MESSAGE_SENT_COUNTER.inc()));
+    }
+
     @Override
     public Mono<Message> createFollowupMessage(InteractionFollowupCreateSpec spec) {
         return this.event.deferReply().onErrorResume(throwable -> Mono.empty()).then(this.event.createFollowup(spec)
