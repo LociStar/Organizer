@@ -184,6 +184,22 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
                 .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
     }
 
+    public Mono<UpdateResult> setDM(Boolean state) {
+        return Mono.from(DatabaseManager.getUsers()
+                        .getCollection()
+                        .updateOne(
+                                Filters.eq("_id", this.getId().asString()),
+                                Updates.set("dm", state),
+                                new UpdateOptions().upsert(true)))
+                .doOnSubscribe(__ -> {
+                    GuildsCollection.LOGGER.debug("[DBUser {}] DM set: {}", this.getId().asString(), state);
+                    Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
+                })
+                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] DM set result: {}",
+                        this.getId().asString(), result))
+                .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
+    }
+
     public boolean hasZoneId() {
         return this.getBean().getZoneId() != null;
     }

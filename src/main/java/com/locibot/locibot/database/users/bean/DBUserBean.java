@@ -24,17 +24,21 @@ public class DBUserBean implements Bean {
     @Nullable
     @JsonProperty("zoneId")
     private ZoneId zoneId;
+    @Nullable
+    @JsonProperty("dm")
+    private Boolean dm;
 
-    public DBUserBean(String id, @Nullable Integer achievements, @Nullable ArrayList<ObjectId> events, @Nullable ArrayList<ObjectId> eventInvitations, @Nullable ZoneId zoneId) {
+    public DBUserBean(String id, @Nullable Integer achievements, @Nullable ArrayList<ObjectId> events, @Nullable ArrayList<ObjectId> eventInvitations, @Nullable ZoneId zoneId, @Nullable Boolean dm) {
         this.id = id;
         this.achievements = achievements;
         this.events = events;
         this.eventInvitations = eventInvitations;
         this.zoneId = zoneId;
+        this.dm = dm;
     }
 
     public DBUserBean(String id) {
-        this(id, null, null, null, null);
+        this(id, null, null, null, null, null);
     }
 
     public DBUserBean() {
@@ -59,6 +63,10 @@ public class DBUserBean implements Bean {
     @Nullable
     public ZoneId getZoneId() {
         return zoneId;// == null ? ZoneId.of("Europe/Berlin") : zoneId;
+    }
+
+    public Boolean getDm() {
+        return this.dm != null && this.dm;
     }
 
     @Override
