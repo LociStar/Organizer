@@ -28,6 +28,8 @@ public abstract class BaseCmd {
 
     private final CommandCategory category;
     private final CommandPermission permission;
+    @Nullable
+    private final List<Requirement> requirements;
     private final String name;
     private final String description;
     private final List<ApplicationCommandOptionData> options;
@@ -38,10 +40,11 @@ public abstract class BaseCmd {
     private RateLimiter rateLimiter;
     private boolean isEnabled;
 
-    protected BaseCmd(CommandCategory category, CommandPermission permission, String name, String description,
+    protected BaseCmd(CommandCategory category, CommandPermission permission, @Nullable List<Requirement> requirements, String name, String description,
                       @Nullable ApplicationCommandOption.Type type) {
         this.category = category;
         this.permission = permission;
+        this.requirements = requirements;
         this.name = name;
         this.description = description;
         this.type = type;
@@ -50,8 +53,17 @@ public abstract class BaseCmd {
         this.isEnabled = true;
     }
 
+    protected BaseCmd(CommandCategory category, CommandPermission permission, String name, String description,
+                      @Nullable ApplicationCommandOption.Type type) {
+        this(category, permission, null, name, description, type);
+    }
+
     protected BaseCmd(CommandCategory category, CommandPermission permission, String name, String description) {
-        this(category, permission, name, description, null);
+        this(category, permission, null, name, description, null);
+    }
+
+    protected BaseCmd(CommandCategory category, CommandPermission permission, String name, String description, Requirement... requirements) {
+        this(category, permission, List.of(requirements), name, description, null);
     }
 
     protected BaseCmd(CommandCategory category, String name, String description) {
@@ -114,6 +126,10 @@ public abstract class BaseCmd {
 
     public void setGameRateLimiter() {
         this.setRateLimiter(DEFAULT_GAME_RATELIMITER.get());
+    }
+
+    public List<Requirement> getRequirements() {
+        return requirements == null ? List.of(Requirement.NONE) : this.requirements;
     }
 
     // TODO: Remove
