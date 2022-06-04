@@ -1,9 +1,6 @@
 package com.locibot.locibot.command.event_commands;
 
-import com.locibot.locibot.core.command.BaseCmd;
-import com.locibot.locibot.core.command.CommandCategory;
-import com.locibot.locibot.core.command.CommandPermission;
-import com.locibot.locibot.core.command.Context;
+import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.events_db.entity.DBEvent;
 import com.locibot.locibot.database.events_db.entity.DBEventMember;
@@ -17,7 +14,7 @@ import java.util.List;
 
 public class CreateEventCmd extends BaseCmd {
     protected CreateEventCmd() {
-        super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "create", "create a new event");
+        super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "create", "create a new event", Requirement.DM);
         this.addOption("title", "event name", true, ApplicationCommandOption.Type.STRING);
         this.addOption("description", "add a brief event description", false, ApplicationCommandOption.Type.STRING);
         this.addOption("icon", "icon image url", false, ApplicationCommandOption.Type.STRING);

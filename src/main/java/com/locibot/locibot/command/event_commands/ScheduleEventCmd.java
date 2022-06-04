@@ -1,9 +1,6 @@
 package com.locibot.locibot.command.event_commands;
 
-import com.locibot.locibot.core.command.BaseCmd;
-import com.locibot.locibot.core.command.CommandCategory;
-import com.locibot.locibot.core.command.CommandPermission;
-import com.locibot.locibot.core.command.Context;
+import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.events_db.entity.DBEventMember;
 import discord4j.core.object.command.ApplicationCommandOption;
@@ -21,7 +18,7 @@ import java.util.stream.Collectors;
 public class ScheduleEventCmd extends BaseCmd {
 
     public ScheduleEventCmd() {
-        super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "schedule", "schedule a event");
+        super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "schedule", "schedule a event", Requirement.DM, Requirement.TIME_ZONE);
         this.addOption("event_title", "Event name", true, ApplicationCommandOption.Type.STRING);
         this.addOption("date", "dd.MM.yyyy", true, ApplicationCommandOption.Type.STRING);
         this.addOption("time", "hh:mm", true, ApplicationCommandOption.Type.STRING);
@@ -44,9 +41,6 @@ public class ScheduleEventCmd extends BaseCmd {
                             if (dbEvent.getId() == null) {
                                 return context.createFollowupMessage(context.localize("event.not.found").formatted(context.getOptionAsString("event_title").orElse("ERROR")));
                             }
-
-                            if (!dbUser.hasZoneId())
-                                return context.createFollowupMessage(context.localize("event.schedule.zone.error"));
 
                             if (!dbEvent.getOwner().getBean().getId().equals(context.getAuthor().getId().asLong())) {
                                 return context.createFollowupMessage(context.localize("event.schedule.owner"));

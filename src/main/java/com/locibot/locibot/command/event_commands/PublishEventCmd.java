@@ -1,9 +1,6 @@
 package com.locibot.locibot.command.event_commands;
 
-import com.locibot.locibot.core.command.BaseCmd;
-import com.locibot.locibot.core.command.CommandCategory;
-import com.locibot.locibot.core.command.CommandPermission;
-import com.locibot.locibot.core.command.Context;
+import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.database.DatabaseManager;
 import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.component.ActionRow;
@@ -21,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 
 public class PublishEventCmd extends BaseCmd {
     protected PublishEventCmd() {
-        super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "publish", "publish the event, so that everyone can join it. The event needs to be scheduled first.");
+        super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "publish", "publish the event, so that everyone can join it. The event needs to be scheduled first.", Requirement.DM);
         this.addOption("event_title", "Event name", true, ApplicationCommandOption.Type.STRING);
     }
 
