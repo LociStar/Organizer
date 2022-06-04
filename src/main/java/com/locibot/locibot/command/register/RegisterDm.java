@@ -15,9 +15,9 @@ public class RegisterDm extends BaseCmd {
 
     @Override
     public Mono<?> execute(Context context) {
-        return DatabaseManager.getGuilds().getDBMember(context.getGuildId(), context.getAuthorId()).flatMap(dbMember -> {
-            boolean botRegister = dbMember.getBotRegister();
-            return dbMember.setBotRegister(!botRegister)
+        return DatabaseManager.getUsers().getDBUser(context.getAuthorId()).flatMap(user -> {
+            boolean botRegister = user.getBean().getDm();
+            return user.setDM(!botRegister)
                     .then(context.createFollowupMessageEphemeral(context.getEvent().getInteraction().getUser().getUsername() +
                             (botRegister ? " un-registered" : " registered") +
                             " to bot messages"))
