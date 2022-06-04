@@ -62,7 +62,7 @@ public class Decline extends BaseCmd {
         return context.createFollowupMessage("You have declined the invitation!").then(group.updateAccept(member.getId(), 2))
                 //inform owner
                 .then(Mono.zip(context.getClient().getUserById(Snowflake.of(member.getBean().getId())),
-                        context.getClient().getUserById(group.getOwner().getId()))
+                                context.getClient().getUserById(group.getOwner().getId()))
                         .flatMap(TupleUtils.function((declinedUser, owner) ->
                                 owner.getPrivateChannel().flatMap(privateChannel ->
                                         privateChannel.createMessage(declinedUser.getUsername() + " declined your invitation to " + group.getGroupName() + "!\n" +
@@ -72,7 +72,7 @@ public class Decline extends BaseCmd {
     @NotNull
     private Mono<Message> informOwner(Context context, DBGroup group, DBGroupMember dbGroupMember, User user) {
         return Mono.zip(context.getClient().getUserById(dbGroupMember.getId()),
-                context.getClient().getUserById(group.getOwner().getId()))
+                        context.getClient().getUserById(group.getOwner().getId()))
                 .flatMap(TupleUtils.function((declinedUser, owner) ->
                         owner.getPrivateChannel().flatMap(privateChannel -> privateChannel.createMessage(
                                 declinedUser.getUsername() + " declined your invitation to " + group.getGroupName() + "!\n" +
