@@ -1,5 +1,6 @@
 package com.locibot.locibot.database.users;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.locibot.locibot.core.cache.MultiValueCache;
 import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.database.DatabaseCollection;
@@ -12,6 +13,7 @@ import com.mongodb.reactivestreams.client.MongoDatabase;
 import discord4j.common.util.Snowflake;
 import org.bson.Document;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.Logger;
 
@@ -24,6 +26,18 @@ public class UsersCollection extends DatabaseCollection {
     public UsersCollection(MongoDatabase database) {
         super(database, "users");
         this.usersCache = MultiValueCache.Builder.<Snowflake, DBUser>builder().withInfiniteTtl().build();
+    }
+
+    public Flux<DBUser> getAllUsers() {
+        Flux<Document> documents = Flux.from(this.getCollection().find());
+        return documents.map(document -> {
+            try {
+                return new DBUser(NetUtil.MAPPER.readValue(document.toJson(JSON_WRITER_SETTINGS), DBUserBean.class));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            return new DBUser(new DBUserBean());
+        });
     }
 
     public Mono<DBUser> getDBUser(Snowflake userId) {
