@@ -1,5 +1,6 @@
 package com.locibot.locibot.command.event_commands.buttons;
 
+import com.locibot.locibot.command.event_commands.EventUtil;
 import com.locibot.locibot.core.command.BaseCmdButton;
 import com.locibot.locibot.core.command.ButtonAnnotation;
 import com.locibot.locibot.core.command.CommandPermission;
@@ -7,12 +8,9 @@ import com.locibot.locibot.core.command.Context;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.events_db.entity.DBEvent;
 import com.locibot.locibot.database.events_db.entity.DBEventMember;
-import discord4j.core.object.component.ActionRow;
-import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.Message;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Mono;
 import reactor.function.TupleUtils;
 
@@ -26,7 +24,7 @@ public class AcceptButtonCmd extends BaseCmdButton {
     public Mono<?> execute(Context context) {
         String eventIdString = context.getEvent().getInteraction().getCommandInteraction().orElseThrow().getCustomId().orElse("error_error").split("_")[1];
         ObjectId objectId = new ObjectId(eventIdString);
-        Mono<Message> context1 = disableIfNoEvent(context, objectId);
+        Mono<Message> context1 = EventUtil.disableIfNoEvent(context, objectId);
         if (context1 != null) return context1;
         return DatabaseManager.getEvents().getDBEvent(objectId).flatMap(event -> {
             for (DBEventMember member : event.getMembers()) {
@@ -39,20 +37,6 @@ public class AcceptButtonCmd extends BaseCmdButton {
             }
             return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.accept.accept.error")));
         });
-    }
-
-    @Nullable
-    private Mono<Message> disableIfNoEvent(Context context, ObjectId objectId) {
-        if (!DatabaseManager.getEvents().containsEvent(objectId)) {
-            ActionRow a = (ActionRow) ActionRow.fromData(context.getEvent().getInteraction().getMessage().orElseThrow().getComponents().get(0).getData());
-            Button accept = (Button) Button.fromData(a.getChildren().get(0).getData());
-            Button decline = (Button) Button.fromData(a.getChildren().get(1).getData());
-            return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.accept.deleted")).then(context.getEvent().getInteraction().getMessage().get().edit().withComponents(
-                    ActionRow.of(
-                            accept.disabled(), decline.disabled()
-                    ))));
-        }
-        return null;
     }
 
     @NotNull

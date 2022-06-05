@@ -1,5 +1,6 @@
 package com.locibot.locibot.command.event_commands.buttons;
 
+import com.locibot.locibot.command.event_commands.EventUtil;
 import com.locibot.locibot.core.command.BaseCmdButton;
 import com.locibot.locibot.core.command.ButtonAnnotation;
 import com.locibot.locibot.core.command.CommandPermission;
@@ -23,6 +24,8 @@ public class LeaveEventButtonCmd extends BaseCmdButton {
     public Mono<?> execute(Context context) {
         String eventIdString = context.getEvent().getInteraction().getCommandInteraction().orElseThrow().getCustomId().orElse("error_error").split("_")[1];
         ObjectId objectId = new ObjectId(eventIdString);
+        Mono<Message> context1 = EventUtil.disableIfNoEvent(context, objectId);
+        if (context1 != null) return context1;
         return DatabaseManager.getEvents().getDBEvent(objectId).flatMap(dbEvent ->
                 DatabaseManager.getEvents().getDBEvent(objectId).flatMapIterable(DBEvent::getMembers).collectMap(DBEventMember::getUId).flatMap(members -> {
                     if (context.getAuthor().getId().asLong() == dbEvent.getOwner().getUId().asLong()) {

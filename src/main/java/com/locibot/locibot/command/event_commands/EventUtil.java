@@ -12,7 +12,9 @@ import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.InteractionFollowupCreateSpec;
 import discord4j.core.spec.MessageCreateSpec;
 import discord4j.rest.util.Color;
+import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -65,5 +67,20 @@ public abstract class EventUtil {
         return ActionRow.of(
                 Button.success("acceptInviteButton_" + dbEvent.getId(), context.localize("event.util.button.accept")),
                 Button.danger("declineInviteButton_" + dbEvent.getId(), context.localize("event.util.button.decline")));
+    }
+
+    @Nullable
+    public static Mono<Message> disableIfNoEvent(Context context, ObjectId objectId) {
+        if (!DatabaseManager.getEvents().containsEvent(objectId)) {
+            ActionRow a = (ActionRow) ActionRow.fromData(context.getEvent().getInteraction().getMessage().orElseThrow().getComponents().get(0).getData());
+            Button accept = (Button) Button.fromData(a.getChildren().get(0).getData());
+            Button decline = (Button) Button.fromData(a.getChildren().get(1).getData());
+            return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.accept.deleted"))
+                    .then(context.getEvent().getInteraction().getMessage().get().edit().withComponents(
+                            ActionRow.of(
+                                    accept.disabled(), decline.disabled()
+                            ))));
+        }
+        return null;
     }
 }
