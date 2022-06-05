@@ -1,5 +1,6 @@
 package com.locibot.locibot;
 
+import com.locibot.locibot.core.command.CommandManager;
 import com.locibot.locibot.core.retriever.SpyRestEntityRetriever;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.Telemetry;
@@ -86,8 +87,8 @@ public class LociBot {
         final long applicationId = Snowflake.asLong(applicationInfo.id());
         DEFAULT_LOGGER.info("Owner ID: {} | Application ID: {}", LociBot.OWNER_ID.get(), applicationId);
 
-//        DEFAULT_LOGGER.info("Registering commands");
-//        CommandManager.register(client.getApplicationService(), applicationId).block();
+        DEFAULT_LOGGER.info("Registering commands");
+        CommandManager.register(client.getApplicationService(), applicationId).block();
 
         DEFAULT_LOGGER.info("Connecting to Discord");
         client.gateway()
@@ -116,7 +117,7 @@ public class LociBot {
 
                     DEFAULT_LOGGER.info("Registering listeners");
                     /* Intent.GUILDS */
-                    //LociBot.register(gateway, new GuildCreateListener(client));
+                    LociBot.register(gateway, new GuildCreateListener(client));
                     LociBot.register(gateway, new RoleDeleteListener());
                     LociBot.register(gateway, new ChannelDeleteListener.TextChannelDeleteListener());
                     LociBot.register(gateway, new ChannelDeleteListener.VoiceChannelDeleteListener());
