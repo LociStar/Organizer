@@ -27,6 +27,9 @@ public class DBUserBean implements Bean {
     @Nullable
     @JsonProperty("dm")
     private Boolean dm;
+    @Nullable
+    @JsonProperty("weatherRegistered")
+    private ArrayList<String> weatherRegistered;
 
     public DBUserBean(String id, @Nullable Integer achievements, @Nullable ArrayList<ObjectId> events, @Nullable ArrayList<ObjectId> eventInvitations, @Nullable ZoneId zoneId, @Nullable Boolean dm) {
         this.id = id;
@@ -58,6 +61,10 @@ public class DBUserBean implements Bean {
 
     public ArrayList<ObjectId> getEventInvitations() {
         return this.eventInvitations == null ? new ArrayList<>() : this.eventInvitations;
+    }
+
+    public ArrayList<String> getWeatherRegistered() {
+        return this.weatherRegistered == null ? new ArrayList<>() : this.weatherRegistered;
     }
 
     @Nullable

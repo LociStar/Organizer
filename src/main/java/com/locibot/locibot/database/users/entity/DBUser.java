@@ -1,10 +1,11 @@
 package com.locibot.locibot.database.users.entity;
 
+import com.locibot.locibot.command.CommandException;
 import com.locibot.locibot.data.Telemetry;
 import com.locibot.locibot.database.DatabaseEntity;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.SerializableEntity;
-import com.locibot.locibot.database.guilds.GuildsCollection;
+import com.locibot.locibot.database.users.UsersCollection;
 import com.locibot.locibot.database.users.bean.DBUserBean;
 import com.locibot.locibot.database.users.entity.achievement.Achievement;
 import com.mongodb.client.model.Filters;
@@ -13,6 +14,7 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import discord4j.common.util.Snowflake;
 import org.bson.types.ObjectId;
+import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
 import java.time.ZoneId;
@@ -51,7 +53,7 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
     private Mono<UpdateResult> updateAchievement(int achievements) {
         // If the achievement is already in this state, no need to request an update
         if (this.getBean().getAchievements() == achievements) {
-            GuildsCollection.LOGGER.debug("[DBUser {}] Achievements update useless, aborting: {}", this.getId().asString(), achievements);
+            UsersCollection.LOGGER.debug("[DBUser {}] Achievements update useless, aborting: {}", this.getId().asString(), achievements);
             return Mono.empty();
         }
 
@@ -62,10 +64,10 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
                                 Updates.set("achievements", achievements),
                                 new UpdateOptions().upsert(true)))
                 .doOnSubscribe(__ -> {
-                    GuildsCollection.LOGGER.debug("[DBUser {}] Achievements update: {}", this.getId().asString(), achievements);
+                    UsersCollection.LOGGER.debug("[DBUser {}] Achievements update: {}", this.getId().asString(), achievements);
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
                 })
-                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] Achievements update result: {}",
+                .doOnNext(result -> UsersCollection.LOGGER.trace("[DBUser {}] Achievements update result: {}",
                         this.getId().asString(), result))
                 .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
     }
@@ -73,7 +75,7 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
     public Mono<UpdateResult> addEvent(ObjectId event) {
         // If the event is already in this state, no need to request an update
         if (this.getBean().getEvents().contains(event)) {
-            GuildsCollection.LOGGER.debug("[DBUser {}] Add Event useless, aborting: {}", this.getId().asString(), event);
+            UsersCollection.LOGGER.debug("[DBUser {}] Add Event useless, aborting: {}", this.getId().asString(), event);
             return Mono.empty();
         }
 
@@ -87,10 +89,10 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
                                 Updates.set("events", events),
                                 new UpdateOptions().upsert(true)))
                 .doOnSubscribe(__ -> {
-                    GuildsCollection.LOGGER.debug("[DBUser {}] Event added: {}", this.getId().asString(), event);
+                    UsersCollection.LOGGER.debug("[DBUser {}] Event added: {}", this.getId().asString(), event);
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
                 })
-                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] Event add result: {}",
+                .doOnNext(result -> UsersCollection.LOGGER.trace("[DBUser {}] Event add result: {}",
                         this.getId().asString(), result))
                 .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
     }
@@ -98,7 +100,7 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
     public Mono<UpdateResult> removeEvent(ObjectId event) {
         // If the event is already in this state, no need to request an update
         if (!this.getBean().getEvents().contains(event)) {
-            GuildsCollection.LOGGER.debug("[DBUser {}] Remove Event useless, aborting: {}", this.getId().asString(), event);
+            UsersCollection.LOGGER.debug("[DBUser {}] Remove Event useless, aborting: {}", this.getId().asString(), event);
             return Mono.empty();
         }
 
@@ -111,10 +113,10 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
                                 Updates.set("events", this.getBean().getEvents()),
                                 new UpdateOptions().upsert(true)))
                 .doOnSubscribe(__ -> {
-                    GuildsCollection.LOGGER.debug("[DBUser {}] Event removed: {}", this.getId().asString(), event);
+                    UsersCollection.LOGGER.debug("[DBUser {}] Event removed: {}", this.getId().asString(), event);
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
                 })
-                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] Event remove result: {}",
+                .doOnNext(result -> UsersCollection.LOGGER.trace("[DBUser {}] Event remove result: {}",
                         this.getId().asString(), result))
                 .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
     }
@@ -122,7 +124,7 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
     public Mono<UpdateResult> addEventInvitation(ObjectId event) {
         // If the event is already in this state, no need to request an update
         if (this.getBean().getEventInvitations().contains(event)) {
-            GuildsCollection.LOGGER.debug("[DBUser {}] Add EventInvitation useless, aborting: {}", this.getId().asString(), event);
+            UsersCollection.LOGGER.debug("[DBUser {}] Add EventInvitation useless, aborting: {}", this.getId().asString(), event);
             return Mono.empty();
         }
 
@@ -136,10 +138,10 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
                                 Updates.set("event_invitations", eventInvitations),
                                 new UpdateOptions().upsert(true)))
                 .doOnSubscribe(__ -> {
-                    GuildsCollection.LOGGER.debug("[DBUser {}] EventInvitation added: {}", this.getId().asString(), event);
+                    UsersCollection.LOGGER.debug("[DBUser {}] EventInvitation added: {}", this.getId().asString(), event);
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
                 })
-                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] EventInvitation add result: {}",
+                .doOnNext(result -> UsersCollection.LOGGER.trace("[DBUser {}] EventInvitation add result: {}",
                         this.getId().asString(), result))
                 .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
     }
@@ -147,7 +149,7 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
     public Mono<UpdateResult> removeEventInvitation(ObjectId event) {
         // If the event is already in this state, no need to request an update
         if (!this.getBean().getEventInvitations().contains(event)) {
-            GuildsCollection.LOGGER.debug("[DBUser {}] Remove EventInvitation useless, aborting: {}", this.getId().asString(), event);
+            UsersCollection.LOGGER.debug("[DBUser {}] Remove EventInvitation useless, aborting: {}", this.getId().asString(), event);
             return Mono.empty();
         }
 
@@ -160,10 +162,10 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
                                 Updates.set("event_invitations", this.getBean().getEvents()),
                                 new UpdateOptions().upsert(true)))
                 .doOnSubscribe(__ -> {
-                    GuildsCollection.LOGGER.debug("[DBUser {}] EventInvitation removed: {}", this.getId().asString(), event);
+                    UsersCollection.LOGGER.debug("[DBUser {}] EventInvitation removed: {}", this.getId().asString(), event);
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
                 })
-                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] EventInvitation remove result: {}",
+                .doOnNext(result -> UsersCollection.LOGGER.trace("[DBUser {}] EventInvitation remove result: {}",
                         this.getId().asString(), result))
                 .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
     }
@@ -176,10 +178,10 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
                                 Updates.set("zoneId", zoneId.toString()),
                                 new UpdateOptions().upsert(true)))
                 .doOnSubscribe(__ -> {
-                    GuildsCollection.LOGGER.debug("[DBUser {}] ZoneId set: {}", this.getId().asString(), zoneId);
+                    UsersCollection.LOGGER.debug("[DBUser {}] ZoneId set: {}", this.getId().asString(), zoneId);
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
                 })
-                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] ZoneId set result: {}",
+                .doOnNext(result -> UsersCollection.LOGGER.trace("[DBUser {}] ZoneId set result: {}",
                         this.getId().asString(), result))
                 .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
     }
@@ -192,10 +194,40 @@ public class DBUser extends SerializableEntity<DBUserBean> implements DatabaseEn
                                 Updates.set("dm", state),
                                 new UpdateOptions().upsert(true)))
                 .doOnSubscribe(__ -> {
-                    GuildsCollection.LOGGER.debug("[DBUser {}] DM set: {}", this.getId().asString(), state);
+                    UsersCollection.LOGGER.debug("[DBUser {}] DM set: {}", this.getId().asString(), state);
                     Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
                 })
-                .doOnNext(result -> GuildsCollection.LOGGER.trace("[DBUser {}] DM set result: {}",
+                .doOnNext(result -> UsersCollection.LOGGER.trace("[DBUser {}] DM set result: {}",
+                        this.getId().asString(), result))
+                .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
+    }
+
+    public Mono<UpdateResult> subscribeWeatherRegistered(String city) {
+        ArrayList<String> cities = this.getBean().getWeatherRegistered();
+        if (!cities.contains(city)) {
+            cities.add(city);
+            return updateWeatherRegistered(cities);
+        }
+        return Mono.error(new CommandException("City already subscribed"));
+    }
+
+    public Mono<UpdateResult> unsubscribeWeatherRegistered(String city) {
+        ArrayList<String> cities = this.getBean().getWeatherRegistered();
+        if (cities.remove(city)) {
+            return updateWeatherRegistered(cities);
+        } else return Mono.error(new CommandException("City already unsubscribed"));
+    }
+
+    @NotNull
+    private Mono<UpdateResult> updateWeatherRegistered(ArrayList<String> cities) {
+        return Mono.from(DatabaseManager.getUsers().getCollection()
+                        .updateOne(Filters.eq("_id", this.getId().asString()),
+                                Updates.set("weatherRegistered", cities)))
+                .doOnSubscribe(__ -> {
+                    UsersCollection.LOGGER.debug("[DBUser {}] Register update: {}", this.getId().asString(), cities);
+                    Telemetry.DB_REQUEST_COUNTER.labels(DatabaseManager.getUsers().getName()).inc();
+                })
+                .doOnNext(result -> UsersCollection.LOGGER.trace("[DBUser {}] Register set result: {}",
                         this.getId().asString(), result))
                 .doOnTerminate(() -> DatabaseManager.getUsers().invalidateCache(this.getId()));
     }
