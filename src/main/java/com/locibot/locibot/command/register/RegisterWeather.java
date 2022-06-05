@@ -40,14 +40,14 @@ public class RegisterWeather extends BaseCmd {
         final WeatherChoice weatherChoice = context.getOptionAsEnum(WeatherChoice.class, "option").orElseThrow();
         final String city = context.getOptionAsString("city").orElseThrow();
 
-        return DatabaseManager.getGuilds().getDBMember(context.getGuildId(), context.getAuthorId()).flatMap(dbMember -> {
+        return DatabaseManager.getUsers().getDBUser(context.getAuthorId()).flatMap(dbUser -> {
             if (weatherChoice.getB()) {
-                return dbMember.subscribeWeatherRegistered(city)
+                return dbUser.subscribeWeatherRegistered(city)
                         .then(context.createFollowupMessage("Subscribed to " + city))
                         .onErrorResume(err -> ExceptionHandler.handleCommandError(err, context)
                                 .then(Mono.empty()));
             } else
-                return dbMember.unsubscribeWeatherRegistered(city)
+                return dbUser.unsubscribeWeatherRegistered(city)
                         .then(context.createFollowupMessage("Unsubscribed to " + city))
                         .onErrorResume(err -> ExceptionHandler.handleCommandError(err, context)
                                 .then(Mono.empty()));
