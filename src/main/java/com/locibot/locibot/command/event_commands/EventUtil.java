@@ -12,20 +12,18 @@ import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.InteractionFollowupCreateSpec;
 import discord4j.core.spec.MessageCreateSpec;
 import discord4j.rest.util.Color;
+import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class EventUtil {
     @NotNull
     static Mono<Message> publicInvite(Context context, DBEvent dbEvent, List<String> usersString) {
-        return context.getClient().getUserById(dbEvent.getOwner().getId()).flatMap(owner ->
+        return context.getClient().getUserById(dbEvent.getOwner().getUId()).flatMap(owner ->
                 context.createFollowupMessage(InteractionFollowupCreateSpec.builder()
                         .addEmbed(EmbedCreateSpec.builder()
                                 .color(Color.BLUE)
@@ -46,9 +44,9 @@ public abstract class EventUtil {
 
     @NotNull
     static Mono<Message> privateInvite(Context context, String dbEvent_title, User user) {
-        return DatabaseManager.getEvents().getDBEvent(dbEvent_title).flatMap(dbEvent ->
+        return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), dbEvent_title).flatMap(dbEvent ->
                 user.getPrivateChannel().flatMap(privateChannel ->
-                        context.getClient().getUserById(dbEvent.getOwner().getId()).flatMap(owner ->
+                        context.getClient().getUserById(dbEvent.getOwner().getUId()).flatMap(owner ->
                                 privateChannel.createMessage(MessageCreateSpec.builder()
                                         .addEmbed(EmbedCreateSpec.builder()
                                                 .color(Color.BLUE)
@@ -67,7 +65,22 @@ public abstract class EventUtil {
     @NotNull
     private static ActionRow createButtons(DBEvent dbEvent, Context context) {
         return ActionRow.of(
-                Button.success("acceptInviteButton_" + dbEvent.getEventName(), context.localize("event.util.button.accept")),
-                Button.danger("declineInviteButton_" + dbEvent.getEventName(), context.localize("event.util.button.decline")));
+                Button.success("acceptInviteButton_" + dbEvent.getId(), context.localize("event.util.button.accept")),
+                Button.danger("declineInviteButton_" + dbEvent.getId(), context.localize("event.util.button.decline")));
+    }
+
+    @Nullable
+    public static Mono<Message> disableIfNoEvent(Context context, ObjectId objectId) {
+        if (!DatabaseManager.getEvents().containsEvent(objectId)) {
+            ActionRow a = (ActionRow) ActionRow.fromData(context.getEvent().getInteraction().getMessage().orElseThrow().getComponents().get(0).getData());
+            Button accept = (Button) Button.fromData(a.getChildren().get(0).getData());
+            Button decline = (Button) Button.fromData(a.getChildren().get(1).getData());
+            return context.getEvent().deferReply().onErrorResume(throwable -> Mono.empty()).then(context.createFollowupMessageEphemeral(context.localize("event.button.accept.deleted"))
+                    .then(context.getEvent().getInteraction().getMessage().get().edit().withComponents(
+                            ActionRow.of(
+                                    accept.disabled(), decline.disabled()
+                            ))));
+        }
+        return null;
     }
 }

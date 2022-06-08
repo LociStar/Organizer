@@ -2,8 +2,14 @@ package com.locibot.locibot.core.command;
 
 import discord4j.core.object.command.ApplicationCommandOption;
 
-public  abstract class BaseCmdButton extends BaseCmd{
+import java.util.List;
+
+public abstract class BaseCmdButton extends BaseCmd {
     protected BaseCmdButton(CommandPermission permission, String buttonId) {
-        super(CommandCategory.BUTTON, permission, buttonId, "button", ApplicationCommandOption.Type.UNKNOWN);
+        super(CommandCategory.BUTTON, permission, null, buttonId, "button", ApplicationCommandOption.Type.UNKNOWN);
+    }
+
+    protected BaseCmdButton(CommandPermission permission, List<Requirement> requirements, String buttonId) {
+        super(CommandCategory.BUTTON, permission, null, buttonId, "button", ApplicationCommandOption.Type.UNKNOWN);
     }
 }

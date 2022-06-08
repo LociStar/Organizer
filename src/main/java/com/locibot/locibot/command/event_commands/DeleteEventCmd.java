@@ -17,19 +17,8 @@ public class DeleteEventCmd extends BaseCmd {
     @Override
     public Mono<?> execute(Context context) {
         return Mono.just(context.getOptionAsString("title").orElse("")).flatMap(eventName ->
-        {
-            //check if group does exist
-            if (DatabaseManager.getEvents().containsEvent(eventName)) {
-                return DatabaseManager.getEvents().getDBEvent(eventName).flatMap(event ->
-                {
-                    //check if author is owner
-                    if (event.getOwner().getId().equals(context.getAuthorId())) {
-                        return event.delete().then(context.createFollowupMessage(context.localize("event.delete.success").formatted(eventName)));
-                    }
-                    return context.createFollowupMessage(context.localize("event.delete.restriction").formatted(eventName));
-                });
-            }
-            return context.createFollowupMessage(context.localize("event.delete.empty").formatted(eventName));
-        });
+                DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), eventName)
+                        .switchIfEmpty(context.createFollowupMessageEphemeral(context.localize("event.delete.empty").formatted(eventName)).then(Mono.empty()))
+                        .flatMap(dbEvent -> dbEvent.delete().then(context.createFollowupMessageEphemeral(context.localize("event.delete.success").formatted(eventName)))));
     }
 }

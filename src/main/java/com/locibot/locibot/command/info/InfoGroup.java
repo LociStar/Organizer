@@ -11,7 +11,7 @@ public class InfoGroup extends BaseCmdGroup {
 
     public InfoGroup() {
         super(CommandCategory.INFO, "Show specific information",
-                List.of(new BotInfoCmd(), new ServerInfoCmd(), new UserInfoCmd(), new InfoGroupCmd()));
+                List.of(new BotInfoCmd(), new ServerInfoCmd(), new UserInfoCmd()));
     }
 
 }

@@ -1,9 +1,6 @@
 package com.locibot.locibot.command.event_commands;
 
-import com.locibot.locibot.core.command.BaseCmd;
-import com.locibot.locibot.core.command.CommandCategory;
-import com.locibot.locibot.core.command.CommandPermission;
-import com.locibot.locibot.core.command.Context;
+import com.locibot.locibot.core.command.*;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.events_db.entity.DBEvent;
 import com.locibot.locibot.database.events_db.entity.DBEventMember;
@@ -17,7 +14,7 @@ import java.util.List;
 
 public class CreateEventCmd extends BaseCmd {
     protected CreateEventCmd() {
-        super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "create", "create a new event");
+        super(CommandCategory.EVENT, CommandPermission.USER_GUILD, "create", "create a new event", Requirement.DM);
         this.addOption("title", "event name", true, ApplicationCommandOption.Type.STRING);
         this.addOption("description", "add a brief event description", false, ApplicationCommandOption.Type.STRING);
         this.addOption("icon", "icon image url", false, ApplicationCommandOption.Type.STRING);
@@ -30,11 +27,9 @@ public class CreateEventCmd extends BaseCmd {
     public Mono<?> execute(Context context) {
 
         if (DatabaseManager.getGuilds().getDBMember(context.getGuildId(), context.getAuthorId()) == null)
-            return context.createFollowupMessage(context.localize("event.create.restriction"));
+            return context.createFollowupMessageEphemeral(context.localize("event.create.restriction"));
 
         String eventName = context.getOptionAsString("title").orElse("error");
-        if (DatabaseManager.getEvents().containsEvent(eventName))
-            return context.createFollowupMessage(context.localize("event.create.group"));
         DBEvent event = new DBEvent(eventName, context.getOptionAsString("description").orElse(null), context.getOptionAsString("icon").orElse(null));
         List<Mono<User>> users = new ArrayList<>();
 
@@ -42,11 +37,23 @@ public class CreateEventCmd extends BaseCmd {
             users.add(context.getOptionAsUser("member_" + i));
         }
 
-        return event.insert()
-                //add Owner
-                .then(new DBEventMember(context.getEvent().getInteraction().getUser().getId().asLong(), eventName, 1, true).insert())
-                //add Members
-                .thenMany(Flux.concat(users).flatMap(user -> new DBEventMember(user.getId().asLong(), eventName, 0, false).insert()))
-                .then(context.createFollowupMessage(context.localize("event.create.success")));
+        Mono<?> insert = event.insertOne().flatMap(insertOneResult -> DatabaseManager.getUsers().getDBUser(context.getAuthorId())
+                .flatMap(dbUser -> dbUser.addEvent(insertOneResult.getInsertedId().asObjectId().getValue()))
+                // get EventId
+                .then(DatabaseManager.getEvents().getDBEvent(insertOneResult.getInsertedId().asObjectId().getValue()).flatMap(dbEvent ->
+                        // add Owner
+                        new DBEventMember(context.getEvent().getInteraction().getUser().getId().asLong(), dbEvent.getId(), 1, true).insert()
+                                // add Members
+                                .thenMany(Flux.concat(users).flatMap(user -> new DBEventMember(user.getId().asLong(), dbEvent.getId(), 0, false).insert()))
+                                .then(context.createFollowupMessageEphemeral(context.localize("event.create.success"))))));
+
+        return DatabaseManager.getEvents().getDBEvent(context.getAuthorId(), eventName).switchIfEmpty(insert.then(Mono.empty())).flatMap(dbEvent -> {
+            if (dbEvent.getId() != null) {
+                System.out.println(dbEvent.getEventName());
+                return context.createFollowupMessageEphemeral(context.localize("event.create.error"));
+            }
+            System.out.println("test");
+            return insert;
+        });
     }
 }

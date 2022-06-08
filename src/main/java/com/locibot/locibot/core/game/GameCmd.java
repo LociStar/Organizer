@@ -15,7 +15,7 @@ public abstract class GameCmd<G extends Game> extends BaseCmd implements GameLis
     private final Map<Snowflake, G> managers;
 
     protected GameCmd(String name, String description, @Nullable ApplicationCommandOption.Type type) {
-        super(CommandCategory.GAME, CommandPermission.USER_GUILD, name, description, type);
+        super(CommandCategory.GAME, CommandPermission.USER_GUILD, null, name, description, type);
         this.setGameRateLimiter();
         this.managers = new ConcurrentHashMap<>();
     }

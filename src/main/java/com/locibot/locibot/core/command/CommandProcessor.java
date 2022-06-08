@@ -4,6 +4,8 @@ import com.locibot.locibot.LociBot;
 import com.locibot.locibot.core.ratelimiter.RateLimitResponse;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.data.Telemetry;
+import com.locibot.locibot.database.DatabaseManager;
+import com.locibot.locibot.database.users.entity.DBUser;
 import com.locibot.locibot.object.Emoji;
 import com.locibot.locibot.object.ExceptionHandler;
 import com.locibot.locibot.utils.ReactorUtil;
@@ -29,12 +31,39 @@ public class CommandProcessor {
                         __ -> context.getDbGuild().getSettings().isTextChannelAllowed(context.getChannelId()),
                         context.replyEphemeral(Emoji.ACCESS_DENIED, context.localize("channel.not.allowed"))))
                 // Execute the command
-                .flatMap(__ -> CommandProcessor.executeCommand(context));
+                .flatMap(__ -> CommandProcessor.filterRequirements(context));
     }
 
     private static Mono<?> executePrivateCommand(Context context) {
         final BaseCmd command = CommandManager.getCommand(context.getLastCommandName());
         return context.getEvent().acknowledge().thenReturn(command.execute(context));
+    }
+
+    private static Mono<?> filterRequirements(Context context) {
+        final BaseCmd command = CommandManager.getCommand(context.getLastCommandName());
+        final Mono<DBUser> user = DatabaseManager.getUsers().getDBUser(context.getAuthorId());
+
+        if (command.getRequirements().contains(Requirement.NONE))
+            return CommandProcessor.executeCommand(context);
+
+        return user.flatMap(dbUser -> {
+
+            for (Requirement requirement : command.getRequirements()) {
+
+                switch (requirement) {
+                    case DM -> {
+                        if (!dbUser.getBean().getDm())
+                            return context.replyEphemeral(Emoji.WARNING, context.localize("dm.not.allowed"));
+                    }
+                    case TIME_ZONE -> {
+                        if (!dbUser.hasZoneId())
+                            return context.replyEphemeral(Emoji.WARNING, context.localize("event.schedule.zone.error"));
+                    }
+                }
+
+            }
+            return CommandProcessor.executeCommand(context);
+        });
     }
 
     private static Mono<?> executeCommand(Context context) {
@@ -74,9 +103,9 @@ public class CommandProcessor {
                         context.replyEphemeral(Emoji.ACCESS_DENIED, context.localize("command.blacklisted"))))
                 // The user is not rate limited
                 .filterWhen(__ -> BooleanUtils.not(CommandProcessor.isRateLimited(context, command)))
-                .flatMap(__ -> context.getEvent().acknowledge()
-                        // Without this, BaseCmd#execute errors would be silently discarded
-                        .thenReturn(__))
+//                .flatMap(__ -> context.getEvent().acknowledge()
+//                        // Without this, BaseCmd#execute errors would be silently discarded
+//                        .thenReturn(__))
                 .flatMap(__ -> command.execute(context))
                 .doOnSuccess(__ -> Telemetry.COMMAND_USAGE_COUNTER.labels(command.getName()).inc())
                 .onErrorResume(err -> ExceptionHandler.handleCommandError(err, context)

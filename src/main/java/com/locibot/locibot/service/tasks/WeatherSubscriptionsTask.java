@@ -19,6 +19,7 @@ import reactor.util.Logger;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Objects;
 
 public class WeatherSubscriptionsTask implements Task {
 
@@ -31,57 +32,61 @@ public class WeatherSubscriptionsTask implements Task {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return CredentialManager.get(Credential.OPENWEATHERMAP_API_KEY) != null;
     }
 
     @Override
     public Disposable schedule(Scheduler scheduler) {
-        LOGGER.info("Scheduling weather subscriptions");//RegisterWeather.getDelay(), Duration.ofDays(1)
-        //final Disposable task = Flux.interval(Duration.ofSeconds(10), Duration.ofMinutes(1), DEFAULT_SCHEDULER)
+        LOGGER.info("Scheduling weather subscriptions");
+        //return Flux.interval(Duration.ofSeconds(10), Duration.ofSeconds(20), scheduler)
         return Flux.interval(RegisterWeather.getDelay(), Duration.ofDays(1), scheduler)
-                .doOnNext(__ -> {
+                .flatMap(__ -> {
                     LOGGER.info("Sending weather subscriptions");
-                    OWM owm = new OWM(CredentialManager.get(Credential.OPENWEATHERMAP_API_KEY));
+                    OWM owm = new OWM(Objects.requireNonNull(CredentialManager.get(Credential.OPENWEATHERMAP_API_KEY)));
                     owm.setUnit(OWM.Unit.METRIC);
-                    DatabaseManager.getGuilds().getDBGuilds().forEach(dbGuild ->
-                            dbGuild.getMembers().forEach(dbMember ->
-                                    dbMember.getWeatherRegistered().forEach(city -> {
+                    return DatabaseManager.getUsers().getAllUsers().flatMap(dbUser -> {
+                                dbUser.getBean().getWeatherRegistered().forEach(city -> {
 
-                                        //TODO: This is a inefficient implementation. This needs to be reworked.
-                                        //1 sek delay for each City-API-Call
-                                        long expectedTime = System.currentTimeMillis();
-                                        long sleepTime = 1000;
-                                        expectedTime += sleepTime;//Sample expectedTime += 1000; 1 second sleep
-                                        while (System.currentTimeMillis() < expectedTime) {
-                                            //Empty Loop
-                                        }
+                                    //TODO: This is a inefficient implementation. This needs to be reworked.
+                                    //1 sek delay for each City-API-Call
+                                    long expectedTime = System.currentTimeMillis();
+                                    long sleepTime = 1000;
+                                    expectedTime += sleepTime;//Sample expectedTime += 1000; 1 second sleep
+                                    while (System.currentTimeMillis() < expectedTime) {
+                                        //Empty Loop
+                                    }
 
-                                        gateway.getUserById(dbMember.getId()).flatMap(user ->
-                                                        user.getPrivateChannel().flatMap(privateChannel ->
-                                                                privateChannel.createMessage("Daily weather forecast of " + city + ":")
-                                                                        .then(new WeatherManager().getSaved5DayWeatherData(city).map(WeatherMapManager::new).flatMap(manager ->
-                                                                                privateChannel.createMessage(messageCreateSpec -> {
-                                                                                    try {
-                                                                                        byte[] bytes = manager.createHeatMap();
-                                                                                        if (bytes.length > 0)
-                                                                                            messageCreateSpec.addFile("temperature.png",
-                                                                                                    new ByteArrayInputStream(bytes));
-                                                                                        else
-                                                                                            messageCreateSpec.setContent("Please provide a real city ;)");
-                                                                                        bytes = manager.createRainMap();
-                                                                                        if (bytes.length > 0)
-                                                                                            messageCreateSpec.addFile("rain.png",
-                                                                                                    new ByteArrayInputStream(bytes));
-                                                                                        else
-                                                                                            messageCreateSpec.setContent("No City No Rain");
-                                                                                        LOGGER.info(city + " weather send to " + user.getUsername());
-                                                                                    } catch (IOException e) {
-                                                                                        e.printStackTrace();
-                                                                                    }
-                                                                                })))))
-                                                .subscribe(null, ExceptionHandler::handleUnknownError);
-                                    })));
-                    LOGGER.info("weather subscriptions send");
+                                    gateway.getUserById(dbUser.getId()).flatMap(user ->
+                                                    user.getPrivateChannel().flatMap(privateChannel ->
+                                                            privateChannel.createMessage("Daily weather forecast of " + city + ":")
+                                                                    .then(new WeatherManager().getSaved5DayWeatherData(city).map(WeatherMapManager::new).flatMap(manager ->
+                                                                            privateChannel.createMessage(messageCreateSpec -> {
+                                                                                try {
+                                                                                    byte[] bytes = manager.createHeatMap();
+                                                                                    if (bytes.length > 0)
+                                                                                        messageCreateSpec.addFile("temperature.png",
+                                                                                                new ByteArrayInputStream(bytes));
+                                                                                    else
+                                                                                        messageCreateSpec.setContent("Please provide a real city ;)");
+                                                                                    bytes = manager.createRainMap();
+                                                                                    if (bytes.length > 0)
+                                                                                        messageCreateSpec.addFile("rain.png",
+                                                                                                new ByteArrayInputStream(bytes));
+                                                                                    else
+                                                                                        messageCreateSpec.setContent("No City No Rain");
+                                                                                    LOGGER.info(city + " weather send to " + user.getUsername());
+                                                                                } catch (IOException e) {
+                                                                                    e.printStackTrace();
+                                                                                }
+                                                                            })))))
+                                            .subscribe(null, ExceptionHandler::handleUnknownError);
+
+                                    LOGGER.info("weather subscriptions send");
+                                });
+                                return Mono.empty();
+                            }
+                    );
                 }).subscribe(null, ExceptionHandler::handleUnknownError);
+
     }
 }
