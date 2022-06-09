@@ -27,21 +27,22 @@ public class SettingsDataSetHandler {
         String token = request.headers().header("Authentication").get(0).split(" ")[1];
         boolean dm = Boolean.parseBoolean(request.queryParam("dm").orElse("false"));
         String timeZone = request.queryParam("timeZone").orElseThrow();
-        ZoneId zoneId;
+        ZoneId zoneId = ZoneId.of("Europe/Berlin");
 
-        try {
-            System.out.println(timeZone);
-            zoneId = ZoneId.of(timeZone);
-        } catch (Exception ignored) {
-            return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(new Error("bad timeZone")));
-        }
+        if (timeZone.equals(""))
+            try {
+                zoneId = ZoneId.of(timeZone);
+            } catch (Exception ignored) {
+                return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(new Error("bad timeZone")));
+            }
 
         TokenVerification tokenVerification = new TokenVerification(token);
 
         try {
             if (tokenVerification.verify(Objects.requireNonNull(CredentialManager.get(Credential.JWT_SECRET)))) {
+                ZoneId finalZoneId = zoneId;
                 return DatabaseManager.getUsers().getDBUser(Snowflake.of(Long.parseLong(tokenVerification.getPayload().get("uid").toString()))).flatMap(dbUser ->
-                        dbUser.setDM(dm).then(timeZone.equals("") ? Mono.empty() : dbUser.setZoneId(zoneId)).then(ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+                        dbUser.setDM(dm).then(timeZone.equals("") ? Mono.empty() : dbUser.setZoneId(finalZoneId)).then(ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                                 .body(BodyInserters.fromValue(new SettingsData(dm, timeZone))))
                 );
             }
