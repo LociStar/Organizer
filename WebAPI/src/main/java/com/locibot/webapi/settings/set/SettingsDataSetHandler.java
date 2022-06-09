@@ -29,7 +29,7 @@ public class SettingsDataSetHandler {
         String timeZone = request.queryParam("timeZone").orElseThrow();
         ZoneId zoneId = ZoneId.of("Europe/Berlin");
 
-        if (timeZone.equals(""))
+        if (!timeZone.equals(""))
             try {
                 zoneId = ZoneId.of(timeZone);
             } catch (Exception ignored) {
