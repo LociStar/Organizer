@@ -272,5 +272,10 @@
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.LociStar</groupId>
+            <artifactId>TextBeautifier</artifactId>
+            <version>2ab4f4cbc2</version>
+        </dependency>
     </dependencies>
 </project>
