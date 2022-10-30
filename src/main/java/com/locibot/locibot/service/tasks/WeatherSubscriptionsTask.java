@@ -59,7 +59,7 @@ public class WeatherSubscriptionsTask implements Task {
                                     gateway.getUserById(dbUser.getId()).flatMap(user ->
                                                     user.getPrivateChannel().flatMap(privateChannel ->
                                                             privateChannel.createMessage("Daily weather forecast of " + city + ":")
-                                                                    .then(new WeatherManager().getSaved5DayWeatherData(city).map(WeatherMapManager::new).flatMap(manager ->
+                                                                    .then(new WeatherManager().getSaved5DayWeatherData(city, 0.0, 0.0).map(WeatherMapManager::new).flatMap(manager ->
                                                                             privateChannel.createMessage(messageCreateSpec -> {
                                                                                 try {
                                                                                     byte[] bytes = manager.createHeatMap();

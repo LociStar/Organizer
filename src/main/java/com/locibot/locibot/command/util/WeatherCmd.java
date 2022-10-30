@@ -90,7 +90,7 @@ public class WeatherCmd extends BaseCmd {
                             .formatted(city));
                 })
                 .onErrorMap(APIException.class, IOException::new)
-                .then(weatherManager.getSaved5DayWeatherData(city).flatMap(data -> {
+                .then(weatherManager.getSaved5DayWeatherData(city, 0.0, 0.0).flatMap(data -> {
                     WeatherMapManager weatherMapManager = new WeatherMapManager(data);
                     return context.getChannel().flatMap(textChannel -> textChannel.createMessage(messageCreateSpec -> {
                         try {
