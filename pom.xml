@@ -133,7 +133,7 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-            <version>3.4.17</version>
+            <version>3.4.24</version>
         </dependency>
         <dependency>
             <groupId>com.discord4j</groupId>
@@ -160,12 +160,12 @@
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient</artifactId>
-            <version>0.15.0</version>
+            <version>0.16.0</version>
         </dependency>
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_httpserver</artifactId>
-            <version>0.15.0</version>
+            <version>0.16.0</version>
         </dependency>
         <!-- Commands -->
         <!-- Evaluate mathematical expression (used by MathCmd) -->
@@ -186,12 +186,12 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.11</version>
+            <version>1.4.4</version>
         </dependency>
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-logback</artifactId>
-            <version>5.7.3</version>
+            <version>6.6.0</version>
         </dependency>
         <!-- Others -->
         <dependency>
@@ -201,39 +201,39 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20220320</version>
+            <version>20220924</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.14.3</version>
+            <version>1.15.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.vladimir-bukhtoyarov</groupId>
             <artifactId>bucket4j-core</artifactId>
-            <version>7.4.0</version>
+            <version>7.6.0</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-reactivestreams</artifactId>
-            <version>4.6.0</version>
+            <version>4.7.1</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.8.2</version>
+            <version>5.9.0</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.image-charts/image-charts -->
         <dependency>
             <groupId>com.image-charts</groupId>
             <artifactId>image-charts</artifactId>
-            <version>6.0.44</version>
+            <version>6.0.55</version>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchart</groupId>
             <artifactId>xchart</artifactId>
-            <version>3.8.1</version>
+            <version>3.8.2</version>
         </dependency>
         <dependency>
             <groupId>com.github.BoscoJared.disparse</groupId>
@@ -249,14 +249,8 @@
         <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio</artifactId>
-            <version>3.8.2</version>
+            <version>3.9.3</version>
             <type>pom</type>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.json/json -->
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20220320</version>
         </dependency>
         <dependency>
             <groupId>com.github.LociStar</groupId>
