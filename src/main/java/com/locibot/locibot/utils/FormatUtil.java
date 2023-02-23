@@ -1,7 +1,6 @@
 package com.locibot.locibot.utils;
 
 import com.locibot.locibot.core.i18n.I18nManager;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import discord4j.discordjson.json.ImmutableEmbedFieldData;
 import discord4j.discordjson.possible.Possible;
 import reactor.util.annotation.Nullable;
@@ -179,33 +178,6 @@ public class FormatUtil {
                 .limit(count)
                 .map(mapper)
                 .collect(Collectors.joining("\n"));
-    }
-
-    /**
-     * @param info The {@link AudioTrackInfo} to format.
-     * @return A string representing the provided info formatted.
-     */
-    public static String trackName(Locale locale, AudioTrackInfo info) {
-        final StringBuilder strBuilder = new StringBuilder();
-        if (info.title == null) {
-            strBuilder.append(I18nManager.localize(locale, "unknown.video.name"));
-        } else if ("Unknown artist".equals(info.author) || info.title.startsWith(info.author)) {
-            strBuilder.append(info.title.trim());
-        } else {
-            strBuilder.append("%s - %s".formatted(info.author.trim(), info.title.trim()));
-        }
-
-        if (info.isStream) {
-            strBuilder.append(" (")
-                    .append(I18nManager.localize(locale, "stream"))
-                    .append(')');
-        } else {
-            strBuilder.append(" (")
-                    .append(FormatUtil.formatDuration(info.length))
-                    .append(')');
-        }
-
-        return strBuilder.toString();
     }
 
 }

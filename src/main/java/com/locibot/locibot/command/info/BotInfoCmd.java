@@ -11,7 +11,6 @@ import com.locibot.locibot.utils.FormatUtil;
 import com.locibot.locibot.utils.LociBotUtil;
 import com.locibot.locibot.utils.SystemUtil;
 import com.locibot.locibot.utils.TimeUtil;
-import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import discord4j.common.GitProperties;
 import discord4j.core.object.entity.User;
 import discord4j.core.spec.EmbedCreateFields;
@@ -31,7 +30,6 @@ public class BotInfoCmd extends BaseCmd {
     private static final Properties D4J_PROPERTIES = GitProperties.getProperties();
     private static final String D4J_NAME = D4J_PROPERTIES.getProperty(GitProperties.APPLICATION_NAME);
     private static final String D4J_VERSION = D4J_PROPERTIES.getProperty(GitProperties.APPLICATION_VERSION);
-    private static final String LAVAPLAYER_VERSION = PlayerLibrary.VERSION;
 
     public BotInfoCmd() {
         super(CommandCategory.INFO, "bot", "Show bot info");
@@ -59,7 +57,7 @@ public class BotInfoCmd extends BaseCmd {
 
         final String versionsTitle = Emoji.SCREWDRIVER + " " + context.localize("botinfo.title.versions");
         final String versionsField = context.localize("botinfo.field.versions")
-                .formatted(JAVA_VERSION, Config.VERSION, D4J_NAME, D4J_VERSION, LAVAPLAYER_VERSION);
+                .formatted(JAVA_VERSION, Config.VERSION, D4J_NAME, D4J_VERSION);
 
         final String performanceTitle = Emoji.GEAR + " " + context.localize("botinfo.title.performance");
         final String performanceField = context.localize("botinfo.field.performance")

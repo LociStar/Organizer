@@ -5,27 +5,13 @@ import com.locibot.locibot.core.i18n.I18nManager;
 import com.locibot.locibot.data.Config;
 import com.locibot.locibot.database.DatabaseManager;
 import com.locibot.locibot.database.guilds.entity.DBMember;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import discord4j.common.util.Snowflake;
 import discord4j.core.spec.EmbedCreateSpec;
-import org.jsoup.Jsoup;
 import reactor.core.publisher.Mono;
-import reactor.util.annotation.NonNull;
 
 import java.util.Locale;
 
 public class LociBotUtil {
-
-    /**
-     * @param err The exception containing the error message to clean.
-     * @return The error message trimmed, without HTML tags nor YouTube links.
-     */
-    public static String cleanLavaplayerErr(@NonNull FriendlyException err) {
-        if (err.getMessage() == null) {
-            return "Error not specified.";
-        }
-        return Jsoup.parse(StringUtil.remove(err.getMessage(), "Watch on YouTube")).text().trim();
-    }
 
     /**
      * @param guildId The ID of the Guild in which the User made the bet.
