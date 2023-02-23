@@ -85,7 +85,7 @@ public class SettingShow extends BaseCmd {
                 {
                     EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
                     embed.author(EmbedCreateFields.Author.of(context.localize("settings.title"),
-                            "https://github.com/Shadorc/Shadbot/wiki/Settings",
+                            "https://github.com/LociStar/Organizer/wiki/Settings",
                             context.getAuthorAvatar()));
                     embed.footer(EmbedCreateFields.Footer.of(context.localize("settings.footer"), null));
 
