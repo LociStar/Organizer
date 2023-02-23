@@ -44,25 +44,26 @@ public class DiscordUtil {
      * it is emitted through the Mono.
      */
     public static Mono<Message> sendMessage(String content, MessageChannel channel) {
-        return DiscordUtil.sendMessage(spec -> spec.withContent(content), channel, false);
+        return DiscordUtil.sendMessage(MessageCreateSpec.builder().content(content).build(), channel, false);
     }
 
     /**
      * @param spec     A {@link Consumer} that provides a "blank" {@link MessageCreateSpec} to be operated on.
      * @param channel  The {@link MessageChannel} in which to send the message.
-     * @param hasEmbed Whether or not the spec contains an embed.
+     * @param hasEmbed Whether the spec contains an embed.
      * @return A {@link Mono} where, upon successful completion, emits the created Message. If an error is received,
      * it is emitted through the Mono.
      */
-    public static Mono<Message> sendMessage(Consumer<MessageCreateSpec> spec, MessageChannel channel, boolean hasEmbed) {
+    public static Mono<Message> sendMessage(MessageCreateSpec spec, MessageChannel channel, boolean hasEmbed) {
         return Mono.zip(
-                DiscordUtil.hasPermission(channel, channel.getClient().getSelfId(), Permission.SEND_MESSAGES),
-                DiscordUtil.hasPermission(channel, channel.getClient().getSelfId(), Permission.EMBED_LINKS))
+                        DiscordUtil.hasPermission(channel, channel.getClient().getSelfId(), Permission.SEND_MESSAGES),
+                        DiscordUtil.hasPermission(channel, channel.getClient().getSelfId(), Permission.EMBED_LINKS))
                 .flatMap(TupleUtils.function((canSendMessage, canSendEmbed) -> {
                     if (!canSendMessage) {
                         LociBot.DEFAULT_LOGGER.info("{Channel ID: {}} Missing permission: {}",
                                 channel.getId().asLong(), FormatUtil.capitalizeEnum(Permission.SEND_MESSAGES));
-                        return Mono.empty();
+                        return DiscordUtil.sendMessage(Emoji.ACCESS_DENIED,
+                                "Missing Permissions!", channel);
                     }
 
                     if (!canSendEmbed && hasEmbed) {
@@ -74,7 +75,7 @@ public class DiscordUtil {
                                         .formatted(FormatUtil.capitalizeEnum(Permission.EMBED_LINKS)), channel);
                     }
 
-                    return channel.createMessage(MessageCreateSpec.builder().build().withAllowedMentions(AllowedMentions.builder()
+                    return channel.createMessage(MessageCreateSpec.builder().from(spec).build().withAllowedMentions(AllowedMentions.builder()
                             .parseType(AllowedMentions.Type.ROLE, AllowedMentions.Type.USER)
                             .build()));
                 }))
