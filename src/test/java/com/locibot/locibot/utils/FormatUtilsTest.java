@@ -1,6 +1,5 @@
 package com.locibot.locibot.utils;
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import com.locibot.locibot.data.Config;
 import org.junit.jupiter.api.Test;
 
@@ -131,32 +130,6 @@ public class FormatUtilsTest {
         assertEquals("", FormatUtil.numberedList(2, 0, i -> Integer.toString(i)));
         assertEquals("", FormatUtil.numberedList(0, 0, i -> Integer.toString(i)));
         assertEquals("", FormatUtil.numberedList(-1, 0, i -> Integer.toString(i)));
-    }
-
-    @Test
-    public void testTrackName() {
-        final Locale locale = Config.DEFAULT_LOCALE;
-        assertEquals("author - title (1:00)", FormatUtil.trackName(locale,
-                new AudioTrackInfo("title", "author", 60 * 1000,
-                        "identifier", false, "uri")));
-        assertEquals("title (1:00)", FormatUtil.trackName(locale,
-                new AudioTrackInfo("title", "Unknown artist", 60 * 1000,
-                        "identifier", false, "uri")));
-        assertEquals("author - title (Stream)", FormatUtil.trackName(locale,
-                new AudioTrackInfo("title", "author", 60 * 1000,
-                        "identifier", true, "uri")));
-        assertEquals("title (Stream)", FormatUtil.trackName(locale,
-                new AudioTrackInfo("title", "Unknown artist", 60 * 1000,
-                        "identifier", true, "uri")));
-        assertEquals("author - title (Stream)", FormatUtil.trackName(locale,
-                new AudioTrackInfo("   title  ", "  author    ", 60 * 1000,
-                        "identifier", true, "uri")));
-        assertEquals("author - title (1:00)", FormatUtil.trackName(locale,
-                new AudioTrackInfo("author - title", "author", 60 * 1000,
-                        "identifier", false, "uri")));
-        assertEquals("Unknown video name (1:00)", FormatUtil.trackName(locale,
-                new AudioTrackInfo(null, "author", 60 * 1000,
-                        "identifier", false, "uri")));
     }
 
 }
