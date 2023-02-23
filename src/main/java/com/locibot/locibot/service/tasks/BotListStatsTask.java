@@ -1,7 +1,6 @@
 package com.locibot.locibot.service.tasks;
 
 import com.locibot.locibot.api.BotListStats;
-import com.locibot.locibot.data.Config;
 import com.locibot.locibot.object.ExceptionHandler;
 import com.locibot.locibot.utils.LogUtil;
 import discord4j.core.GatewayDiscordClient;
@@ -26,7 +25,7 @@ public class BotListStatsTask implements Task {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
     @Override

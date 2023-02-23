@@ -111,13 +111,13 @@ public class BotListStats {
         LOGGER.info("Posting statistics");
         final int shardCount = this.gateway.getGatewayClientGroup().getShardCount();
         return this.gateway.getGuilds().count()
-                .flatMap(guildCount -> this.postOnBotlistDotSpace(guildCount)
-                        .and(this.postOnBotsOndiscordDotXyz(guildCount))
+                .flatMap(guildCount -> Mono.empty()//this.postOnBotlistDotSpace(guildCount)
+                        //.and(this.postOnBotsOndiscordDotXyz(guildCount))
                         .and(this.postOnDiscordbotlistDotCom(shardCount, guildCount))
-                        .and(this.postOnWonderbotlistDotCom(shardCount, guildCount))
-                        .and(this.postOnBotsfordiscordDotCom(guildCount))
-                        .and(this.postOnDiscordDotBoats(guildCount))
-                        .and(this.postOnDiscordextremelistDotXyz(guildCount))
+                        //.and(this.postOnWonderbotlistDotCom(shardCount, guildCount))
+                        //.and(this.postOnBotsfordiscordDotCom(guildCount))
+                        //.and(this.postOnDiscordDotBoats(guildCount))
+                        //.and(this.postOnDiscordextremelistDotXyz(guildCount))
                         .and(this.postOnDiscordBotsDotGg(shardCount, guildCount))
                         .and(this.postOnTopDotGg(shardCount, guildCount)))
                 .doOnSuccess(__ -> LOGGER.info("Statistics posted"));

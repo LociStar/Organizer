@@ -1,7 +1,5 @@
 package com.locibot.locibot.service;
 
-import discord4j.core.GatewayDiscordClient;
-
 import java.util.ArrayList;
 import java.util.List;
 

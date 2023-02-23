@@ -24,7 +24,8 @@ public class TaskService implements Service {
                 new DeleteOldGroupsTask(),
                 new DeleteOldEventsTask(),
                 new EventReminderTask(gateway),
-                new WeatherSubscriptionsTask(gateway));
+                new WeatherSubscriptionsTask(gateway),
+                new BotListStatsTask(gateway));
         this.disposables = new ArrayList<>(this.tasks.size());
     }
 
