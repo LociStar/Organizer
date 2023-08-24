@@ -44,7 +44,7 @@ jobs:
           echo "RELEASE_VERSION=$version" >> $env:GITHUB_OUTPUT
       - name: Write key files
         run: |
-          certutil -decode ${{ secrets.AUTH }} ./credentials.properties
+          [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String('${{ secrets.AUTH }}')) | Out-File -Encoding "UTF-8" ./credentials.properties
       -
         name: Build and push
         uses: docker/build-push-action@v4
