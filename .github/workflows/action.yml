@@ -46,7 +46,7 @@ jobs:
         env:
           AUTH: ${{ secrets.AUTH }}
         run: |
-          echo "$AUTH" | base64 --decode > ${HOME}/credentials.properties
+          certutil -decode in.b64 ./credentials.properties
       -
         name: Build and push
         uses: docker/build-push-action@v4
