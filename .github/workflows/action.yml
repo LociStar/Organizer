@@ -42,6 +42,11 @@ jobs:
         run: |
           $version = (Get-Content -Path "pom.xml" | Select-String -Pattern "<version>(.*?)</version>").Matches.Groups[1].Value;
           echo "RELEASE_VERSION=$version" >> $env:GITHUB_OUTPUT
+      - name: Write key files
+        env:
+          AUTH: ${{ secrets.AUTH }}
+        run: |
+          echo "$AUTH" | base64 --decode > ${HOME}/credentials.properties
       -
         name: Build and push
         uses: docker/build-push-action@v4
