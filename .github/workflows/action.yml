@@ -20,6 +20,7 @@ jobs:
         - name: Build with Maven
           run: mvn --batch-mode --update-snapshots package
         - name: Get version
+          id: version
           shell: cmd
           run: echo RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout) >> $GITHUB_ENV
   deploy:
@@ -45,8 +46,8 @@ jobs:
         with:
           context: ./
           file: ./Dockerfile
-          build-args: "VERSION=${{ env.RELEASE_VERSION }}"
+          build-args: "VERSION=${{ jobs.version.outputs.RELEASE_VERSION }}"
           platforms: linux/arm64
           # builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: '${{ secrets.REGISTRY_URL }}/organizer-bot:${{ env.RELEASE_VERSION }}'
+          tags: '${{ secrets.REGISTRY_URL }}/organizer-bot:${{ jobs.version.outputs.RELEASE_VERSION }}'
