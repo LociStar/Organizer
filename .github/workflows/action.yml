@@ -19,11 +19,6 @@ jobs:
             distribution: 'temurin'
         - name: Build with Maven
           run: mvn --batch-mode --update-snapshots package
-        - name: Get version
-          id: version
-          shell: powershell
-          run: $version = (Get-Content -Path "pom.xml" | Select-String -Pattern "<version>(.*?)</version>").Matches.Groups[1].Value; Write-Host "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
-            
   deploy:
     needs: build
     runs-on: self-hosted
@@ -41,14 +36,18 @@ jobs:
       #     registry: ${{ secrets.REGISTRY_URL }}
       #     username: ""
       #     password: ""
+      - name: Get version
+        id: version
+        shell: powershell
+        run: $version = (Get-Content -Path "pom.xml" | Select-String -Pattern "<version>(.*?)</version>").Matches.Groups[1].Value; Write-Host "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
       -
         name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: ./
           file: ./Dockerfile
-          build-args: "VERSION=${{ env.RELEASE_VERSION }}"
+          build-args: "VERSION=$RELEASE_VERSION}"
           platforms: linux/arm64
           # builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: '${{ secrets.REGISTRY_URL }}/organizer-bot:${{ env.RELEASE_VERSION }}'
+          tags: '${{ secrets.REGISTRY_URL }}/organizer-bot:$RELEASE_VERSION'
