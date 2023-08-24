@@ -23,13 +23,11 @@ jobs:
         #   id: version
         #   shell: cmd
         #   run: echo RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout) >> $GITHUB_ENV
-        - name: Get Project Version from pom.xml
-          uses: entimaniac/read-pom-version-action@1.0.0
-        - name: Get Version
-          uses: ./
-          id: getVersion
+        - name: get-pom-version
+          id: pom-version
+          uses: CptMokoena/maven-get-version-action@master
         - name: Print the version
-          run: echo "RELEASE_VERSION=${{steps.getVersion.outputs.version}}" >> "$GITHUB_ENV"
+          run: echo "RELEASE_VERSION=${{ steps.pom-version.outputs.version }} >> "$GITHUB_ENV"
             
   deploy:
     needs: build
