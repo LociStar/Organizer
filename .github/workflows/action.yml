@@ -45,8 +45,10 @@ jobs:
       - name: Write key files
         run: |
           [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String('${{ secrets.AUTH }}')) | Out-File -Encoding "utf8" ./credentials.properties
-      -
-        name: Build and push
+      - name: Print
+        run: |
+          Get-ChildItem
+      - name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: ./
