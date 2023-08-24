@@ -25,13 +25,13 @@
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
-        <resources>
-            <!-- Allow to read POM information directly from the source code -->
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
+<!--        <resources>-->
+<!--            &lt;!&ndash; Allow to read POM information directly from the source code &ndash;&gt;-->
+<!--            <resource>-->
+<!--                <directory>src/main/resources</directory>-->
+<!--                <filtering>true</filtering>-->
+<!--            </resource>-->
+<!--        </resources>-->
         <plugins>
             <!-- Require specific Maven version -->
             <plugin>
