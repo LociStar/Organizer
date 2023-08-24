@@ -19,6 +19,12 @@ jobs:
             distribution: 'temurin'
         - name: Build with Maven
           run: mvn --batch-mode --update-snapshots package
+        - name: 'Upload Artifact'
+          uses: actions/upload-artifact@v3
+          with:
+            name: jar
+            path: ./target/locibot-*.jar
+            retention-days: 1
   deploy:
     needs: build
     runs-on: self-hosted
@@ -48,6 +54,10 @@ jobs:
       - name: Print
         run: |
           Get-ChildItem
+      - name: Download a single artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: jar
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
