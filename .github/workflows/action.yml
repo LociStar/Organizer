@@ -19,10 +19,18 @@ jobs:
             distribution: 'temurin'
         - name: Build with Maven
           run: mvn --batch-mode --update-snapshots package
-        - name: Get version
-          id: version
-          shell: bash
-          run: echo RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout) >> $GITHUB_ENV
+        # - name: Get version
+        #   id: version
+        #   shell: cmd
+        #   run: echo RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout) >> $GITHUB_ENV
+        - name: Get Project Version from pom.xml
+          uses: entimaniac/read-pom-version-action@1.0.0
+        - name: Get Version
+          uses: ./
+          id: getVersion
+        - name: Print the version
+          run: echo "RELEASE_VERSION=${{steps.getVersion.outputs.version}}" >> "$GITHUB_ENV"
+            
   deploy:
     needs: build
     runs-on: self-hosted
