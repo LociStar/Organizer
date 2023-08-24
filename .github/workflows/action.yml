@@ -46,8 +46,8 @@ jobs:
         with:
           context: ./
           file: ./Dockerfile
-          build-args: "VERSION=${{ steps.version.outputs.RELEASE_VERSION }}"
+          build-args: "VERSION=${{ env.RELEASE_VERSION }}"
           platforms: linux/arm64
           # builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: '${{ secrets.REGISTRY_URL }}/organizer-bot:${{ steps.version.outputs.RELEASE_VERSION }}'
+          tags: '${{ secrets.REGISTRY_URL }}/organizer-bot:${{ env.RELEASE_VERSION }}'
