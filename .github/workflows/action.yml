@@ -25,7 +25,7 @@ jobs:
         #   run: echo RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout) >> $GITHUB_ENV
         - name: get-pom-version
           id: pom-version
-          uses: CptMokoena/maven-get-version-action@main
+          uses: PERES-Richard/maven-get-version-action@v3.0.0
         - name: Print the version
           run: echo "RELEASE_VERSION=${{ steps.pom-version.outputs.version }} >> "$GITHUB_ENV"
             
