@@ -1,0 +1,93 @@
+{
+  "name": "util",
+  "description": "Utility commands",
+  "options": [
+    {
+      "name": "beautify",
+      "description": "Beautify your input",
+      "type": 1,
+      "options": [
+        {
+          "name": "font",
+          "description": "Select a Font",
+          "type": 3,
+          "required": true,
+          "choices": [
+            {
+              "name": "Gothic",
+              "value": "Gothic Style"
+            },
+            {
+              "name": "Emoji",
+              "value": "Emoji"
+            },
+            {
+              "name": "Black Square",
+              "value": "Black Square"
+            },
+            {
+              "name": "Bubble",
+              "value": "Bubble"
+            },
+            {
+              "name": "Math Sans Bold",
+              "value": "Math Sans Bold"
+            },
+            {
+              "name": "Word With Decoration",
+              "value": "Word With Decor"
+            },
+            {
+              "name": "Letter with Decoration 1",
+              "value": "Letter with Decor 1"
+            },
+            {
+              "name": "Letter with Decoration 2",
+              "value": "Letter with Decor 2"
+            },
+            {
+              "name": "Letter with Decoration 3",
+              "value": "Letter with Decor 3"
+            },
+            {
+              "name": "Text with Decoration",
+              "value": "Text with Decor"
+            }
+          ]
+        },
+        {
+          "name": "text",
+          "description": "The text you want to beautify",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "math",
+      "description": "Evaluate an expression",
+      "type": 1,
+      "options": [
+        {
+          "name": "expression",
+          "description": "Expression to evaluate (example: 2*cos(pi))",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "urban",
+      "description": "Search for Urban Dictionary definition",
+      "type": 1,
+      "options": [
+        {
+          "name": "word",
+          "description": "Search for a word",
+          "type": 3,
+          "required": true
+        }
+      ]
+    }
+  ]
+}

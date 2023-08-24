@@ -1,0 +1,64 @@
+{
+  "name": "setting",
+  "description": "Setting commands",
+  "options": [
+    {
+      "name": "language",
+      "description": "Set bot language",
+      "type": 1,
+      "options": [
+        {
+          "name": "value",
+          "description": "Language",
+          "type": 3,
+          "required": true,
+          "choices": [
+            {
+              "name": "English",
+              "value": "en"
+            },
+            {
+              "name": "German",
+              "value": "de"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "welcome_message",
+      "description": "Manage auto-message on user join",
+      "type": 1,
+      "options": [
+        {
+          "name": "action",
+          "description": "Whether to enable or disable automatic messages",
+          "type": 3,
+          "required": true,
+          "choices": [
+            {
+              "name": "Enable",
+              "value": "true"
+            },
+            {
+              "name": "Disable",
+              "value": "false"
+            }
+          ]
+        },
+        {
+          "name": "message",
+          "description": "The message to automatically send",
+          "type": 3,
+          "required": false
+        },
+        {
+          "name": "channel",
+          "description": "The channel in which send the automatic message",
+          "type": 7,
+          "required": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "info",
+  "description": "Info commands",
+  "options": [
+    {
+      "name": "bot",
+      "description": "Show bot info",
+      "type": 1
+    },
+    {
+      "name": "server",
+      "description": "Show server info",
+      "type": 1
+    },
+    {
+      "name": "user",
+      "description": "Show user info",
+      "type": 1,
+        "options": [
+            {
+            "name": "user",
+            "description": "User to show info",
+            "type": 6,
+            "required": false
+            }
+        ]
+    }
+  ]
+}
