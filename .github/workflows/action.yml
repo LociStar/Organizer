@@ -21,7 +21,7 @@ jobs:
           run: mvn --batch-mode --update-snapshots package
         - name: Get version
           id: version
-          shell: cmd
+          shell: bash
           run: echo RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout) >> $GITHUB_ENV
   deploy:
     needs: build
