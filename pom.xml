@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.locibot.locibot</groupId>
     <artifactId>locibot</artifactId>
-    <version>3.1.7</version>
+    <version>3.1.7.2</version>
     <name>LociBot</name>
     <url>https://github.com/LociStar/Organizer</url>
     <description>
@@ -175,7 +175,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.11</version>
+            <version>1.4.11</version>
         </dependency>
         <dependency>
             <groupId>io.sentry</groupId>
@@ -266,5 +266,6 @@
             <version>1.14.3</version>
             <scope>compile</scope>
         </dependency>
+
     </dependencies>
 </project>
