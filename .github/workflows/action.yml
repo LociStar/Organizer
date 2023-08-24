@@ -38,8 +38,10 @@ jobs:
       #     password: ""
       - name: Get version
         id: version
-        shell: pwsh
-        run: echo $($version = (Get-Content -Path "pom.xml" | Select-String -Pattern "<version>(.*?)</version>").Matches.Groups[1].Value; Write-Host "RELEASE_VERSION=$version") >> $env:GITHUB_OUTPUT
+        shell: powershell
+        run: |
+          $version = (Get-Content -Path "pom.xml" | Select-String -Pattern "<version>(.*?)</version>").Matches.Groups[1].Value;
+          echo "RELEASE_VERSION=$version" >> $env:GITHUB_OUTPUT
       -
         name: Build and push
         uses: docker/build-push-action@v4
