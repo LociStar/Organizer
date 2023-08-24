@@ -39,7 +39,7 @@ jobs:
       - name: Get version
         id: version
         shell: powershell
-        run: $version = (Get-Content -Path "pom.xml" | Select-String -Pattern "<version>(.*?)</version>").Matches.Groups[1].Value; Write-Host "RELEASE_VERSION=$version" >> $env:GITHUB_OUTPUT
+        run: $version = (Get-Content -Path "pom.xml" | Select-String -Pattern "<version>(.*?)</version>").Matches.Groups[1].Value; Write-Host "RELEASE_VERSION=$version" >> "$GITHUB_OUTPUT"
       -
         name: Build and push
         uses: docker/build-push-action@v4
@@ -50,4 +50,4 @@ jobs:
           platforms: linux/arm64
           # builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: '${{ secrets.REGISTRY_URL }}/organizer-bot:$RELEASE_VERSION'
+          tags: '${{ secrets.REGISTRY_URL }}/organizer-bot:${{ steps.version.outputs.RELEASE_VERSION }}'
