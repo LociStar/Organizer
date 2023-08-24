@@ -20,7 +20,8 @@ jobs:
         - name: Build with Maven
           run: mvn --batch-mode --update-snapshots package
         - name: Get version
-          run: $RELEASE_VERSION=cmd /c "mvn help:evaluate -Dexpression=project.version -q -DforceStdout" echo "RELEASE_VERSION=$RELEASE_VERSION" >> $Env:GITHUB_ENV
+          shell: cmd
+          run: echo project_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout) >> $GITHUB_ENV
   deploy:
     runs-on: self-hosted
     steps:
