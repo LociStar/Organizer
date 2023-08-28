@@ -38,11 +38,7 @@ public class SlashCommandListener {
         //Convert our list to a flux that we can iterate through
         return Flux.fromIterable(commands)
                 //Filter out all commands that don't match the name this event is for
-                .filter(command -> {
-                    System.out.println("FULLNAME: " + DiscordUtil.getFullCommandName(event));
-                    System.out.println("NAME: " + command.getName());
-                    return command.getName().equals(DiscordUtil.getFullCommandName(event));
-                })
+                .filter(command -> command.getName().equals(DiscordUtil.getFullCommandName(event)))
                 //Get the first (and only) item in the flux that matches our filter
                 .next()
                 //Have our command class handle all logic related to its specific command.
@@ -51,9 +47,10 @@ public class SlashCommandListener {
                     // add Locale to context
                     return commandContext.getUncachedLocale()
                             .flatMap(locale -> {
+                                System.out.println("LOCALE: " + locale);
                                 commandContext.setLocale(locale);
-                                return Mono.just(commandContext);
-                            }).then(command.handle(commandContext));
+                                return command.handle(commandContext);
+                            });
                 })
                 .onErrorResume(err -> ExceptionHandler.handleCommandError(err, new CommandContext<ApplicationCommandInteractionEvent>(event, guildRepository, userRepository)).then(Mono.empty()))
                 .doOnSuccess(__ -> Telemetry.COMMAND_USAGE_COUNTER.labels(event.getCommandName()).inc()); //TODO: Add error handling
