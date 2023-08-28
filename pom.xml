@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.locibot</groupId>
-    <artifactId>organizer2</artifactId>
-    <version>0.0.1</version>
+    <artifactId>organizer</artifactId>
+    <version>4.0.0</version>
     <name>organizer2</name>
     <description>organizer2</description>
     <properties>
