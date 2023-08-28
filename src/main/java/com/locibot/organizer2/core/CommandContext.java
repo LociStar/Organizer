@@ -110,6 +110,10 @@ public class CommandContext<T extends ApplicationCommandInteractionEvent> {
         return event.getInteraction().getMember().orElseThrow();
     }
 
+    public Snowflake getAuthorId() {
+        return this.getEvent().getInteraction().getUser().getId();
+    }
+
     public String getAuthorAvatar() {
         return getAuthor().getAvatarUrl();
     }
