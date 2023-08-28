@@ -31,15 +31,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import reactor.core.publisher.Hooks;
-import reactor.core.publisher.Mono;
 
-import java.time.Duration;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
+@EnableScheduling
 public class Organizer2Application {
 
     public final Logger DEFAULT_LOGGER = LoggerFactory.getLogger(this.getClass());
