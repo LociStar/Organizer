@@ -1,0 +1,56 @@
+{
+  "name": "event",
+  "description": "Event commands",
+  "options": [
+    {
+      "name": "create",
+      "description": "Create an event",
+      "type": 1,
+      "options": [
+        {
+          "name": "name",
+          "description": "Name of the event",
+          "type": 3,
+          "required": true
+        },
+        {
+          "name": "description",
+          "description": "Description of the event",
+          "type": 3,
+          "required": true
+        },
+        {
+          "name": "date",
+          "description": "Date of the event",
+          "type": 3,
+          "required": true
+        },
+        {
+          "name": "time",
+          "description": "Time of the event",
+          "type": 3,
+          "required": true
+        },
+        {
+          "name": "icon",
+          "description": "Event icon",
+          "type": 3,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "time_zone",
+      "description": "Set your time zone",
+      "type": 1,
+      "options": [
+        {
+          "name": "time_zone",
+          "description": "Time zone",
+          "type": 3,
+          "required": true
+        }
+      ]
+    }
+  ]
+}
