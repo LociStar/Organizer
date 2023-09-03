@@ -8,6 +8,22 @@
       "type": 1,
       "options": [
         {
+          "name": "type",
+          "description": "Type of the event",
+          "type": 3,
+          "required": true,
+          "choices": [
+            {
+              "name": "Server event",
+              "value": "public"
+            },
+            {
+              "name": "Private event",
+              "value": "private"
+            }
+          ]
+        },
+        {
           "name": "name",
           "description": "Name of the event",
           "type": 3,
@@ -21,7 +37,7 @@
         },
         {
           "name": "date",
-          "description": "Date of the event",
+          "description": "Date of the event (yyyy-mm-dd)",
           "type": 3,
           "required": true
         },
@@ -35,6 +51,85 @@
           "name": "icon",
           "description": "Event icon",
           "type": 3,
+          "required": false
+        },
+        {
+          "name": "role",
+          "description": "Role to ping",
+          "type": 8,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "invite",
+      "description": "Invite a user to an event",
+      "type": 1,
+      "options": [
+        {
+          "name": "event_name",
+          "description": "Name of the event",
+          "type": 3,
+          "required": true
+        },
+        {
+          "name": "user_1",
+          "description": "User to invite",
+          "type": 6,
+          "required": true
+        },
+        {
+          "name": "user_2",
+          "description": "User to invite",
+          "type": 6,
+          "required": false
+        },
+        {
+          "name": "user_3",
+          "description": "User to invite",
+          "type": 6,
+          "required": false
+        },
+        {
+          "name": "user_4",
+          "description": "User to invite",
+          "type": 6,
+          "required": false
+        },
+        {
+          "name": "user_5",
+          "description": "User to invite",
+          "type": 6,
+          "required": false
+        },
+        {
+          "name": "user_6",
+          "description": "User to invite",
+          "type": 6,
+          "required": false
+        },
+        {
+          "name": "user_7",
+          "description": "User to invite",
+          "type": 6,
+          "required": false
+        },
+        {
+          "name": "user_8",
+          "description": "User to invite",
+          "type": 6,
+          "required": false
+        },
+        {
+          "name": "user_9",
+          "description": "User to invite",
+          "type": 6,
+          "required": false
+        },
+        {
+          "name": "user_10",
+          "description": "User to invite",
+          "type": 6,
           "required": false
         }
       ]
