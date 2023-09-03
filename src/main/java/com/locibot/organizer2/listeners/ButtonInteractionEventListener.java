@@ -39,8 +39,6 @@ public class ButtonInteractionEventListener {
 
 
     public Mono<?> handle(ButtonInteractionEvent event) {
-        System.out.println("ButtonInteractionEvent: " + event.getCustomId().split("_")[0]);
-        System.out.println(events.size());
         //Convert our list to a flux that we can iterate through
         return Flux.fromIterable(events)
                 //Filter out all commands that don't match the name this event is for
@@ -53,12 +51,20 @@ public class ButtonInteractionEventListener {
                     // add Locale to context
                     return buttonEventContext.getUncachedLocale()
                             .flatMap(locale -> {
-                                System.out.println("LOCALE: " + locale);
                                 buttonEventContext.setLocale(locale);
                                 return command.handle(buttonEventContext);
                             });
                 })
-                .onErrorResume(err -> ExceptionHandler.handleCommandError(err, new ButtonEventContext<>(event, guildRepository, userRepository, eventRepository, eventSubscriptionRepository)).then(Mono.empty()))
+                .onErrorResume(err -> {
+                    ButtonEventContext<ButtonInteractionEvent> buttonEventContextInit = new ButtonEventContext<>(event, guildRepository, userRepository, eventRepository, eventSubscriptionRepository);
+                    // add Locale to context
+                    Mono<ButtonEventContext<ButtonInteractionEvent>> commandContextMono = buttonEventContextInit.getUncachedLocale()
+                            .map(locale -> {
+                                buttonEventContextInit.setLocale(locale);
+                                return buttonEventContextInit;
+                            });
+                    return commandContextMono.flatMap(commandContext -> ExceptionHandler.handleCommandError(err, commandContext).then(Mono.empty()));
+                })
                 .doOnSuccess(__ -> Telemetry.COMMAND_USAGE_COUNTER.labels(event.getCustomId()).inc()); //TODO: Add error handling
     }
 }

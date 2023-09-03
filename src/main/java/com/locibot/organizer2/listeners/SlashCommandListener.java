@@ -9,7 +9,6 @@ import com.locibot.organizer2.database.repositories.UserRepository;
 import com.locibot.organizer2.utils.DiscordUtil;
 import com.locibot.organizer2.object.ExceptionHandler;
 import discord4j.core.GatewayDiscordClient;
-import discord4j.core.event.domain.interaction.ApplicationCommandInteractionEvent;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -50,12 +49,20 @@ public class SlashCommandListener {
                     // add Locale to context
                     return commandContext.getUncachedLocale()
                             .flatMap(locale -> {
-                                System.out.println("LOCALE: " + locale);
                                 commandContext.setLocale(locale);
                                 return command.handle(commandContext);
                             });
                 })
-                .onErrorResume(err -> ExceptionHandler.handleCommandError(err, new CommandContext<ApplicationCommandInteractionEvent>(event, guildRepository, userRepository, eventRepository)).then(Mono.empty()))
+                .onErrorResume(err -> {
+                    CommandContext<ChatInputInteractionEvent> commandContextInit = new CommandContext<>(event, guildRepository, userRepository, eventRepository);
+                    // add Locale to context
+                    Mono<CommandContext<ChatInputInteractionEvent>> commandContextMono = commandContextInit.getUncachedLocale()
+                            .map(locale -> {
+                                commandContextInit.setLocale(locale);
+                                return commandContextInit;
+                            });
+                    return commandContextMono.flatMap(commandContext -> ExceptionHandler.handleCommandError(err, commandContext).then(Mono.empty()));
+                })
                 .doOnSuccess(__ -> Telemetry.COMMAND_USAGE_COUNTER.labels(event.getCommandName()).inc()); //TODO: Add error handling
     }
 }
