@@ -3,6 +3,7 @@ package com.locibot.organizer2.listeners;
 import com.locibot.organizer2.commands.SlashCommand;
 import com.locibot.organizer2.core.CommandContext;
 import com.locibot.organizer2.data.Telemetry;
+import com.locibot.organizer2.database.repositories.EventRepository;
 import com.locibot.organizer2.database.repositories.GuildRepository;
 import com.locibot.organizer2.database.repositories.UserRepository;
 import com.locibot.organizer2.utils.DiscordUtil;
@@ -22,13 +23,15 @@ public class SlashCommandListener {
 
     private final GuildRepository guildRepository;
     private final UserRepository userRepository;
+    private final EventRepository eventRepository;
 
     private final Collection<SlashCommand> commands;
 
-    public SlashCommandListener(List<SlashCommand> slashCommands, GatewayDiscordClient client, GuildRepository guildRepository, UserRepository userRepository) {
+    public SlashCommandListener(List<SlashCommand> slashCommands, GatewayDiscordClient client, GuildRepository guildRepository, UserRepository userRepository, EventRepository eventRepository) {
         commands = slashCommands;
         this.guildRepository = guildRepository;
         this.userRepository = userRepository;
+        this.eventRepository = eventRepository;
 
         client.on(ChatInputInteractionEvent.class, this::handle).subscribe();
     }
@@ -43,7 +46,7 @@ public class SlashCommandListener {
                 .next()
                 //Have our command class handle all logic related to its specific command.
                 .flatMap(command -> {
-                    CommandContext<ChatInputInteractionEvent> commandContext = new CommandContext<>(event, guildRepository, userRepository);
+                    CommandContext<ChatInputInteractionEvent> commandContext = new CommandContext<>(event, guildRepository, userRepository, eventRepository);
                     // add Locale to context
                     return commandContext.getUncachedLocale()
                             .flatMap(locale -> {
@@ -52,7 +55,7 @@ public class SlashCommandListener {
                                 return command.handle(commandContext);
                             });
                 })
-                .onErrorResume(err -> ExceptionHandler.handleCommandError(err, new CommandContext<ApplicationCommandInteractionEvent>(event, guildRepository, userRepository)).then(Mono.empty()))
+                .onErrorResume(err -> ExceptionHandler.handleCommandError(err, new CommandContext<ApplicationCommandInteractionEvent>(event, guildRepository, userRepository, eventRepository)).then(Mono.empty()))
                 .doOnSuccess(__ -> Telemetry.COMMAND_USAGE_COUNTER.labels(event.getCommandName()).inc()); //TODO: Add error handling
     }
 }
