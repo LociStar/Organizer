@@ -1,6 +1,7 @@
 package com.locibot.organizer2.core;
 
 import com.locibot.organizer2.data.Config;
+import com.locibot.organizer2.database.repositories.EventRepository;
 import com.locibot.organizer2.database.repositories.GuildRepository;
 import com.locibot.organizer2.database.repositories.UserRepository;
 import com.locibot.organizer2.utils.DiscordUtil;
@@ -26,12 +27,14 @@ public class CommandContext<T extends ApplicationCommandInteractionEvent> {
     private final T event;
     private final GuildRepository guildRepository;
     private final UserRepository userRepository;
+    private final EventRepository eventRepository;
     private Locale locale;
 
-    public CommandContext(T event, GuildRepository guildRepository, UserRepository userRepository) {
+    public CommandContext(T event, GuildRepository guildRepository, UserRepository userRepository, EventRepository eventRepository) {
         this.event = event;
         this.guildRepository = guildRepository;
         this.userRepository = userRepository;
+        this.eventRepository = eventRepository;
     }
 
     public T getEvent() {
@@ -63,7 +66,6 @@ public class CommandContext<T extends ApplicationCommandInteractionEvent> {
 
     public Mono<Locale> getUncachedLocale() {
         if (event.getInteraction().getGuildId().isPresent()) {
-            System.out.println("DB ACCESS");
             return guildRepository.findById(event.getInteraction().getGuildId().get().asLong())
                     .map(guild -> Locale.forLanguageTag(guild.getLocale()))
                     .onErrorReturn(Config.DEFAULT_LOCALE);//TODO: remove blocking and/or add caching
@@ -220,5 +222,9 @@ public class CommandContext<T extends ApplicationCommandInteractionEvent> {
 
     public UserRepository getUserRepository() {
         return userRepository;
+    }
+
+    public EventRepository getEventRepository() {
+        return eventRepository;
     }
 }
