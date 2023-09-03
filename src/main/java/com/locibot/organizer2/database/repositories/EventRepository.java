@@ -16,4 +16,7 @@ public interface EventRepository extends R2dbcRepository<Event, Long> {
 
     @Query("SELECT * FROM event WHERE event.name = $1 AND event.owner_id = $2")
     Flux<Event> findByNameAndOwnerId(String name, Long ownerId);
+
+    @Query("SELECT * FROM event WHERE event.owner_id = $1")
+    Flux<Event> findByOwnerId(Long ownerId);
 }
