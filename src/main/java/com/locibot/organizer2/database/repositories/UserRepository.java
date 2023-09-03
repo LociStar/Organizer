@@ -10,6 +10,8 @@ import java.time.ZoneId;
 
 public interface UserRepository extends R2dbcRepository<User, Integer> {
 
+    Mono<User> findById(long id);
+
     @Query("""
             INSERT INTO user_ (id, zone_id)
             VALUES ($1, $2)
