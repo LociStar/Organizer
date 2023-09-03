@@ -146,6 +146,11 @@
           "required": true
         }
       ]
+    },
+    {
+      "name": "list",
+      "description": "List your events",
+      "type": 1
     }
   ]
 }
