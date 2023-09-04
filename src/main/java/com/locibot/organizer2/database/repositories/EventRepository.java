@@ -19,4 +19,7 @@ public interface EventRepository extends R2dbcRepository<Event, Long> {
 
     @Query("SELECT * FROM event WHERE event.owner_id = $1")
     Flux<Event> findByOwnerId(Long ownerId);
+
+    @Query("DELETE FROM event WHERE event.owner_id = $1")
+    Mono<?> deleteAllByOwnerId(long aLong);
 }
