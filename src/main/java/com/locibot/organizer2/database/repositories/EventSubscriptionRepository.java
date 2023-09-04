@@ -18,4 +18,9 @@ public interface EventSubscriptionRepository extends R2dbcRepository<EventSubscr
     @Query("SELECT * FROM event_subscription WHERE event_id = $1 AND user_id = $2;")
     Mono<EventSubscription> findByEventIdAndUserId(Long eventId, Long userId);
 
+    @Query("DELETE FROM event_subscription WHERE user_id = $1;")
+    Mono<?> deleteAllByUserId(long aLong);
+
+    @Query("DELETE FROM event_subscription WHERE event_id = $1;")
+    Mono<?> deleteByEventId(long aLong);
 }
