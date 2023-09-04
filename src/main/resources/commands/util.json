@@ -88,6 +88,11 @@
           "required": true
         }
       ]
+    },
+    {
+      "name": "delete_user_data",
+      "description": "Delete your data from the bot's database",
+      "type": 1
     }
   ]
 }
