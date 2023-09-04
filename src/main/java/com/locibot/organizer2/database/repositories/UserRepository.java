@@ -1,7 +1,6 @@
 package com.locibot.organizer2.database.repositories;
 
 import com.locibot.organizer2.database.tables.User;
-import discord4j.gateway.GatewayObserver;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Mono;

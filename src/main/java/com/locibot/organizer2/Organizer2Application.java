@@ -6,7 +6,6 @@ import com.locibot.organizer2.data.credential.Credential;
 import com.locibot.organizer2.data.credential.CredentialManager;
 import discord4j.common.ReactorResources;
 import discord4j.common.store.Store;
-import discord4j.common.store.impl.LocalStoreLayout;
 import discord4j.common.store.legacy.LegacyStoreLayout;
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
