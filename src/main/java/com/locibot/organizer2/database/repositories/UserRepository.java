@@ -20,4 +20,10 @@ public interface UserRepository extends R2dbcRepository<User, Integer> {
 
     Mono<?> deleteById(long userId);
 
+    @Query("""
+            UPDATE user_
+            SET last_used_timestamp = EXTRACT(EPOCH FROM NOW())
+            WHERE id = $1;""")
+    Mono<?> updateLastUsedTimestamp(long userId);
+
 }
