@@ -83,10 +83,7 @@ public class Organizer2Application {
                 .setEnabledIntents(IntentSet.of(
                         Intent.GUILDS,
                         Intent.GUILD_MEMBERS,
-                        Intent.GUILD_VOICE_STATES,
-                        Intent.GUILD_MESSAGE_REACTIONS,
-                        Intent.GUILD_MESSAGES,
-                        Intent.DIRECT_MESSAGES))
+                        Intent.GUILD_MESSAGE_REACTIONS))
                 .setInitialPresence(__ -> ClientPresence.online(ClientActivity.listening("/help")))
                 .setMemberRequestFilter(MemberRequestFilter.none())
                 .login()
