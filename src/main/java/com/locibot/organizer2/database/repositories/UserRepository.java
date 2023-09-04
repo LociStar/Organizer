@@ -19,4 +19,6 @@ public interface UserRepository extends R2dbcRepository<User, Integer> {
             RETURNING id;""")
     Mono<Long> setZoneId(long userId, ZoneId zoneId);
 
+    Mono<?> deleteById(long userId);
+
 }
