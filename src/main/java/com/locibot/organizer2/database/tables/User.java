@@ -29,4 +29,7 @@ public class User {
 
     @Column("achievements")
     private Integer achievements;
+
+    @Column("last_used_timestamp")
+    private Long lastUsedTimestamp;
 }
