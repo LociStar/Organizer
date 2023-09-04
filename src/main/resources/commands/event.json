@@ -135,6 +135,19 @@
       ]
     },
     {
+      "name": "delete",
+      "description": "Delete an event",
+      "type": 1,
+      "options": [
+        {
+          "name": "name",
+          "description": "Name of the event",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+    {
       "name": "time_zone",
       "description": "Set your time zone",
       "type": 1,
