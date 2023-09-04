@@ -39,6 +39,9 @@ public class ButtonInteractionEventListener {
 
 
     public Mono<?> handle(ButtonInteractionEvent event) {
+
+        Mono<?> updateLastUsedTimestamp = userRepository.updateLastUsedTimestamp(event.getInteraction().getUser().getId().asLong());
+
         //Convert our list to a flux that we can iterate through
         return Flux.fromIterable(events)
                 //Filter out all commands that don't match the name this event is for
@@ -65,6 +68,7 @@ public class ButtonInteractionEventListener {
                             });
                     return commandContextMono.flatMap(commandContext -> ExceptionHandler.handleCommandError(err, commandContext).then(Mono.empty()));
                 })
+                .then(updateLastUsedTimestamp)
                 .doOnSuccess(__ -> Telemetry.COMMAND_USAGE_COUNTER.labels(event.getCustomId()).inc()); //TODO: Add error handling
     }
 }

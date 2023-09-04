@@ -37,6 +37,9 @@ public class SlashCommandListener {
 
 
     public Mono<?> handle(ChatInputInteractionEvent event) {
+
+        Mono<?> updateLastUsedTimestamp = userRepository.updateLastUsedTimestamp(event.getInteraction().getUser().getId().asLong());
+
         //Convert our list to a flux that we can iterate through
         return Flux.fromIterable(commands)
                 //Filter out all commands that don't match the name this event is for
@@ -63,6 +66,7 @@ public class SlashCommandListener {
                             });
                     return commandContextMono.flatMap(commandContext -> ExceptionHandler.handleCommandError(err, commandContext).then(Mono.empty()));
                 })
+                .then(updateLastUsedTimestamp)
                 .doOnSuccess(__ -> Telemetry.COMMAND_USAGE_COUNTER.labels(event.getCommandName()).inc()); //TODO: Add error handling
     }
 }
