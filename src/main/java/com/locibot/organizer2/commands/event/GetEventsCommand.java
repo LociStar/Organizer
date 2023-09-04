@@ -2,10 +2,13 @@ package com.locibot.organizer2.commands.event;
 
 import com.locibot.organizer2.commands.SlashCommand;
 import com.locibot.organizer2.core.CommandContext;
+import com.locibot.organizer2.database.tables.Event;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+
+import java.util.ArrayList;
 
 @Component
 public class GetEventsCommand implements SlashCommand {
@@ -20,6 +23,8 @@ public class GetEventsCommand implements SlashCommand {
                 .switchIfEmpty(context.getEvent().reply(context.localize("event.list.no_events")).withEphemeral(true).then(Mono.empty()))
                 .collectList()
                 .flatMap(events -> {
+                    if (events.size() == 0)
+                        return Mono.empty();
                     StringBuilder eventNames = new StringBuilder();
                     StringBuilder eventTypes = new StringBuilder();
                     for (int i = 0; i < events.size(); i++) {
