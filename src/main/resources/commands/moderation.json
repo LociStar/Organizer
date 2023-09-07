@@ -1,0 +1,25 @@
+{
+  "name": "moderation",
+  "description": "Moderation commands",
+  "options": [
+    {
+      "name": "prune",
+      "description": "Prune messages",
+      "type": 1,
+      "options": [
+        {
+          "name": "amount",
+          "description": "Amount of messages to prune (max 100)",
+          "type": 4,
+          "required": false
+        },
+        {
+          "name": "user",
+          "description": "User to prune messages from",
+          "type": 6,
+          "required": false
+        }
+      ]
+    }
+  ]
+}
