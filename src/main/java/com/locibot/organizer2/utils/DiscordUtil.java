@@ -1,5 +1,6 @@
 package com.locibot.organizer2.utils;
 
+import com.locibot.organizer2.commands.MissingPermissionException;
 import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.interaction.ApplicationCommandInteractionEvent;
 import discord4j.core.object.command.ApplicationCommandInteraction;
@@ -10,6 +11,7 @@ import discord4j.discordjson.json.ApplicationCommandOptionChoiceData;
 import discord4j.rest.util.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -93,6 +95,20 @@ public class DiscordUtil {
         getSubCommandGroupName(event).ifPresent(cmds::add);
         getSubCommandName(event).ifPresent(cmds::add);
         return String.join(" ", cmds);
+    }
+
+    /**
+     * @param channel     The channel in which the permissions have to be checked.
+     * @param permissions The permissions to check.
+     * @return A {@link Mono} containing a {@link MissingPermissionException} if the bot does not have the provided
+     * permissions in the provided channel or an empty Mono otherwise.
+     */
+    public static Mono<Void> requirePermissions(Channel channel, Permission... permissions) {
+        return Flux.fromArray(permissions)
+                .flatMap(permission -> DiscordUtil.hasPermission(channel, channel.getClient().getSelfId(), permission)
+                        .filter(Boolean.TRUE::equals)
+                        .switchIfEmpty(Mono.error(new MissingPermissionException(permission))))
+                .then();
     }
 
 }
