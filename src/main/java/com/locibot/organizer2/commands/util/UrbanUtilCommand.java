@@ -4,7 +4,7 @@ import com.locibot.organizer2.api.command_api.ServerAccessException;
 import com.locibot.organizer2.api.command_api.json.urbandictionary.UrbanDefinition;
 import com.locibot.organizer2.api.command_api.json.urbandictionary.UrbanDictionaryResponse;
 import com.locibot.organizer2.commands.SlashCommand;
-import com.locibot.organizer2.core.CommandContext;
+import com.locibot.organizer2.core.command.CommandContext;
 import com.locibot.organizer2.object.Emoji;
 import com.locibot.organizer2.object.RequestHelper;
 import com.locibot.organizer2.utils.NetUtil;

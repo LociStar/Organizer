@@ -1,7 +1,7 @@
 package com.locibot.organizer2.commands.event;
 
 import com.locibot.organizer2.commands.SlashCommand;
-import com.locibot.organizer2.core.CommandContext;
+import com.locibot.organizer2.core.command.CommandContext;
 import com.locibot.organizer2.database.repositories.EventSubscriptionRepository;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;

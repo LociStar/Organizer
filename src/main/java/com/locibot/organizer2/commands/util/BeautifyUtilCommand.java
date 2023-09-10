@@ -2,7 +2,7 @@ package com.locibot.organizer2.commands.util;
 
 import com.loci.textbeautifier.Font;
 import com.locibot.organizer2.commands.SlashCommand;
-import com.locibot.organizer2.core.CommandContext;
+import com.locibot.organizer2.core.command.CommandContext;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 

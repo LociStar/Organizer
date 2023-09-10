@@ -2,7 +2,7 @@ package com.locibot.organizer2.commands.setting;
 
 import com.locibot.organizer2.commands.CommandException;
 import com.locibot.organizer2.commands.SlashCommand;
-import com.locibot.organizer2.core.CommandContext;
+import com.locibot.organizer2.core.command.CommandContext;
 import com.locibot.organizer2.database.tables.Guild;
 import com.locibot.organizer2.object.Emoji;
 import discord4j.core.object.entity.channel.TextChannel;

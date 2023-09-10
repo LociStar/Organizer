@@ -3,7 +3,7 @@ package com.locibot.organizer2.object;
 
 import com.locibot.organizer2.commands.CommandException;
 import com.locibot.organizer2.core.ButtonEventContext;
-import com.locibot.organizer2.core.CommandContext;
+import com.locibot.organizer2.core.command.CommandContext;
 import io.netty.channel.unix.Errors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

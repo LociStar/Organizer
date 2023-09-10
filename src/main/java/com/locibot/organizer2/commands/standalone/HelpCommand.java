@@ -1,7 +1,7 @@
 package com.locibot.organizer2.commands.standalone;
 
 import com.locibot.organizer2.commands.SlashCommand;
-import com.locibot.organizer2.core.CommandContext;
+import com.locibot.organizer2.core.command.CommandContext;
 import com.locibot.organizer2.data.Config;
 import discord4j.common.JacksonResources;
 import discord4j.core.spec.EmbedCreateFields;

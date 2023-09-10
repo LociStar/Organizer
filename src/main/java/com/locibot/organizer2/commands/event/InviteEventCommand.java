@@ -1,7 +1,7 @@
 package com.locibot.organizer2.commands.event;
 
 import com.locibot.organizer2.commands.SlashCommand;
-import com.locibot.organizer2.core.CommandContext;
+import com.locibot.organizer2.core.command.CommandContext;
 import com.locibot.organizer2.database.tables.Event;
 import discord4j.core.object.component.ActionRow;
 import discord4j.core.object.component.Button;

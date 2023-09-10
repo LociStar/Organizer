@@ -1,7 +1,7 @@
 package com.locibot.organizer2.commands.info;
 
 import com.locibot.organizer2.commands.SlashCommand;
-import com.locibot.organizer2.core.CommandContext;
+import com.locibot.organizer2.core.command.CommandContext;
 import com.locibot.organizer2.data.Config;
 import com.locibot.organizer2.data.Telemetry;
 import com.locibot.organizer2.object.Emoji;

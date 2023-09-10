@@ -3,7 +3,7 @@ package com.locibot.organizer2.commands.util;
 import com.fathzer.soft.javaluator.DoubleEvaluator;
 import com.locibot.organizer2.commands.CommandException;
 import com.locibot.organizer2.commands.SlashCommand;
-import com.locibot.organizer2.core.CommandContext;
+import com.locibot.organizer2.core.command.CommandContext;
 import com.locibot.organizer2.object.Emoji;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
