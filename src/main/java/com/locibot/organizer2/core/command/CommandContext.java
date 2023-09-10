@@ -1,4 +1,4 @@
-package com.locibot.organizer2.core;
+package com.locibot.organizer2.core.command;
 
 import com.locibot.organizer2.data.Config;
 import com.locibot.organizer2.database.repositories.EventRepository;
@@ -19,6 +19,9 @@ import discord4j.core.object.entity.Role;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.rest.util.Permission;
+import reactor.bool.BooleanUtils;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -226,5 +229,20 @@ public class CommandContext<T extends ApplicationCommandInteractionEvent> {
 
     public EventRepository getEventRepository() {
         return eventRepository;
+    }
+
+    public Flux<CommandPermission> getPermissions() {
+        // The author is a bot's owner
+        final Mono<CommandPermission> ownerPerm = Mono.just(this.getAuthorId())
+                .filter(Snowflake.of(Config.OWNER_USER_ID)::equals)
+                .map(__ -> CommandPermission.OWNER);
+
+        // The member is an administrator or it's a private message
+        final Mono<CommandPermission> adminPerm = event.getInteraction().getChannel()
+                .filterWhen(channel -> BooleanUtils.or(
+                        DiscordUtil.hasPermission(channel, this.getAuthorId(), Permission.ADMINISTRATOR),
+                        Mono.just(channel.getType() == Channel.Type.DM)))
+                .map(__ -> CommandPermission.ADMIN);
+        return Flux.merge(ownerPerm, adminPerm, Mono.just(CommandPermission.USER_GUILD), Mono.just(CommandPermission.USER_GLOBAL));
     }
 }
