@@ -2,7 +2,8 @@ package com.locibot.organizer2.commands.moderation;
 
 import com.locibot.organizer2.commands.CommandException;
 import com.locibot.organizer2.commands.SlashCommand;
-import com.locibot.organizer2.core.CommandContext;
+import com.locibot.organizer2.core.command.CommandContext;
+import com.locibot.organizer2.core.command.CommandPermission;
 import com.locibot.organizer2.object.Emoji;
 import com.locibot.organizer2.utils.DiscordUtil;
 import com.locibot.organizer2.utils.NumberUtil;
@@ -30,6 +31,11 @@ public class PruneModerationCommand implements SlashCommand {
     @Override
     public String getName() {
         return "moderation prune";
+    }
+
+    @Override
+    public CommandPermission getPermission() {
+        return CommandPermission.ADMIN;
     }
 
     private static Mono<Long> getLimit(CommandContext<?> context) {
