@@ -1,13 +1,15 @@
 package com.locibot.organizer2.listeners;
 
 import com.locibot.organizer2.commands.SlashCommand;
-import com.locibot.organizer2.core.CommandContext;
+import com.locibot.organizer2.core.command.CommandContext;
 import com.locibot.organizer2.data.Telemetry;
 import com.locibot.organizer2.database.repositories.EventRepository;
 import com.locibot.organizer2.database.repositories.GuildRepository;
 import com.locibot.organizer2.database.repositories.UserRepository;
+import com.locibot.organizer2.object.Emoji;
 import com.locibot.organizer2.utils.DiscordUtil;
 import com.locibot.organizer2.object.ExceptionHandler;
+import com.locibot.organizer2.utils.ReactorUtil;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import org.springframework.stereotype.Component;
@@ -49,11 +51,22 @@ public class SlashCommandListener {
                 //Have our command class handle all logic related to its specific command.
                 .flatMap(command -> {
                     CommandContext<ChatInputInteractionEvent> commandContext = new CommandContext<>(event, guildRepository, userRepository, eventRepository);
+
                     // add Locale to context
                     return commandContext.getUncachedLocale()
                             .flatMap(locale -> {
                                 commandContext.setLocale(locale);
-                                return command.handle(commandContext);
+
+                                //Check if the user has the required permissions to run the command
+                                return commandContext.getPermissions()
+                                        .collectList()
+                                        // The author has the permission to execute this command
+                                        .filterWhen(ReactorUtil.filterOrExecute(
+                                                userPerms -> userPerms.contains(command.getPermission()),
+                                                commandContext.getEvent()
+                                                        .reply(Emoji.ACCESS_DENIED + " " + commandContext.localize("command.missing.permission"))
+                                                        .withEphemeral(true)))
+                                        .flatMap(__ -> command.handle(commandContext));
                             });
                 })
                 .onErrorResume(err -> {
