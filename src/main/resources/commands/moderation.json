@@ -45,6 +45,25 @@
           "required": false
         }
       ]
+    },
+    {
+      "name" : "nickname_reset",
+      "description": "Reset nickname prefix",
+        "type": 1,
+        "options": [
+          {
+            "name": "user",
+            "description": "User to reset nickname prefix for",
+            "type": 6,
+            "required": false
+          },
+          {
+            "name": "role",
+            "description": "Role to reset nickname prefix for",
+            "type": 8,
+            "required": false
+          }
+        ]
     }
   ]
 }
