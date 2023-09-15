@@ -20,6 +20,31 @@
           "required": false
         }
       ]
+    },
+    {
+      "name": "nickname_prefix",
+      "description": "Set nickname prefix",
+      "type": 1,
+      "options": [
+        {
+          "name": "prefix",
+          "description": "Nickname prefix",
+          "type": 3,
+          "required": true
+        },
+        {
+          "name": "user",
+          "description": "User to set nickname prefix for",
+          "type": 6,
+          "required": false
+        },
+        {
+          "name": "role",
+          "description": "Role to set nickname prefix for",
+          "type": 8,
+          "required": false
+        }
+      ]
     }
   ]
 }
