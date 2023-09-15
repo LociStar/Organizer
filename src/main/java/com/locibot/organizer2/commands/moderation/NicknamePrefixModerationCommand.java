@@ -76,6 +76,6 @@ public class NicknamePrefixModerationCommand implements SlashCommand {
     private Mono<?> buildReply(CommandContext<?> context) {
         return context.getEvent().reply()
                 .withEphemeral(true)
-                .withContent("Successfully changed (all) nickname(s)");
+                .withContent(context.localize("moderation.nickname_prefix.success"));
     }
 }
