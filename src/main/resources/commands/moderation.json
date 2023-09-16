@@ -47,23 +47,66 @@
       ]
     },
     {
-      "name" : "nickname_reset",
+      "name": "nickname_reset",
       "description": "Reset nickname prefix",
-        "type": 1,
-        "options": [
-          {
-            "name": "user",
-            "description": "User to reset nickname prefix for",
-            "type": 6,
-            "required": false
-          },
-          {
-            "name": "role",
-            "description": "Role to reset nickname prefix for",
-            "type": 8,
-            "required": false
-          }
-        ]
+      "type": 1,
+      "options": [
+        {
+          "name": "user",
+          "description": "User to reset nickname prefix for",
+          "type": 6,
+          "required": false
+        },
+        {
+          "name": "role",
+          "description": "Role to reset nickname prefix for",
+          "type": 8,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "iam",
+      "description": "Add a role button",
+      "type": 1,
+      "options": [
+        {
+          "name": "role1",
+          "description": "Role to add",
+          "type": 8,
+          "required": true
+        },
+        {
+          "name": "role2",
+          "description": "Role to add",
+          "type": 8,
+          "required": false
+        },
+        {
+          "name": "role3",
+          "description": "Role to add",
+          "type": 8,
+          "required": false
+        },
+        {
+          "name": "role4",
+          "description": "Role to add",
+          "type": 8,
+          "required": false
+        },
+        {
+          "name": "role5",
+          "description": "Role to add",
+          "type": 8,
+          "required": false
+        },
+        {
+          "name": "text",
+          "description": "Replace the default text",
+          "type": 3,
+          "required": false
+        }
+      ]
     }
   ]
 }
