@@ -54,7 +54,7 @@ jobs:
       - name: Download a single artifact
         uses: actions/download-artifact@v3
         with:
-          path: ./target/
+          path: ./target/organizer2-*.jar
           name: jar
       - name: Print
         run: |
