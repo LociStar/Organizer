@@ -9,10 +9,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class PingCommand implements SlashCommand {
 
-    private final UserRepository userRepository;
-
-    public PingCommand(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public PingCommand() {
     }
 
     @Override
@@ -22,7 +19,6 @@ public class PingCommand implements SlashCommand {
 
     @Override
     public Mono<?> handle(CommandContext<?> context) {
-        userRepository.count().block();
         //We reply to the command with "Pong!" and make sure it is ephemeral (only the command user can see it)
         return context.getEvent().reply()
                 .withEphemeral(true)
