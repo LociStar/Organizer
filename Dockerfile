@@ -1,4 +1,4 @@
-FROM openjdk:17.0.2-jdk
+FROM openjdk:20.0.2-jdk
 ARG VERSION
 ENV VERSION=$VERSION
 COPY ./target/organizer-$VERSION.jar /temp/organizer-$VERSION.jar
