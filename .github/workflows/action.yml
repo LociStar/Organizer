@@ -19,6 +19,12 @@ jobs:
             distribution: 'temurin'
         - name: Build with Maven
           run: mvn --batch-mode --update-snapshots package
+        - name: 'Upload Artifact'
+          uses: actions/upload-artifact@v3
+          with:
+            name: jar
+            path: ./target/organizer2-*.jar
+            retention-days: 1
   deploy:
     needs: build
     runs-on: self-hosted
@@ -42,8 +48,18 @@ jobs:
         run: |
           $version = (Get-Content -Path "pom.xml" | Select-String -Pattern "<version>(.*?)</version>").Matches.Groups[1].Value;
           echo "RELEASE_VERSION=$version" >> $env:GITHUB_OUTPUT
-      -
-        name: Build and push
+      - name: Write key files
+        run: |
+          [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String('${{ secrets.AUTH }}')) | Out-File -Encoding "utf8" ./credentials.properties
+      - name: Download a single artifact
+        uses: actions/download-artifact@v3
+        with:
+          path: ./target/
+          name: jar
+      - name: Print
+        run: |
+          Get-ChildItem
+      - name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: ./
