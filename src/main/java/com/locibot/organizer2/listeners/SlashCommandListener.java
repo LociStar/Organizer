@@ -5,6 +5,7 @@ import com.locibot.organizer2.core.command.CommandContext;
 import com.locibot.organizer2.data.Telemetry;
 import com.locibot.organizer2.database.repositories.EventRepository;
 import com.locibot.organizer2.database.repositories.GuildRepository;
+import com.locibot.organizer2.database.repositories.AnalyticsRepository;
 import com.locibot.organizer2.database.repositories.UserRepository;
 import com.locibot.organizer2.object.Emoji;
 import com.locibot.organizer2.utils.DiscordUtil;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,14 +29,16 @@ public class SlashCommandListener {
     private final GuildRepository guildRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
+    private final AnalyticsRepository analyticsRepository;
 
     private final Collection<SlashCommand> commands;
 
-    public SlashCommandListener(List<SlashCommand> slashCommands, GatewayDiscordClient client, GuildRepository guildRepository, UserRepository userRepository, EventRepository eventRepository) {
+    public SlashCommandListener(List<SlashCommand> slashCommands, GatewayDiscordClient client, GuildRepository guildRepository, UserRepository userRepository, EventRepository eventRepository, AnalyticsRepository analyticsRepository) {
         commands = slashCommands;
         this.guildRepository = guildRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
+        this.analyticsRepository = analyticsRepository;
 
         client.on(ChatInputInteractionEvent.class, this::handle).subscribe();
     }
@@ -41,6 +47,7 @@ public class SlashCommandListener {
     public Mono<?> handle(ChatInputInteractionEvent event) {
 
         Mono<?> updateLastUsedTimestamp = userRepository.updateLastUsedTimestamp(event.getInteraction().getUser().getId().asLong());
+        ZonedDateTime timestamp = Instant.now().atZone(ZoneId.systemDefault());
 
         //Convert our list to a flux that we can iterate through
         return Flux.fromIterable(commands)
@@ -80,6 +87,7 @@ public class SlashCommandListener {
                     return commandContextMono.flatMap(commandContext -> ExceptionHandler.handleCommandError(err, commandContext).then(Mono.empty()));
                 })
                 .then(updateLastUsedTimestamp)
+                .then(analyticsRepository.updateSlashCommandCount(event.getInteraction().getGuildId().get().asLong(), timestamp.getMonthValue(), timestamp.getYear()))
                 .doOnSuccess(__ -> Telemetry.COMMAND_USAGE_COUNTER.labels(event.getCommandName()).inc()); //TODO: Add error handling
     }
 }
