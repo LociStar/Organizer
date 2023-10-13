@@ -15,6 +15,12 @@ public class Guild {
     @Id
     private long id;
 
+    @Column("name")
+    private String name;
+
+    @Column("owner_id")
+    private long ownerId;
+
     @Column("join_message")
     private String join_message;
 
