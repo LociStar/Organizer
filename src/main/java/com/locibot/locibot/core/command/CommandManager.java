@@ -26,20 +26,20 @@ public class CommandManager {
     private static Map<String, BaseCmd> initialize() {
         Set<Class<?>> list = new Reflections("com.locibot.locibot.command").getTypesAnnotatedWith(CmdAnnotation.class);
         List<BaseCmd> cmds = new ArrayList<>();
-        list.forEach(aClass -> {
-            try {
-                cmds.add((BaseCmd) aClass.getDeclaredConstructor().newInstance());
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                LociBot.DEFAULT_LOGGER.error(e.getMessage());
-            }
-        });
+//        list.forEach(aClass -> {
+//            try {
+//                cmds.add((BaseCmd) aClass.getDeclaredConstructor().newInstance());
+//            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+//                LociBot.DEFAULT_LOGGER.error(e.getMessage());
+//            }
+//        });
         final Map<String, BaseCmd> map = new LinkedHashMap<>(cmds.size());
-        for (final BaseCmd cmd : cmds) {
-            if (map.putIfAbsent(cmd.getName(), cmd) != null) {
-                LociBot.DEFAULT_LOGGER.error("Command name collision between {} and {}",
-                        cmd.getClass().getSimpleName(), map.get(cmd.getName()).getClass().getSimpleName());
-            }
-        }
+//        for (final BaseCmd cmd : cmds) {
+//            if (map.putIfAbsent(cmd.getName(), cmd) != null) {
+//                LociBot.DEFAULT_LOGGER.error("Command name collision between {} and {}",
+//                        cmd.getClass().getSimpleName(), map.get(cmd.getName()).getClass().getSimpleName());
+//            }
+//        }
         LociBot.DEFAULT_LOGGER.info("{} commands initialized", map.size());
         return Collections.unmodifiableMap(map);
     }
@@ -47,20 +47,20 @@ public class CommandManager {
     private static Map<String, BaseCmdButton> initializeButtons() {
         Set<Class<?>> list = new Reflections("com.locibot.locibot.command").getTypesAnnotatedWith(ButtonAnnotation.class);
         List<BaseCmdButton> cmds = new ArrayList<>();
-        list.forEach(aClass -> {
-            try {
-                cmds.add((BaseCmdButton) aClass.getDeclaredConstructor().newInstance());
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                LociBot.DEFAULT_LOGGER.error(e.getMessage());
-            }
-        });
+//        list.forEach(aClass -> {
+//            try {
+//                cmds.add((BaseCmdButton) aClass.getDeclaredConstructor().newInstance());
+//            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+//                LociBot.DEFAULT_LOGGER.error(e.getMessage());
+//            }
+//        });
         final Map<String, BaseCmdButton> map = new LinkedHashMap<>(cmds.size());
-        for (final BaseCmdButton cmd : cmds) {
-            if (map.putIfAbsent(cmd.getName(), cmd) != null) {
-                LociBot.DEFAULT_LOGGER.error("Button command name collision between {} and {}",
-                        cmd.getClass().getSimpleName(), map.get(cmd.getName()).getClass().getSimpleName());
-            }
-        }
+//        for (final BaseCmdButton cmd : cmds) {
+//            if (map.putIfAbsent(cmd.getName(), cmd) != null) {
+//                LociBot.DEFAULT_LOGGER.error("Button command name collision between {} and {}",
+//                        cmd.getClass().getSimpleName(), map.get(cmd.getName()).getClass().getSimpleName());
+//            }
+//        }
         LociBot.DEFAULT_LOGGER.info("{} button commands initialized", map.size());
         return Collections.unmodifiableMap(map);
     }
