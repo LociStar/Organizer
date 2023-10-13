@@ -25,6 +25,7 @@ import discord4j.store.api.mapping.MappingStoreService;
 import discord4j.store.caffeine.CaffeineStoreService;
 import discord4j.store.jdk.JdkStoreService;
 import io.netty.resolver.DefaultAddressResolverGroup;
+import io.r2dbc.spi.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -82,7 +83,9 @@ public class Organizer2Application {
                 .setEnabledIntents(IntentSet.of(
                         Intent.GUILDS,
                         Intent.GUILD_MEMBERS,
-                        Intent.GUILD_MESSAGE_REACTIONS))
+                        Intent.GUILD_MESSAGES,
+                        Intent.GUILD_MESSAGE_REACTIONS,
+                        Intent.GUILD_PRESENCES))
                 .setInitialPresence(__ -> ClientPresence.online(ClientActivity.listening("/help")))
                 .setMemberRequestFilter(MemberRequestFilter.none())
                 .login()
