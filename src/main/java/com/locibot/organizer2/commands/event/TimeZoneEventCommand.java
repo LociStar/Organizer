@@ -16,7 +16,6 @@ public class TimeZoneEventCommand implements SlashCommand {
 
     @Override
     public Mono<?> handle(CommandContext<?> context) {
-        System.out.println("EXECUTING");
         String zoneId = context.getOptionAsString("zone_id").orElseThrow();
 
         return context.getUserRepository().setZoneId(context.getAuthorId().asLong(), ZoneId.of(zoneId))
