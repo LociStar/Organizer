@@ -23,7 +23,7 @@ jobs:
           uses: actions/upload-artifact@v3
           with:
             name: jar
-            path: ./target/locibot-*.jar
+            path: ./target/organizer2-*.jar
             retention-days: 1
   deploy:
     needs: build
