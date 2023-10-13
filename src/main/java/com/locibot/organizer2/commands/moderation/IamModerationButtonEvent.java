@@ -49,7 +49,7 @@ public class IamModerationButtonEvent implements ButtonEvent {
                     .collectList()
                     .flatMap(roleIdsFiltered -> context.getEvent().getInteraction().getMember().get()
                             .edit(GuildMemberEditSpec.builder().addAllRoles(roleIdsFiltered).build()))
-                    .then(context.getEvent().reply("event.iam.success").withEphemeral(true));
+                    .then(context.getEvent().reply(context.localize("event.iam.success")).withEphemeral(true));
         }));
     }
 }
