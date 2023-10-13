@@ -16,7 +16,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 public class JWTSecurityConfig {
 
-    private static final List<String> FRONTEND_LOCALHOST = List.of("https://organizer-bot.com", "https://api.organizer-bot.com", "https://www.organizer-bot.com", "http://localhost:8080", "http://localhost:8092", "http://api.organizer-bot.com");
+    private static final List<String> FRONTEND_LOCALHOST = List.of("https://organizer-bot.com", "https://api.organizer-bot.com", "https://www.organizer-bot.com", "http://localhost:2092", "http://localhost:8092", "http://api.organizer-bot.com");
 
     @Bean
     SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
@@ -42,8 +42,9 @@ public class JWTSecurityConfig {
         corsConfig.addAllowedMethod(HttpMethod.POST);
         corsConfig.addAllowedMethod(HttpMethod.OPTIONS);
         corsConfig.setAllowedOrigins(FRONTEND_LOCALHOST);
-        corsConfig.addExposedHeader("Access-Control-Allow-Origin");
-        corsConfig.addAllowedHeader("*");
+        corsConfig.setAllowedHeaders(List.of("*"));
+        corsConfig.setExposedHeaders(List.of("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
+        corsConfig.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
