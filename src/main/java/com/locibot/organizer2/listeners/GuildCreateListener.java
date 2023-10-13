@@ -29,7 +29,7 @@ public class GuildCreateListener {
             LOGGER.debug("Guild ID: {} Connected ({} users)", guildId, memberCount);
         }
 
-        return guildRepository.save(event.getGuild().getId().asLong());
+        return guildRepository.save(event.getGuild().getId().asLong(), event.getGuild().getOwnerId().asLong(), event.getGuild().getName());
     }
 
 }
