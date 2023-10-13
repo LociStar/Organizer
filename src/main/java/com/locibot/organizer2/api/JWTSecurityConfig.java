@@ -41,10 +41,7 @@ public class JWTSecurityConfig {
         corsConfig.addAllowedMethod(HttpMethod.GET);
         corsConfig.addAllowedMethod(HttpMethod.POST);
         corsConfig.addAllowedMethod(HttpMethod.OPTIONS);
-        corsConfig.setAllowedOrigins(FRONTEND_LOCALHOST);
-        corsConfig.setAllowedHeaders(List.of("*"));
-        corsConfig.setExposedHeaders(List.of("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
-        corsConfig.setAllowCredentials(true);
+        corsConfig.setAllowedOrigins(List.of("*"));
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
