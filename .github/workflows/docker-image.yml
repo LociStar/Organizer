@@ -23,7 +23,7 @@ jobs:
           uses: actions/upload-artifact@v3
           with:
             name: jar
-            path: ./target/organizer2-*.jar
+            path: ./target/organizer-*.jar
             retention-days: 1
   deploy:
     needs: build
@@ -32,16 +32,6 @@ jobs:
       -
         name: Checkout 
         uses: actions/checkout@v3
-      # -
-      #   name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v1
-      # - 
-      #   name: Login to private registry
-      #   uses: docker/login-action@v1
-      #   with:
-      #     registry: ${{ secrets.REGISTRY_URL }}
-      #     username: ""
-      #     password: ""
       - name: Get version
         id: version
         shell: powershell
@@ -54,7 +44,7 @@ jobs:
       - name: Download a single artifact
         uses: actions/download-artifact@v3
         with:
-          path: ./target/organizer2-*.jar
+          path: ./target/
           name: jar
       - name: Print
         run: |
