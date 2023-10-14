@@ -39,4 +39,9 @@ public interface GuildRepository extends R2dbcRepository<Guild, Long> {
             """)
     Flux<Guild> getGuildsByOwnerId(Long id);
 
+    @Query("""
+            SELECT * FROM guild
+            """)
+    Flux<Guild> getAllGuilds();
+
 }
