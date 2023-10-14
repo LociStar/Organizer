@@ -1,6 +1,7 @@
 package com.locibot.organizer2.api.handlers;
 
 import com.locibot.organizer2.api.util.WebUtil;
+import com.locibot.organizer2.data.Config;
 import com.locibot.organizer2.database.repositories.GuildRepository;
 import com.locibot.organizer2.database.tables.Guild;
 import discord4j.common.util.Snowflake;
@@ -29,11 +30,19 @@ public class ServerHandler {
 
     public Mono<ServerResponse> getServers(ServerRequest ignored) {
 
-        return WebUtil.getUserAttributes().flatMap(stringObjectMap -> guildRepository
-                .getGuildsByOwnerId(Long.parseLong(stringObjectMap.get("id").toString()))
-                .collectMap(Guild::getName, guild -> String.valueOf(guild.getId()))
-                .flatMap(stringLongMap -> ServerResponse.ok().bodyValue(stringLongMap))
-                .switchIfEmpty(ServerResponse.notFound().build())
+        return WebUtil.getUserAttributes().flatMap(stringObjectMap -> {
+                    if (Long.parseLong(stringObjectMap.get("id").toString()) == Config.OWNER_USER_ID)
+                        return guildRepository.getAllGuilds()
+                                .collectMap(Guild::getName, guild -> String.valueOf(guild.getId()))
+                                .flatMap(stringLongMap -> ServerResponse.ok().bodyValue(stringLongMap))
+                                .switchIfEmpty(ServerResponse.notFound().build());
+                    else
+                        return guildRepository
+                                .getGuildsByOwnerId(Long.parseLong(stringObjectMap.get("id").toString()))
+                                .collectMap(Guild::getName, guild -> String.valueOf(guild.getId()))
+                                .flatMap(stringLongMap -> ServerResponse.ok().bodyValue(stringLongMap))
+                                .switchIfEmpty(ServerResponse.notFound().build());
+                }
         );
     }
 

@@ -1,5 +1,6 @@
 package com.locibot.organizer2.api.util;
 
+import com.locibot.organizer2.data.Config;
 import com.locibot.organizer2.database.repositories.GuildRepository;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -26,7 +27,12 @@ public class WebUtil {
     }
 
     public static Mono<Boolean> isOwner(GuildRepository guildRepository, Long guildId) {
-        return getUserAttributes().flatMap(stringObjectMap -> guildRepository
-                .existByIdAndOwnerIdAsBoolean(guildId, Long.parseLong(stringObjectMap.get("id").toString())));
+        return getUserAttributes().flatMap(stringObjectMap -> {
+            if (Long.parseLong(stringObjectMap.get("id").toString()) == Config.OWNER_USER_ID)
+                return Mono.just(true);
+            else
+                return guildRepository
+                        .existByIdAndOwnerIdAsBoolean(guildId, Long.parseLong(stringObjectMap.get("id").toString()));
+        });
     }
 }
