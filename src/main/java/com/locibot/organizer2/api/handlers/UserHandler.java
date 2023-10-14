@@ -26,8 +26,6 @@ public class UserHandler {
     private final EventSubscriptionRepository eventSubscriptionRepository;
     private final EventRepository eventRepository;
 
-    private final WebClient client = WebClient.create();
-
     public UserHandler(UserRepository userRepository, EventSubscriptionRepository eventSubscriptionRepository, EventRepository eventRepository) {
         this.userRepository = userRepository;
         this.eventSubscriptionRepository = eventSubscriptionRepository;
