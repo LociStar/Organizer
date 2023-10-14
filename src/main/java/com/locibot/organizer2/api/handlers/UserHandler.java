@@ -1,7 +1,7 @@
 package com.locibot.organizer2.api.handlers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.locibot.organizer2.api.web.util.WebUtil;
+import com.locibot.organizer2.api.util.WebUtil;
 import com.locibot.organizer2.data.credential.Credential;
 import com.locibot.organizer2.data.credential.CredentialManager;
 import com.locibot.organizer2.database.repositories.EventRepository;

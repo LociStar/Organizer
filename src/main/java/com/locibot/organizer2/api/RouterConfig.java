@@ -1,4 +1,4 @@
-package com.locibot.organizer2.api.web;
+package com.locibot.organizer2.api;
 
 import com.locibot.organizer2.api.handlers.AnalyticsHandler;
 import com.locibot.organizer2.api.handlers.ServerHandler;

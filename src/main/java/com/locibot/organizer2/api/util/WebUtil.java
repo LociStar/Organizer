@@ -1,4 +1,4 @@
-package com.locibot.organizer2.api.web.util;
+package com.locibot.organizer2.api.util;
 
 import com.locibot.organizer2.database.repositories.GuildRepository;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;

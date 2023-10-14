@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import reactor.util.Logger;
 
-import static com.locibot.organizer2.api.web.util.WebUtil.getUserAttributes;
+import static com.locibot.organizer2.api.util.WebUtil.getUserAttributes;
 
 @Component
 public class AnalyticsHandler {

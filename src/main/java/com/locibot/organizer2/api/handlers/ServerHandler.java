@@ -1,6 +1,6 @@
 package com.locibot.organizer2.api.handlers;
 
-import com.locibot.organizer2.api.web.util.WebUtil;
+import com.locibot.organizer2.api.util.WebUtil;
 import com.locibot.organizer2.database.repositories.GuildRepository;
 import com.locibot.organizer2.database.tables.Guild;
 import discord4j.common.util.Snowflake;

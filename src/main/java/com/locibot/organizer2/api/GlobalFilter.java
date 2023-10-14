@@ -1,6 +1,6 @@
 package com.locibot.organizer2.api;
 
-import com.locibot.organizer2.api.web.util.WebUtil;
+import com.locibot.organizer2.api.util.WebUtil;
 import com.locibot.organizer2.database.repositories.UserRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.annotation.Order;
